@@ -1,0 +1,47 @@
+# Python
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# Environment
+.venv/
+env/
+conda_env/
+
+# Data
+data/raw/*
+data/processed/*
+
+# Keep folder structure
+!data/raw/.gitkeep
+!data/raw/user_A/.gitkeep
+!data/raw/user_B/.gitkeep
+!data/raw/user_C/.gitkeep
+!data/processed/.gitkeep
+
+# Model checkpoints
+checkpoints/*
+*.pth
+*.pt
+*.ckpt
+
+# Keep checkpoint folders
+!checkpoints/baseline/.gitkeep
+!checkpoints/improved/.gitkeep
+
+# Results
+results/logs/*
+results/predictions/*
+
+# Keep result folders
+!results/metrics/.gitkeep
+!results/logs/.gitkeep
+!results/predictions/.gitkeep
+
+# System files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
