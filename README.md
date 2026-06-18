@@ -1,5 +1,3 @@
-下面是一份适合你当前阶段使用的 `README.md`，只介绍仓库背景和项目架构，不涉及具体代码文件实现，后续可以继续补充运行方式、实验结果和成员分工。
-
 # Multimodal User Intention Recognition
 
 ## 1. Project Overview
