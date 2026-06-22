@@ -4,66 +4,86 @@
 
 This repository is created for the final project of the Machine Learning course.
 
-The project focuses on **Multimodal User Intention Recognition** in augmented reality interaction scenarios. The main goal is to build and improve a multimodal learning framework that can recognize user intentions from raw multimodal interaction data.
+The project focuses on **multimodal user intention recognition** in augmented reality interaction scenarios. The goal is to refactor and improve the provided multimodal recognition model so that it can recognize user intentions from raw multimodal interaction data.
 
-This project will be completed by a team of three members. The final results will be used for course project submission and group defense. Therefore, this repository is organized with a clear and professional structure to support collaborative development, experiment management, report writing, and presentation preparation.
+The course project requires the model to handle:
 
-At the current stage, this repository mainly provides the overall project architecture. Specific source code files, experiment scripts, and implementation details will be added in later development stages.
+- Modal noise
+- Missing modalities
+- Cross-user testing
+- End-to-end input from raw data to intention labels
+
+The current repository already contains the reorganized raw dataset, baseline source code, feature extraction scripts, original code documentation, and report/result folders for later experiments.
 
 ---
 
 ## 2. Project Background
 
-With the development of AR devices and intelligent interaction systems, traditional single-modal interaction methods are often insufficient for understanding complex user intentions. Multimodal interaction combines information from different modalities, such as gesture, voice, gaze, motion, or other sensor data, to improve the robustness and accuracy of intention recognition.
+AR glasses and wearable interaction systems usually receive information from multiple modalities, including scene video, gesture video, audio, speech/text, and IMU signals. A single modality can be noisy or unavailable in real use, so this project studies robust multimodal fusion for user intention recognition.
 
-In this course project, we aim to improve a given multimodal user intention recognition model, especially under the following challenging conditions:
-
-- Modal noise
-- Missing modalities
-- Cross-user testing scenario
-- End-to-end raw data input and intention category output
+The original teacher-provided code first extracts features from the dataset and then trains a multimodal fusion model on saved feature files. This project will refactor that workflow into a clearer end-to-end pipeline and evaluate the model under clean, noisy, and missing-modality settings.
 
 ---
 
 ## 3. Project Objectives
 
-The main objectives of this project are:
-
-1. Refactor the original feature-based model into an end-to-end model.
-2. Use raw multimodal data as model input.
-3. Use user A and user B as training data.
-4. Use user C as testing data.
-5. Construct modal noise baselines.
-6. Construct missing modality baselines.
-7. Improve the model under noise and missing modality conditions.
-8. Organize experimental results for final report and defense.
+1. Use user A and user B as the training set.
+2. Use user C as the testing set.
+3. Refactor the original feature-based workflow into an end-to-end training and testing workflow.
+4. Integrate preprocessing and feature extraction into the training/testing pipeline.
+5. Build modal noise baselines at 20%, 40%, and 60% noise levels.
+6. Build missing-modality baselines by dropping one or two modalities.
+7. Improve the model with new modules or loss terms.
+8. Save metrics, logs, figures, screenshots, and references for the final report and defense.
 
 ---
 
-## 4. Repository Structure
+## 4. Current Repository Structure
 
-The planned repository structure is shown below:
+The current repository is organized as follows:
 
 ```text
 multimodal-intention-recognition/
-│
 ├── README.md
+├── README_CHINESE.md
 ├── requirements.txt
 ├── .gitignore
+├── 课程项目2026.pdf
 │
 ├── data/
 │   ├── raw/
+│   │   ├── imu.csv
 │   │   ├── user_A/
+│   │   │   ├── HoloLens/
+│   │   │   └── fisheye/
 │   │   ├── user_B/
-│   │   └── user_C/
-│   │
+│   │   │   ├── HoloLens/
+│   │   │   └── fisheye/
+│   │   ├── user_C/
+│   │   │   ├── HoloLens/
+│   │   │   └── fisheye/
+│   │   └── models/
+│   │       ├── all-MiniLM-L6-v2/
+│   │       └── clip_teacher_model/
 │   └── processed/
 │
 ├── src/
 │   ├── models/
+│   │   └── baseline_real_scene.py
 │   └── modules/
+│       ├── real_scene_utils.py
+│       └── feature_extraction/
+│           ├── ASR.py
+│           ├── get_timestamp.py
+│           ├── imu.py
+│           ├── mfcc.py
+│           └── strong_gesture2.0.py
 │
 ├── experiments/
+│   └── train_and_test.py
+│
+├── docs/
+│   └── original_code_readme.md
 │
 ├── results/
 │   ├── metrics/
@@ -75,228 +95,161 @@ multimodal-intention-recognition/
 │   ├── curves/
 │   └── result_charts/
 │
-├── checkpoints/
-│   ├── baseline/
-│   └── improved/
-│
-├── report/
-│   ├── screenshots/
-│   └── references/
-│
-└── docs/
-````
-
----
-
-## 5. Folder Description
-
-### `data/`
-
-This folder is used to store the dataset used in the project.
-
-```text
-data/
-├── raw/
-│   ├── user_A/
-│   ├── user_B/
-│   └── user_C/
-└── processed/
+└── report/
+    ├── references.md
+    └── screenshots/
 ```
 
-* `raw/`: stores the original multimodal interaction data.
-* `user_A/`: stores raw data from user A.
-* `user_B/`: stores raw data from user B.
-* `user_C/`: stores raw data from user C.
-* `processed/`: stores processed or intermediate data if needed.
-
-According to the project requirement, data from user A and user B will be used for training, while data from user C will be used for testing.
-
 ---
 
-### `src/`
+## 5. File and Folder Explanation
 
-This folder will contain the main source code of the project.
+### `data/raw/`
 
-```text
-src/
-├── models/
-└── modules/
-```
+This folder stores the reorganized raw dataset and local model resources.
 
-* `models/`: stores the baseline model and improved model structures.
-* `modules/`: stores reusable functional modules, such as data preprocessing, modal noise processing, missing modality processing, and fusion modules.
+- `imu.csv`: the original IMU signal file. It is used as the IMU modality and is aligned with interaction videos by timestamp.
+- `user_A/`: raw data for user A. This user belongs to the training set.
+- `user_B/`: raw data for user B. This user belongs to the training set.
+- `user_C/`: raw data for user C. This user belongs to the testing set.
+- `HoloLens/`: HoloLens interaction videos in `.mp4` format. These videos are used mainly for audio and speech-related processing.
+- `fisheye/`: fisheye camera videos in `.avi` format. These videos are used mainly for scene and gesture modalities.
+- `models/all-MiniLM-L6-v2/`: local sentence embedding model used by text or ASR-related feature extraction.
+- `models/clip_teacher_model/`: local vision-language/visual backbone resources from the original dataset package.
 
-At the current stage, only the folder structure is prepared. Specific code files will be added later.
+Some directories may contain `.DS_Store` or `._*` files created by macOS. These are system metadata files and should not be treated as valid training samples.
 
----
+### `data/processed/`
+
+This folder is reserved for generated intermediate data, cached features, aligned samples, and other preprocessing outputs. It is currently kept as an output directory and should not be used as the primary source of raw data.
+
+### `src/models/`
+
+This folder stores model definitions.
+
+- `baseline_real_scene.py`: the teacher-provided baseline model code after relocation. It contains the Perceiver-IO based multimodal fusion baseline, intent labels, train/test video lists, modality definitions, training logic, and evaluation utilities. The code still needs further refactoring to become a clean end-to-end implementation.
+
+### `src/modules/`
+
+This folder stores reusable modules used by models and experiments.
+
+- `real_scene_utils.py`: utilities for mapping fisheye `.avi` videos to HoloLens `.mp4` videos, reading real scene frames, extracting scene features with a local ViT model, and caching scene features.
+- `feature_extraction/`: original feature extraction scripts moved from the teacher-provided code package.
+
+### `src/modules/feature_extraction/`
+
+This folder contains the modality preprocessing and feature extraction scripts.
+
+- `get_timestamp.py`: extracts or aligns timestamps for interaction data.
+- `ASR.py`: performs speech recognition or speech-text feature processing.
+- `imu.py`: processes IMU signals and extracts IMU features.
+- `mfcc.py`: extracts audio MFCC features.
+- `strong_gesture2.0.py`: extracts gesture-related features from video data.
+
+These scripts are the main references for integrating feature extraction into the future end-to-end training and testing pipeline.
 
 ### `experiments/`
 
-This folder will contain experiment entry scripts.
+This folder stores experiment entry scripts.
 
-It will be used to organize different experimental settings, including:
-
-* Baseline experiment
-* Modal noise baseline experiment
-* Missing modality baseline experiment
-* Improved model experiment
-* Comparison experiments
-
-Keeping experiment scripts in a separate folder makes the project easier to reproduce and manage.
-
----
-
-### `results/`
-
-This folder is used to save experiment outputs.
-
-```text
-results/
-├── metrics/
-├── logs/
-└── predictions/
-```
-
-* `metrics/`: stores accuracy, loss, F1-score, and other evaluation results.
-* `logs/`: stores training and testing logs.
-* `predictions/`: stores model prediction results on the test set.
-
-This folder will help organize the experimental evidence used in the final report.
-
----
-
-### `figures/`
-
-This folder is used to save figures for the project report and presentation.
-
-```text
-figures/
-├── model_structure/
-├── curves/
-└── result_charts/
-```
-
-* `model_structure/`: stores model architecture diagrams.
-* `curves/`: stores training loss curves and accuracy curves.
-* `result_charts/`: stores comparison charts for noise and missing modality experiments.
-
-These figures will be used in the final project report and defense slides.
-
----
-
-### `checkpoints/`
-
-This folder is used to save trained model weights.
-
-```text
-checkpoints/
-├── baseline/
-└── improved/
-```
-
-* `baseline/`: stores model checkpoints of the baseline model.
-* `improved/`: stores model checkpoints of the improved model.
-
-Large model files may not be uploaded to GitHub directly. If necessary, this folder can be ignored by `.gitignore`.
-
----
-
-### `report/`
-
-This folder is used to store materials related to the final project report.
-
-```text
-report/
-├── screenshots/
-└── references/
-```
-
-* `screenshots/`: stores screenshots proving that the end-to-end model runs successfully.
-* `references/`: stores reference materials and citation lists.
-
-The final report should include model design, improvement methods, experimental results, team contribution, and references.
-
----
+- `train_and_test.py`: relocated original training/testing script. It currently serves as the main reference implementation. Later work should split it into clearer training and testing entry points, such as `train.py`, `test.py`, and separate experiment scripts for clean, noisy, and missing-modality settings.
 
 ### `docs/`
 
-This folder is used to store project documentation.
+This folder stores project documentation.
 
-Possible documents include:
+- `original_code_readme.md`: the teacher-provided code README. It explains the original code structure, training/testing data split, feature extraction scripts, and submission expectations.
 
-* Project requirement summary
-* Experiment plan
-* Team contribution description
-* Development notes
-* Defense preparation materials
+### `results/`
 
-This folder helps the team maintain clear communication and project records during collaboration.
+This folder stores experiment outputs.
+
+- `metrics/`: accuracy, F1 score, classification reports, confusion matrices, and comparison tables.
+- `logs/`: training and testing logs.
+- `predictions/`: model predictions on validation or test samples.
+
+### `figures/`
+
+This folder stores figures for the project report and defense slides.
+
+- `model_structure/`: model architecture diagrams.
+- `curves/`: training loss, validation accuracy, and other curves.
+- `result_charts/`: charts comparing clean, noisy, missing-modality, baseline, and improved results.
+
+### `report/`
+
+This folder stores report-related materials.
+
+- `references.md`: reference list or citation notes for the final report.
+- `screenshots/`: screenshots proving that the end-to-end model runs successfully.
+
+### `课程项目2026.pdf`
+
+This is the official course project requirement document. It defines the project topic, implementation requirements, report requirements, and scoring criteria.
 
 ---
 
 ## 6. Development Plan
 
-The project will be developed in several stages:
+### Stage 1: Dataset and Code Organization
 
-### Stage 1: Project Initialization
+- Keep the raw multimodal data under `data/raw/`.
+- Keep user A and user B for training.
+- Keep user C for testing.
+- Keep the teacher-provided baseline and feature extraction scripts under `src/` and `experiments/`.
 
-* Build the repository structure.
-* Prepare project documentation.
-* Organize the raw dataset according to user A, user B, and user C.
+### Stage 2: Baseline Refactoring
 
-### Stage 2: Baseline Model Construction
+- Refactor `experiments/train_and_test.py`.
+- Move reusable model components into `src/models/`.
+- Move preprocessing and feature extraction calls into reusable modules.
+- Replace hard-coded original local paths with project-relative paths.
 
-* Refactor the original model workflow.
-* Build an end-to-end training and testing pipeline.
-* Use raw data as input and intention category as output.
+### Stage 3: End-to-End Training and Testing
 
-### Stage 3: Baseline Experiments
-
-* Train and test the baseline model.
-* Record performance on the clean test set.
-* Save logs, metrics, and initial results.
+- Build a training script that starts from raw multimodal data.
+- Build a testing script that outputs intention classification results.
+- Save model checkpoints, scalers, label encoders, metrics, and logs.
 
 ### Stage 4: Modal Noise Experiments
 
-* Add noise to each single modality.
-* Test noise levels of 20%, 40%, and 60%.
-* Analyze the influence of modal noise on recognition accuracy.
+- Add 20%, 40%, and 60% noise to each single modality.
+- Train and evaluate the model under each noise setting.
+- Save comparison metrics and result charts.
 
 ### Stage 5: Missing Modality Experiments
 
-* Remove one modality or two modalities.
-* Train and test the model under different missing modality settings.
-* Analyze model robustness under incomplete input conditions.
+- Drop each single modality and each pair of modalities.
+- Train and evaluate the model under missing-modality settings.
+- Analyze robustness under incomplete input.
 
 ### Stage 6: Model Improvement
 
-* Introduce improved fusion modules or additional loss terms.
-* Improve recognition accuracy under noise and missing modality conditions.
-* Compare the improved model with the baseline model.
+- Add improved fusion modules, modality reliability estimation, auxiliary losses, or other robustness-oriented components.
+- Compare improved results with baseline results.
 
-### Stage 7: Report and Defense Preparation
+### Stage 7: Report and Defense
 
-* Organize experimental results.
-* Draw result charts and model structure figures.
-* Complete the final report.
-* Prepare presentation slides for group defense.
+- Save screenshots of successful end-to-end runs.
+- Organize result tables and charts.
+- Write the project report with citations and team contribution percentages.
+- Prepare the group defense slides.
 
 ---
 
 ## 7. Team Collaboration
 
-This project will be completed by three team members.
+Suggested task division:
 
-The repository is designed to support collaborative work. Suggested task division includes:
+- Dataset organization and preprocessing
+- Baseline refactoring
+- Feature extraction integration
+- Noise and missing-modality experiments
+- Model improvement
+- Result analysis and visualization
+- Report writing and defense preparation
 
-* Dataset organization and preprocessing
-* Baseline model refactoring
-* Noise and missing modality experiments
-* Model improvement
-* Result analysis and visualization
-* Report writing and defense preparation
-
-The final contribution percentage of each member will be recorded in the project report.
+The final contribution percentage of each member should be recorded in the project report.
 
 ---
 
@@ -304,18 +257,21 @@ The final contribution percentage of each member will be recorded in the project
 
 Current repository status:
 
-* Project topic confirmed
-* Repository structure designed
-* Folder organization planned
-* Code files not yet added
-* Experiment implementation to be completed
-* Report materials to be collected later
+- Project topic and requirement document are available.
+- Raw data has been reorganized under `data/raw/`.
+- User folders `user_A`, `user_B`, and `user_C` exist with `HoloLens/` and `fisheye/` subfolders.
+- IMU data is available at `data/raw/imu.csv`.
+- Local model resources are available under `data/raw/models/`.
+- Baseline model code is available at `src/models/baseline_real_scene.py`.
+- Real scene utilities are available at `src/modules/real_scene_utils.py`.
+- Feature extraction scripts are available under `src/modules/feature_extraction/`.
+- The original training/testing script is available at `experiments/train_and_test.py`.
+- Result, figure, and report folders are prepared for later outputs.
 
 ---
 
 ## 9. Notes
 
-This repository is currently in the initialization stage. The project structure may be adjusted during later development according to the actual dataset format, model requirements, and experiment results.
-
-```
-```
+- The current source code is still close to the teacher-provided version and may contain hard-coded paths from the original environment. These paths should be replaced with project-relative paths during refactoring.
+- Large raw data and generated model checkpoints should not be committed to Git unless the course submission explicitly requires them.
+- macOS metadata files such as `.DS_Store` and `._*` should be ignored during data loading and experiment execution.

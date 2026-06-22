@@ -1,45 +1,80 @@
 # Python
 __pycache__/
 *.pyc
+*.pyo
+*.pyd
 .ipynb_checkpoints/
 
 # Environment
 .venv/
 env/
 conda_env/
+venv/
 
 # Data
-data/raw/*
-data/processed/*
+data/raw/**
+data/processed/**
 
-# Keep folder structure
+# Keep data folder structure
+!data/
+!data/raw/
 !data/raw/.gitkeep
+!data/raw/user_A/
 !data/raw/user_A/.gitkeep
+!data/raw/user_B/
 !data/raw/user_B/.gitkeep
+!data/raw/user_C/
 !data/raw/user_C/.gitkeep
+!data/processed/
 !data/processed/.gitkeep
 
-# Model checkpoints
-checkpoints/*
+# Model checkpoints and generated model artifacts
+checkpoints/**
 *.pth
 *.pt
 *.ckpt
+*.pkl
+*.joblib
 
 # Keep checkpoint folders
+!checkpoints/
+!checkpoints/baseline/
 !checkpoints/baseline/.gitkeep
+!checkpoints/improved/
 !checkpoints/improved/.gitkeep
 
-# Results
-results/logs/*
-results/predictions/*
+# Results and experiment outputs
+results/logs/**
+results/predictions/**
+results/metrics/*
 
-# Keep result folders
+# Keep result and figure folder structure
+!results/
+!results/metrics/
 !results/metrics/.gitkeep
+!results/logs/
 !results/logs/.gitkeep
+!results/predictions/
 !results/predictions/.gitkeep
+!figures/
+!figures/curves/
+!figures/curves/.gitkeep
+!figures/model_structure/
+!figures/model_structure/.gitkeep
+!figures/result_charts/
+!figures/result_charts/.gitkeep
+
+# Large media files
+*.mp4
+*.avi
+*.mov
+*.mkv
+*.wav
+*.mp3
 
 # System files
 .DS_Store
+._*
 Thumbs.db
 
 # IDE
