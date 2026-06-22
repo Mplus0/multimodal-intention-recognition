@@ -1,0 +1,47 @@
+# Default path configuration for the multimodal intention recognition project.
+# All paths are relative to the repository root.
+# Large files should be placed locally according to this structure but should not be committed to GitHub.
+
+project:
+  root: "."
+
+data:
+  raw_dir: "data/raw"
+  processed_dir: "data/processed"
+  imu_csv: "data/raw/imu.csv"
+
+  users:
+    user_a: "data/raw/user_A"
+    user_b: "data/raw/user_B"
+    user_c: "data/raw/user_C"
+
+  subdirs:
+    hololens: "HoloLens"
+    fisheye: "fisheye"
+
+local_models:
+  root: "data/raw/models"
+  sentence_model: "data/raw/models/all-MiniLM-L6-v2"
+  clip_teacher_model: "data/raw/models/clip_teacher_model"
+  vit_model: "data/raw/models/clip_teacher_model/vit-base-patch16-224"
+
+cache:
+  root: "data/processed/cache"
+  huggingface: "data/processed/cache/huggingface"
+  hf_hub: "data/processed/cache/huggingface/hub"
+  transformers: "data/processed/cache/huggingface/transformers"
+  scene_cache: "data/processed/cache/scene_cache_real_vit"
+  feature_cache: "data/processed/cache/feature_cache"
+
+outputs:
+  model_dir: "models"
+  result_dir: "results"
+  metrics_dir: "results/metrics"
+  logs_dir: "results/logs"
+  prediction_dir: "results/predictions"
+  figure_dir: "figures"
+  report_dir: "report"
+
+report:
+  screenshots_dir: "report/screenshots"
+  references_file: "report/references.md"
