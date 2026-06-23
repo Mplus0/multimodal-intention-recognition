@@ -94,3 +94,67 @@ python src/utils/seed.py
 ### 遗留问题
 - 当前训练、测试和特征提取脚本尚未接入 `src/utils/logger.py` 和 `src/utils/seed.py`。
 - 本次任务未运行任何训练或测试实验。
+
+## 2026-06-23 - 实验记录文档创建
+
+### 贡献者
+- 姓名：Mplus0
+- 角色：Experiment / Report
+
+### 修改文件
+- `docs/experiment_log.md`：创建实验记录文档，包含统一实验设置、待执行实验矩阵和各类实验记录模板。
+- `docs/collaboration_log.md`：追加本次实验记录文档创建记录。
+
+### 修改目的
+为成员 B 后续记录 clean baseline、模态噪声实验、模态缺失实验、改进模型实验和消融实验提供统一模板，方便成员 C 后续整理报告材料。
+
+### 运行方式
+本次任务只涉及文档，不需要运行命令。
+
+### 输出文件
+- `docs/experiment_log.md`
+- `docs/collaboration_log.md`
+
+### 当前状态
+- 已完成
+
+### 给报告撰写者的说明
+当前 `docs/experiment_log.md` 只记录实验计划和模板，所有指标均为待填写。后续报告中的实验结果必须来自真实运行后的 `results/metrics/`、`results/logs/`、`results/predictions/` 和 `figures/`。
+
+### 遗留问题
+- 成员 A 的端到端训练和测试入口尚未完成。
+- 当前未运行任何训练或测试实验。
+
+## 2026-06-23 - Baseline 配置与实验日志模板准备
+
+### 贡献者
+- 姓名：Mplus0
+- 角色：Experiment / Report
+
+### 修改文件
+- `configs/noise.yaml`：创建 modal noise baseline 配置，包含实验名称、随机种子、数据划分、模态列表、噪声比例、单模态加噪策略、baseline 模型类型和输出路径。
+- `configs/missing_modality.yaml`：创建 missing-modality baseline 配置，包含实验名称、随机种子、数据划分、完整模态列表、单模态缺失组合、双模态缺失组合、baseline 模型类型和输出路径。
+- `docs/experiment_log.md`：追加 Clean Baseline、Modal Noise Baseline 和 Missing Modality Baseline 的基础实验配置说明与记录模板。
+- `docs/collaboration_log.md`：追加本次 baseline 配置准备记录。
+
+### 修改目的
+为成员 B 后续编写 `experiments/run_clean_baseline.py`、`experiments/run_noise_baseline.py` 和 `experiments/run_missing_baseline.py` 提供清晰的配置依据，并为成员 C 后续整理实验报告提供统一模板。
+
+### 运行方式
+本次任务仅准备配置文件和实验日志模板，暂不运行实验。
+
+### 输出文件
+- `configs/noise.yaml`
+- `configs/missing_modality.yaml`
+- `docs/experiment_log.md`
+- `docs/collaboration_log.md`
+
+### 当前状态
+- 已完成配置准备
+
+### 给报告撰写者的说明
+当前没有运行任何实验，也没有真实指标结果。`docs/experiment_log.md` 中新增的基础实验字段均为 TBD，后续必须从真实运行后的 `results/metrics/`、`results/logs/`、`results/predictions/` 和 `figures/` 同步。
+
+### 遗留问题
+- 需要等待成员 A 的 `train.py` / `test.py` 接口稳定。
+- 后续再编写 `experiments/run_clean_baseline.py`、`experiments/run_noise_baseline.py` 和 `experiments/run_missing_baseline.py`。
