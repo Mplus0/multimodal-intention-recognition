@@ -13,7 +13,7 @@ The course project requires the model to handle:
 - Cross-user testing
 - End-to-end input from raw data to intention labels
 
-The current repository already contains the reorganized raw dataset, baseline source code, feature extraction scripts, original code documentation, and report/result folders for later experiments.
+The current repository contains the baseline source code, feature extraction scripts, path conventions, project documentation, and report/result folders for later experiments. Large raw datasets and local model resources should be placed on the server or local machine according to the documented directory structure, but they are not expected to be committed to the repository.
 
 ---
 
@@ -47,8 +47,12 @@ multimodal-intention-recognition/
 ├── README.md
 ├── README_CHINESE.md
 ├── requirements.txt
+├── AGENTS.md
 ├── .gitignore
 ├── 课程项目2026.pdf
+│
+├── configs/
+│   └── default.yaml
 │
 ├── data/
 │   ├── raw/
@@ -70,6 +74,10 @@ multimodal-intention-recognition/
 ├── src/
 │   ├── models/
 │   │   └── baseline_real_scene.py
+│   ├── utils/
+│   │   ├── paths.py
+│   │   ├── logger.py
+│   │   └── seed.py
 │   └── modules/
 │       ├── real_scene_utils.py
 │       └── feature_extraction/
@@ -83,7 +91,9 @@ multimodal-intention-recognition/
 │   └── train_and_test.py
 │
 ├── docs/
-│   └── original_code_readme.md
+│   ├── original_code_readme.md
+│   ├── path_setup.md
+│   └── collaboration_log.md
 │
 ├── results/
 │   ├── metrics/
@@ -106,7 +116,7 @@ multimodal-intention-recognition/
 
 ### `data/raw/`
 
-This folder stores the reorganized raw dataset and local model resources.
+This folder is the expected location for the reorganized raw dataset and local model resources.
 
 - `imu.csv`: the original IMU signal file. It is used as the IMU modality and is aligned with interaction videos by timestamp.
 - `user_A/`: raw data for user A. This user belongs to the training set.
@@ -118,6 +128,8 @@ This folder stores the reorganized raw dataset and local model resources.
 - `models/clip_teacher_model/`: local vision-language/visual backbone resources from the original dataset package.
 
 Some directories may contain `.DS_Store` or `._*` files created by macOS. These are system metadata files and should not be treated as valid training samples.
+
+Large raw data and pretrained model folders may be absent from a cloned repository. In the official project workflow, they should be prepared on the server according to `configs/default.yaml` and `docs/path_setup.md`.
 
 ### `data/processed/`
 
@@ -148,6 +160,14 @@ This folder contains the modality preprocessing and feature extraction scripts.
 
 These scripts are the main references for integrating feature extraction into the future end-to-end training and testing pipeline.
 
+### `src/utils/`
+
+This folder stores lightweight engineering utilities shared by future training, testing, and experiment scripts.
+
+- `paths.py`: reads `configs/default.yaml`, resolves project-relative paths, creates runtime output directories, sets Hugging Face cache environment variables, and prints path validation reports.
+- `logger.py`: provides standard project logging helpers. Experiment logs can be saved under the configured `results/logs/` directory.
+- `seed.py`: provides reproducibility helpers for setting Python, NumPy, and PyTorch random seeds, plus DataLoader worker and generator utilities.
+
 ### `experiments/`
 
 This folder stores experiment entry scripts.
@@ -159,6 +179,14 @@ This folder stores experiment entry scripts.
 This folder stores project documentation.
 
 - `original_code_readme.md`: the teacher-provided code README. It explains the original code structure, training/testing data split, feature extraction scripts, and submission expectations.
+- `path_setup.md`: explains the standardized data, model, cache, output, figure, and report paths.
+- `collaboration_log.md`: records meaningful project changes for team collaboration and later report writing.
+
+### `configs/`
+
+This folder stores project configuration files.
+
+- `default.yaml`: defines the standard project-relative paths for raw data, processed data, local models, caches, outputs, figures, logs, predictions, and report materials.
 
 ### `results/`
 
@@ -187,6 +215,10 @@ This folder stores report-related materials.
 
 This is the official course project requirement document. It defines the project topic, implementation requirements, report requirements, and scoring criteria.
 
+### `AGENTS.md`
+
+This file records project-level collaboration and development rules for Codex-assisted work, including dependency usage, output locations, logging requirements, and update conventions.
+
 ---
 
 ## 6. Development Plan
@@ -197,6 +229,7 @@ This is the official course project requirement document. It defines the project
 - Keep user A and user B for training.
 - Keep user C for testing.
 - Keep the teacher-provided baseline and feature extraction scripts under `src/` and `experiments/`.
+- Follow `configs/default.yaml` and `docs/path_setup.md` when preparing data, local models, caches, outputs, figures, and report materials.
 
 ### Stage 2: Baseline Refactoring
 
@@ -210,6 +243,7 @@ This is the official course project requirement document. It defines the project
 - Build a training script that starts from raw multimodal data.
 - Build a testing script that outputs intention classification results.
 - Save model checkpoints, scalers, label encoders, metrics, and logs.
+- Use `src/utils/logger.py` for consistent logs and `src/utils/seed.py` for reproducible experiments when writing new scripts.
 
 ### Stage 4: Modal Noise Experiments
 
@@ -251,6 +285,13 @@ Suggested task division:
 
 The final contribution percentage of each member should be recorded in the project report.
 
+Development notes:
+
+- Code should be written strictly against the dependencies listed in `requirements.txt`.
+- If the current local environment is missing a dependency from `requirements.txt`, do not add local compatibility fallbacks and do not install that dependency only for the local machine.
+- The official project is expected to run in the server environment where the dependencies in `requirements.txt` are available.
+- After meaningful code or documentation updates, record the change in `docs/collaboration_log.md`, `docs/experiment_log.md`, or `docs/method_notes.md` according to the project rules.
+
 ---
 
 ## 8. Current Status
@@ -258,13 +299,13 @@ The final contribution percentage of each member should be recorded in the proje
 Current repository status:
 
 - Project topic and requirement document are available.
-- Raw data has been reorganized under `data/raw/`.
-- User folders `user_A`, `user_B`, and `user_C` exist with `HoloLens/` and `fisheye/` subfolders.
-- IMU data is available at `data/raw/imu.csv`.
-- Local model resources are available under `data/raw/models/`.
+- Standard path configuration is available at `configs/default.yaml`.
+- Path setup documentation is available at `docs/path_setup.md`.
+- Raw data, user folders, IMU data, and local model resources should be prepared on the server or local machine according to the configured `data/raw/` structure.
 - Baseline model code is available at `src/models/baseline_real_scene.py`.
 - Real scene utilities are available at `src/modules/real_scene_utils.py`.
 - Feature extraction scripts are available under `src/modules/feature_extraction/`.
+- Path, logging, and random seed utilities are available under `src/utils/`.
 - The original training/testing script is available at `experiments/train_and_test.py`.
 - Result, figure, and report folders are prepared for later outputs.
 
@@ -275,3 +316,4 @@ Current repository status:
 - The current source code is still close to the teacher-provided version and may contain hard-coded paths from the original environment. These paths should be replaced with project-relative paths during refactoring.
 - Large raw data and generated model checkpoints should not be committed to Git unless the course submission explicitly requires them.
 - macOS metadata files such as `.DS_Store` and `._*` should be ignored during data loading and experiment execution.
+- `src/utils/logger.py` and `src/utils/seed.py` are shared utilities and are not yet connected to the existing baseline training/testing script.

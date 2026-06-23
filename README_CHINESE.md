@@ -13,7 +13,7 @@
 - 跨用户测试
 - 从原始数据输入到意图类别输出的端到端流程
 
-当前仓库已经包含整理后的原始数据集、基线源代码、特征提取脚本、原始代码说明文档，以及后续实验、结果和报告所需的目录。
+当前仓库已经包含基线源代码、特征提取脚本、路径规范、项目文档，以及后续实验、结果和报告所需的目录。大体积原始数据集和本地模型资源应按照文档约定放置在服务器或本地机器中，但不应默认提交到仓库。
 
 ---
 
@@ -47,8 +47,12 @@ multimodal-intention-recognition/
 ├── README.md
 ├── README_CHINESE.md
 ├── requirements.txt
+├── AGENTS.md
 ├── .gitignore
 ├── 课程项目2026.pdf
+│
+├── configs/
+│   └── default.yaml
 │
 ├── data/
 │   ├── raw/
@@ -70,6 +74,10 @@ multimodal-intention-recognition/
 ├── src/
 │   ├── models/
 │   │   └── baseline_real_scene.py
+│   ├── utils/
+│   │   ├── paths.py
+│   │   ├── logger.py
+│   │   └── seed.py
 │   └── modules/
 │       ├── real_scene_utils.py
 │       └── feature_extraction/
@@ -83,7 +91,9 @@ multimodal-intention-recognition/
 │   └── train_and_test.py
 │
 ├── docs/
-│   └── original_code_readme.md
+│   ├── original_code_readme.md
+│   ├── path_setup.md
+│   └── collaboration_log.md
 │
 ├── results/
 │   ├── metrics/
@@ -106,7 +116,7 @@ multimodal-intention-recognition/
 
 ### `data/raw/`
 
-该目录存放已经整理过的原始数据集和本地模型资源。
+该目录是原始数据集和本地模型资源的推荐放置位置。
 
 - `imu.csv`：原始 IMU 信号文件，用作 IMU 模态，并通过时间戳与交互视频对齐。
 - `user_A/`：用户 A 的原始数据，属于训练集。
@@ -118,6 +128,8 @@ multimodal-intention-recognition/
 - `models/clip_teacher_model/`：原始数据包中提供的本地视觉/视觉语言骨干模型资源。
 
 部分目录中可能包含 `.DS_Store` 或 `._*` 文件，这些是 macOS 系统元数据文件，不应作为有效训练样本读取。
+
+大体积原始数据和预训练模型目录可能不会出现在克隆后的仓库中。正式项目运行时，应按照 `configs/default.yaml` 和 `docs/path_setup.md` 在服务器中准备这些文件。
 
 ### `data/processed/`
 
@@ -148,6 +160,14 @@ multimodal-intention-recognition/
 
 这些脚本是后续将特征提取整合进端到端训练和测试流程的主要参考。
 
+### `src/utils/`
+
+该目录存放后续训练、测试和实验脚本可复用的轻量级工程工具。
+
+- `paths.py`：读取 `configs/default.yaml`，解析项目相对路径，创建运行时输出目录，设置 Hugging Face 缓存环境变量，并打印路径检查报告。
+- `logger.py`：提供统一的项目日志工具，实验日志可保存到配置中的 `results/logs/` 目录。
+- `seed.py`：提供随机种子工具，用于统一设置 Python、NumPy 和 PyTorch 随机种子，并提供 DataLoader worker 与 generator 辅助函数。
+
 ### `experiments/`
 
 该目录存放实验入口脚本。
@@ -159,6 +179,14 @@ multimodal-intention-recognition/
 该目录存放项目文档。
 
 - `original_code_readme.md`：老师提供的代码说明文档，解释了原始代码结构、训练/测试数据划分、特征提取脚本和课程提交要求。
+- `path_setup.md`：说明标准化的数据、模型、缓存、输出、图表和报告路径。
+- `collaboration_log.md`：记录重要项目修改，便于团队协作和后续报告整理。
+
+### `configs/`
+
+该目录存放项目配置文件。
+
+- `default.yaml`：定义原始数据、处理中间数据、本地模型、缓存、结果、日志、预测、图表和报告材料的项目相对路径。
 
 ### `results/`
 
@@ -187,6 +215,10 @@ multimodal-intention-recognition/
 
 该文件是课程项目官方要求文档，定义了项目主题、实现要求、报告要求和评分标准。
 
+### `AGENTS.md`
+
+该文件记录 Codex 协作开发时需要遵守的项目级规则，包括依赖使用、输出目录、日志记录和更新规范。
+
 ---
 
 ## 6. 开发计划
@@ -197,6 +229,7 @@ multimodal-intention-recognition/
 - 使用用户 A 和用户 B 作为训练集。
 - 使用用户 C 作为测试集。
 - 将老师提供的基线代码和特征提取脚本保留在 `src/` 和 `experiments/` 中。
+- 准备数据、本地模型、缓存、输出、图表和报告材料时，遵循 `configs/default.yaml` 和 `docs/path_setup.md`。
 
 ### 阶段二：基线代码重构
 
@@ -210,6 +243,7 @@ multimodal-intention-recognition/
 - 构建从原始多模态数据开始的训练脚本。
 - 构建输出意图分类结果的测试脚本。
 - 保存模型检查点、标准化器、标签编码器、指标和日志。
+- 编写新脚本时，使用 `src/utils/logger.py` 统一日志记录，并使用 `src/utils/seed.py` 提高实验可复现性。
 
 ### 阶段四：模态噪声实验
 
@@ -251,6 +285,13 @@ multimodal-intention-recognition/
 
 每位成员最终的贡献比例应记录在项目报告中。
 
+开发说明：
+
+- 编写代码时应严格基于 `requirements.txt` 中列出的依赖。
+- 如果当前本地环境缺少 `requirements.txt` 中的依赖，不应为了本地环境加入兼容性兜底，也不应只为当前本地环境安装依赖。
+- 正式项目以服务器环境为运行环境，服务器中应已具备 `requirements.txt` 中的依赖。
+- 每次进行有意义的代码或文档更新后，应按照项目规范记录到 `docs/collaboration_log.md`、`docs/experiment_log.md` 或 `docs/method_notes.md` 中。
+
 ---
 
 ## 8. 当前状态
@@ -258,13 +299,13 @@ multimodal-intention-recognition/
 当前仓库状态：
 
 - 项目主题和课程要求文档已经准备好。
-- 原始数据已经整理到 `data/raw/`。
-- `user_A`、`user_B` 和 `user_C` 三个用户目录均已存在，并包含 `HoloLens/` 和 `fisheye/` 子目录。
-- IMU 数据位于 `data/raw/imu.csv`。
-- 本地模型资源位于 `data/raw/models/`。
+- 标准路径配置文件位于 `configs/default.yaml`。
+- 路径设置说明文档位于 `docs/path_setup.md`。
+- 原始数据、用户目录、IMU 数据和本地模型资源应按照配置中的 `data/raw/` 结构在服务器或本地机器中准备。
 - 基线模型代码位于 `src/models/baseline_real_scene.py`。
 - 真实场景工具位于 `src/modules/real_scene_utils.py`。
 - 特征提取脚本位于 `src/modules/feature_extraction/`。
+- 路径、日志和随机种子工具位于 `src/utils/`。
 - 原始训练/测试脚本位于 `experiments/train_and_test.py`。
 - 结果、图表和报告目录已经为后续输出准备好。
 
@@ -275,3 +316,4 @@ multimodal-intention-recognition/
 - 当前源代码仍接近老师提供的原始版本，可能包含原始环境中的硬编码路径，后续重构时需要替换为项目相对路径。
 - 大体积原始数据和训练生成的模型检查点不建议提交到 Git，除非课程提交明确要求。
 - `.DS_Store` 和 `._*` 等 macOS 元数据文件应在数据加载和实验执行时忽略。
+- `src/utils/logger.py` 和 `src/utils/seed.py` 是共享工具文件，目前尚未接入现有 baseline 训练/测试脚本。

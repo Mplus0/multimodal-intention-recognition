@@ -63,7 +63,7 @@ python src/utils/paths.py
 ## 2026-06-23 - 日志与随机种子工具补充
 
 ### 贡献者
-- 姓名：Codex
+- 姓名：Mplus0
 - 角色：代码 / 文档
 
 ### 修改文件
@@ -94,5 +94,3 @@ python src/utils/seed.py
 ### 遗留问题
 - 当前训练、测试和特征提取脚本尚未接入 `src/utils/logger.py` 和 `src/utils/seed.py`。
 - 本次任务未运行任何训练或测试实验。
-
-
