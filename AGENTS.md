@@ -39,14 +39,16 @@ Large datasets and trained model files may not be uploaded to GitHub. Do not ass
 2. Modify only files related to the current task.
 3. Keep the original teacher-provided logic understandable.
 4. Prefer project-relative paths instead of hard-coded absolute paths.
-5. Do not delete baseline code unless a replacement has already been tested.
-6. Keep generated large files out of Git unless explicitly requested.
-7. Save metrics under `results/metrics/`.
-8. Save logs under `results/logs/`.
-9. Save predictions under `results/predictions/`.
-10. Save figures under `figures/`.
-11. Save report screenshots under `report/screenshots/`.
-12. After every meaningful code change, update collaboration logs.
+5. Write code strictly against the dependencies listed in `requirements.txt`.
+6. If the current local environment is missing a dependency from `requirements.txt`, do not add compatibility fallbacks for that local environment and do not install the dependency. The official project runs on the server environment where these dependencies are already available.
+7. Do not delete baseline code unless a replacement has already been tested.
+8. Keep generated large files out of Git unless explicitly requested.
+9. Save metrics under `results/metrics/`.
+10. Save logs under `results/logs/`.
+11. Save predictions under `results/predictions/`.
+12. Save figures under `figures/`.
+13. Save report screenshots under `report/screenshots/`.
+14. After every meaningful code change, update collaboration logs.
 
 ## Required Logs After Each Task
 

@@ -59,3 +59,40 @@ python src/utils/paths.py
 ### 遗留问题
 - 运行 `src/utils/paths.py` 前需要确保 `configs/default.yaml` 已存在。
 - 本次任务未运行任何实验。
+
+## 2026-06-23 - 日志与随机种子工具补充
+
+### 贡献者
+- 姓名：Codex
+- 角色：代码 / 文档
+
+### 修改文件
+- `src/utils/logger.py`：新增项目日志工具，支持控制台日志、文件日志、实验日志路径生成和重复配置时的 handler 清理。
+- `src/utils/seed.py`：新增随机种子工具，统一设置 Python、NumPy 和 PyTorch 的随机种子，并提供 DataLoader worker 和 generator 辅助函数。
+- `docs/collaboration_log.md`：追加本次工具补充记录。
+
+### 修改目的
+为后续训练、测试和实验脚本提供统一的日志记录与可复现实验设置，减少不同成员各自实现日志和随机种子逻辑造成的不一致。
+
+### 运行方式
+```bash
+python src/utils/logger.py
+python src/utils/seed.py
+```
+
+### 输出文件
+- `src/utils/logger.py`
+- `src/utils/seed.py`
+- `docs/collaboration_log.md`
+
+### 当前状态
+- 已完成
+
+### 给报告撰写者的说明
+本次修改属于工程规范化工作，不涉及模型结构、训练流程或实验结果变化。后续实验脚本可以使用这些工具记录日志并固定随机种子。
+
+### 遗留问题
+- 当前训练、测试和特征提取脚本尚未接入 `src/utils/logger.py` 和 `src/utils/seed.py`。
+- 本次任务未运行任何训练或测试实验。
+
+
