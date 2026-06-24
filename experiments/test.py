@@ -49,6 +49,21 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--batch-size", type=int, default=None, help="Override config batch size.")
     parser.add_argument("--max-samples", type=int, default=None, help="Limit real test metadata samples.")
     parser.add_argument("--smoke-test", action="store_true", help="Use tiny synthetic samples instead of raw data.")
+    parser.add_argument(
+        "--no-build-source-features",
+        action="store_true",
+        help="Require source .npy files to exist instead of building them from raw data.",
+    )
+    parser.add_argument(
+        "--rebuild-source-features",
+        action="store_true",
+        help="Regenerate source .npy files from raw data before testing.",
+    )
+    parser.add_argument(
+        "--rebuild-feature-cache",
+        action="store_true",
+        help="Ignore existing complete-sample .npz feature cache.",
+    )
     return parser.parse_args()
 
 
@@ -105,7 +120,13 @@ def _make_test_loader(args: argparse.Namespace, config: dict[str, Any], seed: in
         if not test_samples:
             missing_text = "\n".join(f"- {item}" for item in missing[:20])
             raise RuntimeError(f"No user_C test samples are available. Missing items:\n{missing_text}")
-        dataset = MultimodalIntentDataset.from_metadata_samples(test_samples, config=config)
+        dataset = MultimodalIntentDataset.from_metadata_samples(
+            test_samples,
+            config=config,
+            rebuild_cache=args.rebuild_feature_cache,
+            build_missing_source_features=not args.no_build_source_features,
+            rebuild_source_features=args.rebuild_source_features,
+        )
     loader = DataLoader(dataset, batch_size=batch_size, shuffle=False, num_workers=num_workers)
     return loader, samples, missing
 

@@ -154,3 +154,62 @@ python experiments/test.py --config configs/default.yaml --smoke-test --checkpoi
 ### Problems
 - 当前仓库缺少正式 raw data 和本地模型资源，正式 clean baseline 指标仍不能生成。
 - 当前文档只覆盖成员 A clean baseline 主线，不覆盖成员 B 的 noise、missing 或 improved model 实验实现。
+## 2026-06-24 成员 A raw-to-feature 最小真实样本验证
+
+### 目标
+验证成员 A clean baseline 不依赖人工提前准备的五模态 `.npy`，能够从 `data/raw/` 中的正式原始文件启动，自动生成或复用五模态源特征缓存，并进入训练入口。
+
+### 数据与划分
+- 样本总数：39
+- 训练集：`user_A` + `user_B`，共 26 条
+- 测试集：`user_C`，共 13 条
+- 本次最小验证样本：`interaction_20260131_071552`
+
+### 运行命令
+```bash
+../software/memberA_miniconda3/bin/python src/data/build_samples.py --config configs/default.yaml --output data/processed/sample_index.json
+../software/memberA_miniconda3/bin/python src/data/build_features.py --config configs/default.yaml --metadata-json data/processed/sample_index.json --build-missing-source-features --limit 1
+../software/memberA_miniconda3/bin/python experiments/train.py --config configs/default.yaml --max-samples 1 --epochs 1 --batch-size 1
+```
+
+### 五模态特征 shape
+| Modality | Shape |
+|---|---|
+| imu | `(1, 10, 12)` |
+| gesture | `(1, 10, 768)` |
+| audio | `(1, 10, 39)` |
+| text | `(1, 10, 384)` |
+| scene | `(1, 768)` |
+
+### 输出文件
+- `data/processed/sample_index.json`
+- `data/processed/cache/feature_cache/imu_features/imu_features_interaction_20260131_071552.npy`
+- `data/processed/cache/feature_cache/strong_gesture_features/strong_gesture_features_interaction_20260131_071552.npy`
+- `data/processed/cache/feature_cache/audio_features/audio_features_interaction_20260131_071552.npy`
+- `data/processed/cache/feature_cache/text_features/text_features_interaction_20260131_071552.npy`
+- `data/processed/cache/feature_cache/scene_features/scene_features_interaction_20260131_071552.npy`
+- `results/checkpoints/best.pt`
+- `results/checkpoints/final.pt`
+- `results/metrics/clean_baseline_metrics.csv`
+- `results/metrics/clean_baseline_summary.json`
+- `results/predictions/clean_baseline_predictions.csv`
+- `results/logs/clean_baseline.log`
+- `figures/loss_curve.png`
+- `figures/confusion_matrix.png`
+
+### 结果说明
+- 本次 `--max-samples 1` 训练只作为工程链路验证，不能作为正式实验结果写入报告。
+- 该验证说明代码已经能从 raw data 构建五模态缓存，并复用缓存进入 clean baseline 训练。
+- 首次文本特征生成需要 Whisper ASR 模型；本次已准备 `data/processed/cache/whisper/small.pt`。
+
+### 下一步
+- 建议先运行：
+```bash
+../software/memberA_miniconda3/bin/python src/data/build_features.py --config configs/default.yaml --metadata-json data/processed/sample_index.json --build-missing-source-features --limit 3
+```
+- 如果 3 个样本稳定，再运行全量预构建或正式训练：
+```bash
+../software/memberA_miniconda3/bin/python src/data/build_features.py --config configs/default.yaml --metadata-json data/processed/sample_index.json --build-missing-source-features --all
+../software/memberA_miniconda3/bin/python experiments/train.py --config configs/default.yaml
+../software/memberA_miniconda3/bin/python experiments/test.py --config configs/default.yaml --checkpoint results/checkpoints/best.pt
+```

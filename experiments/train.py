@@ -50,6 +50,21 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--lr", type=float, default=1e-3, help="Learning rate.")
     parser.add_argument("--max-samples", type=int, default=None, help="Limit real metadata samples for quick checks.")
     parser.add_argument("--smoke-test", action="store_true", help="Use tiny synthetic samples instead of raw data.")
+    parser.add_argument(
+        "--no-build-source-features",
+        action="store_true",
+        help="Require source .npy files to exist instead of building them from raw data.",
+    )
+    parser.add_argument(
+        "--rebuild-source-features",
+        action="store_true",
+        help="Regenerate source .npy files from raw data before training.",
+    )
+    parser.add_argument(
+        "--rebuild-feature-cache",
+        action="store_true",
+        help="Ignore existing complete-sample .npz feature cache.",
+    )
     return parser.parse_args()
 
 
@@ -124,8 +139,20 @@ def _make_loaders(args: argparse.Namespace, config: dict[str, Any], seed: int):
         if not train_samples or not val_samples:
             missing_text = "\n".join(f"- {item}" for item in missing[:20])
             raise RuntimeError(f"No train/validation samples are available. Missing items:\n{missing_text}")
-        train_dataset = MultimodalIntentDataset.from_metadata_samples(train_samples, config=config)
-        val_dataset = MultimodalIntentDataset.from_metadata_samples(val_samples, config=config)
+        train_dataset = MultimodalIntentDataset.from_metadata_samples(
+            train_samples,
+            config=config,
+            rebuild_cache=args.rebuild_feature_cache,
+            build_missing_source_features=not args.no_build_source_features,
+            rebuild_source_features=args.rebuild_source_features,
+        )
+        val_dataset = MultimodalIntentDataset.from_metadata_samples(
+            val_samples,
+            config=config,
+            rebuild_cache=args.rebuild_feature_cache,
+            build_missing_source_features=not args.no_build_source_features,
+            rebuild_source_features=args.rebuild_source_features,
+        )
         test_dataset = val_dataset
 
     generator = make_generator(seed)

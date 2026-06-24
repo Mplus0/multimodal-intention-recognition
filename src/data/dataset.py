@@ -218,6 +218,8 @@ class MultimodalIntentDataset(Dataset):
         config: dict[str, Any] | None = None,
         use_cache: bool = True,
         rebuild_cache: bool = False,
+        build_missing_source_features: bool = True,
+        rebuild_source_features: bool = False,
     ) -> "MultimodalIntentDataset":
         """Load features from sample metadata and return an item-level Dataset."""
         active_config = config or load_config()
@@ -227,6 +229,8 @@ class MultimodalIntentDataset(Dataset):
                 config=active_config,
                 use_cache=use_cache,
                 rebuild_cache=rebuild_cache,
+                build_missing_source_features=build_missing_source_features,
+                rebuild_source_features=rebuild_source_features,
             )
             for sample in samples
         ]

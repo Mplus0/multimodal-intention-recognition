@@ -20,6 +20,7 @@ if __package__ is None or __package__ == "":
         sys.path.insert(0, str(repo_root))
 
 from src.data.features import MODALITY_KEYS  # noqa: E402
+from src.data.raw_feature_builder import expected_feature_paths, feature_status  # noqa: E402
 from src.utils.paths import get_path, load_config, resolve_path  # noqa: E402
 
 
@@ -177,18 +178,10 @@ def _scene_for_video(video_name: str) -> tuple[int | None, str | None]:
     return None, None
 
 
-def _feature_paths_for_video(video_path: Path, config: dict[str, Any]) -> dict[str, str]:
-    """Return existing formal-modality feature paths for a video if present."""
-    feature_root = get_path("cache", "feature_cache", config=config)
-    stem = video_path.stem
-    candidates = {
-        "imu": feature_root / "imu_features" / f"imu_features_{stem}.npy",
-        "gesture": feature_root / "strong_gesture_features" / f"strong_gesture_features_{stem}.npy",
-        "audio": feature_root / "audio_features" / f"audio_features_{stem}.npy",
-        "text": feature_root / "text_features" / f"text_features_{stem}.npy",
-        "scene": feature_root / "scene_features" / f"scene_features_{stem}.npy",
-    }
-    return {key: str(path) for key, path in candidates.items() if path.exists()}
+def _feature_paths_for_sample(sample: dict[str, Any], config: dict[str, Any]) -> tuple[dict[str, str], dict[str, bool]]:
+    """Return expected formal-modality feature paths and current existence."""
+    paths = expected_feature_paths(sample, config)
+    return {key: str(path) for key, path in paths.items()}, feature_status(paths)
 
 
 def build_sample_index(config: dict[str, Any] | None = None) -> tuple[list[dict[str, Any]], list[str]]:
@@ -247,21 +240,20 @@ def build_sample_index(config: dict[str, Any] | None = None) -> tuple[list[dict[
                 "text": str(audio_path),
                 "scene": str(visual_path) if visual_path else None,
             }
-            samples.append(
-                {
-                    "sample_id": audio_path.stem,
-                    "video_name": audio_path.name,
-                    "user": user_name,
-                    "split": _split_for_user(user_name, config),
-                    "raw_paths": raw_paths,
-                    "feature_paths": _feature_paths_for_video(audio_path, config),
-                    "intent_label": intent_label,
-                    "intent_name": intent_name,
-                    "scene_label": scene_label,
-                    "scene_name": scene_name,
-                    "joint_label": joint_label,
-                }
-            )
+            sample = {
+                "sample_id": audio_path.stem,
+                "video_name": audio_path.name,
+                "user": user_name,
+                "split": _split_for_user(user_name, config),
+                "raw_paths": raw_paths,
+                "intent_label": intent_label,
+                "intent_name": intent_name,
+                "scene_label": scene_label,
+                "scene_name": scene_name,
+                "joint_label": joint_label,
+            }
+            sample["feature_paths"], sample["feature_status"] = _feature_paths_for_sample(sample, config)
+            samples.append(sample)
 
             if visual_path is None:
                 missing.append(f"{audio_path.name} visual source not found under {visual_dir}")

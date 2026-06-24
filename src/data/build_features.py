@@ -51,8 +51,19 @@ def parse_args() -> argparse.Namespace:
         ),
     )
     parser.add_argument("--limit", type=int, default=1, help="Maximum samples to inspect.")
+    parser.add_argument("--all", action="store_true", help="Build or inspect all metadata samples.")
     parser.add_argument("--rebuild-cache", action="store_true", help="Ignore existing feature cache.")
     parser.add_argument("--no-cache", action="store_true", help="Do not read or write complete feature cache.")
+    parser.add_argument(
+        "--build-missing-source-features",
+        action="store_true",
+        help="Build missing source .npy features from sample raw_paths.",
+    )
+    parser.add_argument(
+        "--rebuild-source-features",
+        action="store_true",
+        help="Regenerate source .npy features even if they already exist.",
+    )
     parser.add_argument("--dry-run", action="store_true", help="Only print config/path checks when no metadata is given.")
     return parser.parse_args()
 
@@ -127,15 +138,18 @@ def build_from_metadata(args: argparse.Namespace, config: dict[str, Any]) -> int
         print("[ERROR] Sample metadata JSON contains no samples.")
         return 2
 
-    selected = samples[: max(args.limit, 1)]
+    selected = samples if args.all else samples[: max(args.limit, 1)]
     bundles = []
-    for sample in selected:
+    for index, sample in enumerate(selected, start=1):
+        print(f"[build_features] {index}/{len(selected)} sample_id={sample.get('sample_id')}")
         bundles.append(
             load_or_build_sample_features(
                 sample,
                 config=config,
                 use_cache=not args.no_cache,
                 rebuild_cache=args.rebuild_cache,
+                build_missing_source_features=args.build_missing_source_features,
+                rebuild_source_features=args.rebuild_source_features,
             )
         )
 

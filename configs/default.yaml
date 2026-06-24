@@ -50,7 +50,7 @@ local_models:
   root: "data/raw/models"
   sentence_model: "data/raw/models/all-MiniLM-L6-v2"
   clip_teacher_model: "data/raw/models/clip_teacher_model"
-  vit_model: "data/raw/models/clip_teacher_model/vit-base-patch16-224"
+  vit_model: "data/raw/models/clip_teacher_model"
 
 cache:
   root: "data/processed/cache"

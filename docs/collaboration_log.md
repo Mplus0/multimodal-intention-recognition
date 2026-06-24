@@ -153,3 +153,40 @@ python experiments/test.py --config configs/default.yaml --checkpoint results/ch
 
 ### 给报告撰写者的说明
 报告中可以引用本日志和 `docs/memberA_report_and_handoff.md` 说明成员 A 的贡献：完成了五模态端到端主线、Dataset 接口、特征缓存接口、clean baseline 训练/测试入口和输出规范。正式实验结果不要使用 smoke test 指标替代，应在正式数据就绪后重新运行生成。
+## 2026-06-24 成员 A raw data 到五模态特征缓存接入
+
+### 修改范围
+- 新增 `src/data/raw_feature_builder.py`，统一从 `sample["raw_paths"]` 构建缺失的五模态源特征，并写入 `data/processed/cache/feature_cache/`。
+- 新增 `src/modules/feature_extraction/adapters.py`，把 IMU、fisheye 视觉序列、HoloLens 音频 MFCC、Whisper ASR 文本嵌入、scene CLIP 特征封装为可调用函数。
+- 更新 `src/data/features.py`，在完整样本 `.npz` 缓存缺失、源 `.npy` 缺失时，可按需触发 raw 特征构建；不再要求人工预先准备全部 `.npy`。
+- 更新 `src/data/build_samples.py`，样本索引中固定写入预期 `feature_paths` 和 `feature_status`，便于成员 A/B 共用同一套缓存路径。
+- 更新 `src/data/build_features.py`、`src/data/dataset.py`、`experiments/train.py`、`experiments/test.py`，增加源特征自动构建、禁用自动构建和强制重建相关参数。
+
+### 关键约束确认
+- 正式模态 key 仍固定为 `imu`、`gesture`、`audio`、`text`、`scene`。
+- `hololens`、`fisheye`、`hololens_frames`、`fisheye_frames` 只作为 raw source 名称使用，不作为正式实验模态名。
+- 音频和文本特征不使用 unavailable 零特征冒充正式特征；如果 ffmpeg、Whisper、sentence model 等资源缺失，会明确报错。
+- `.npy` 现在作为由 raw data 自动生成或复用的中间缓存，不再作为人工必须提前准备的输入。
+
+### 已完成检查
+```bash
+../software/memberA_miniconda3/bin/python -m py_compile src/data/raw_feature_builder.py src/modules/feature_extraction/adapters.py src/data/features.py src/data/build_samples.py src/data/build_features.py src/data/dataset.py experiments/train.py experiments/test.py
+../software/memberA_miniconda3/bin/python src/data/build_samples.py --config configs/default.yaml --output data/processed/sample_index.json
+../software/memberA_miniconda3/bin/python src/data/build_features.py --config configs/default.yaml --metadata-json data/processed/sample_index.json --build-missing-source-features --limit 1
+../software/memberA_miniconda3/bin/python experiments/train.py --config configs/default.yaml --max-samples 1 --epochs 1 --batch-size 1
+```
+
+### 检查结论
+- 样本索引为 39 条：`user_A` 13 条、`user_B` 13 条、`user_C` 13 条；训练集为 A+B，测试集为 C。
+- 第一个真实 raw 样本 `interaction_20260131_071552` 已生成五模态源特征，输出 shape 为：
+  - `imu`: `(1, 10, 12)`
+  - `gesture`: `(1, 10, 768)`
+  - `audio`: `(1, 10, 39)`
+  - `text`: `(1, 10, 384)`
+  - `scene`: `(1, 768)`
+- 已完成 1 个真实样本的最小训练入口验证，输出路径符合 `results/metrics/`、`results/logs/`、`results/predictions/`、`results/checkpoints/` 和 `figures/` 规范。
+
+### 已知说明
+- 本次 1 样本训练只证明 raw data -> feature cache -> Dataset -> model -> engine 链路可运行，不代表正式实验指标。
+- 首次生成文本特征需要准备 Whisper 模型；本次已将 `small.pt` 下载到 `data/processed/cache/whisper/small.pt`。
+- 全量正式训练前建议先运行 `build_features.py --limit 3`，确认多个样本稳定后再运行 `--all` 或直接正式训练。
