@@ -1,0 +1,38 @@
+experiment:
+  name: modal_noise_baseline
+  model_type: baseline
+  seed: 42
+
+dataset_split:
+  train:
+    - user_A
+    - user_B
+  test:
+    - user_C
+
+modalities:
+  - imu
+  - gesture
+  - audio
+  - text
+  - scene
+
+noise:
+  ratios:
+    - 0.2
+    - 0.4
+    - 0.6
+  strategy: single_modality
+  description: each run adds noise to only one modality while keeping all other modalities clean
+
+outputs:
+  metrics: results/metrics/
+  logs: results/logs/
+  predictions: results/predictions/
+  figures: figures/
+
+notes:
+  - This config is only for modal noise baseline experiments.
+  - Do not include improved_model settings.
+  - Do not include ablation study settings.
+  - Do not fill or assume experiment results in this config.

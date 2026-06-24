@@ -19,6 +19,33 @@ data:
     hololens: "HoloLens"
     fisheye: "fisheye"
 
+  raw_sources:
+    imu:
+      file: "data/raw/imu.csv"
+    gesture:
+      video_dir_pattern: "{user_dir}/fisheye"
+    audio:
+      video_dir_pattern: "{user_dir}/HoloLens"
+    text:
+      audio_dir_pattern: "{user_dir}/HoloLens"
+    scene:
+      video_dir_pattern: "{user_dir}/fisheye"
+
+modalities:
+  keys:
+    - imu
+    - gesture
+    - audio
+    - text
+    - scene
+  feature_dims:
+    imu: 12
+    gesture: 768
+    audio: 39
+    text: 384
+    scene: 768
+  target_timesteps: 10
+
 local_models:
   root: "data/raw/models"
   sentence_model: "data/raw/models/all-MiniLM-L6-v2"
@@ -39,9 +66,21 @@ outputs:
   metrics_dir: "results/metrics"
   logs_dir: "results/logs"
   prediction_dir: "results/predictions"
+  checkpoint_dir: "results/checkpoints"
   figure_dir: "figures"
   report_dir: "report"
 
 report:
   screenshots_dir: "report/screenshots"
   references_file: "report/references.md"
+
+training:
+  split:
+    train_users:
+      - user_A
+      - user_B
+    test_users:
+      - user_C
+  seed: 42
+  batch_size: 64
+  num_workers: 0

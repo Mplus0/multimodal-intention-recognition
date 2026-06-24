@@ -94,3 +94,50 @@ python src/utils/seed.py
 ### 遗留问题
 - 当前训练、测试和特征提取脚本尚未接入 `src/utils/logger.py` 和 `src/utils/seed.py`。
 - 本次任务未运行任何训练或测试实验。
+
+## 2026-06-24 - 成员 B baseline 接口接入
+
+### Contributor
+- Name: Codex
+- Role: Code / Experiment
+
+### Files Changed
+- `src/utils/paths.py`：补充 `load_config()` 兼容入口，并把 `outputs.checkpoint_dir` 纳入运行目录创建和路径检查。
+- `src/data/transforms.py`：实现 `ModalNoiseTransform`、`MissingModalityTransform` 和 `ComposeTransforms`，保留 `apply_modal_noise()` 与 `apply_missing_modalities()` 函数式接口。
+- `src/training/experiment_runner.py`：新增 clean、modal noise、missing modality baseline 可复用训练与测试 runner。
+- `experiments/run_clean_baseline.py`：改为调用基础 runner 执行 clean baseline。
+- `experiments/run_noise_baseline.py`：改为读取 `configs/noise.yaml` 的实验矩阵并循环执行单模态噪声 baseline。
+- `experiments/run_missing_baseline.py`：改为读取 `configs/missing_modality.yaml` 的实验矩阵并循环执行单/双模态缺失 baseline。
+- `docs/collaboration_log.md`：追加本次接口接入记录。
+
+### Purpose
+根据 `MEMBER_B_INTERFACE_INTEGRATION_PLAN.md` 的基础方案，将成员 B 预留的 `TODO` / placeholder 接口接入成员 A 已提供的 Dataset、baseline model 和 training engine。此次只完成 clean baseline、modal noise baseline 和 missing modality baseline 的基础代码接口，不实现 improved model、新模块或新损失项。
+
+### How to Run
+```bash
+python experiments/run_clean_baseline.py --config configs/default.yaml
+python experiments/run_noise_baseline.py --config configs/noise.yaml
+python experiments/run_missing_baseline.py --config configs/missing_modality.yaml
+```
+
+### Output Files
+- `results/metrics/clean_baseline_metrics.csv`
+- `results/metrics/noise_baseline_metrics.csv`
+- `results/metrics/missing_modality_metrics.csv`
+- `results/logs/*.log`
+- `results/predictions/*_predictions.csv`
+- `results/checkpoints/*_best.pt`
+- `results/checkpoints/*_final.pt`
+- `figures/*_loss_curve.png`
+- `figures/*_confusion_matrix.png`
+
+### Current Status
+- Partially completed
+
+### Notes for Report Writer
+本次修改只补齐实验运行接口和结果保存路径，不产生正式实验结果。正式结果必须在课程服务器准备好数据集、依赖和本地模型后运行上述命令生成，不应使用 smoke-test 结果写入报告。
+
+### Remaining Problems
+- 当前本机缺少课程数据集和依赖，因此未运行正式训练、测试或特征提取。
+- 噪声 baseline 目前在 Dataset feature 层实现可复现实验扰动；若后续需要严格解释为 raw data 噪声，应在成员 A 提供 raw-level hook 后前移扰动位置。
+- improved model、新模块和新损失项尚未实现，留待后续任务。

@@ -29,6 +29,13 @@ joblib
 # ==============================
 opencv-python-headless
 transformers
+librosa
+moviepy
+openai-whisper
+sentence-transformers
+pypinyin
+webrtcvad
+mediapipe
 
 # ==============================
 # 可视化
