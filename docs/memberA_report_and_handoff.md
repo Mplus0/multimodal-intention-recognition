@@ -1,339 +1,349 @@
-# Member A Report Materials and Handoff Notes
+# 成员 A 报告材料与交接说明
 
-Date: 2026-06-23  
-Project: `multimodal-intention-recognition`  
-Owner: Member A  
+日期：2026-06-24
+项目：`multimodal-intention-recognition`
+负责人：成员 A
 
-## 1. Member A Responsibility Check
+## 1. 成员 A 职责
 
-According to `docs/PROJECT_WORKFLOW_AND_TEAM_DIVISION.md`, Member A is responsible for end-to-end data flow and data engineering.
+成员 A 负责建立课程项目中的五模态端到端主线，重点是数据工程、Dataset、特征接口、clean baseline 模型和训练/测试入口。
 
-Required tasks:
+成员 A 当前完成的主线覆盖：
 
-1. Check repository structure and data paths.
-2. Handle user A/B/C data reading under `data/raw/`.
-3. Integrate multimodal feature extraction interfaces.
-4. Write or maintain:
-   - `src/data/dataset.py`
-   - `src/data/build_samples.py`
-   - related feature extraction interfaces
-   - train/test entry scripts
-5. Ensure the end-to-end flow can run.
-6. Save running screenshots and basic logs.
+1. 统一项目路径配置和输出目录。
+2. 读取 user_A、user_B、user_C 的样本划分。
+3. 建立五模态正式 key：`imu`、`gesture`、`audio`、`text`、`scene`。
+4. 整理老师源码中合理的五模态特征处理逻辑。
+5. 实现可复用的 Dataset 和 transform 接口。
+6. 实现 clean baseline 模型、训练入口和测试入口。
+7. 统一保存 metrics、logs、predictions、checkpoints 和 figures。
+8. 为成员 B 后续 noise、missing、improved model 实验预留接口。
 
-Current completion status: completed as a runnable baseline. The current pipeline is suitable for report evidence and for Member B to continue model/experiment improvement.
+本交接说明只覆盖成员 A clean baseline 主线，不展开成员 B 的实验实现。
 
-## 2. Files Delivered by Member A
+## 2. 正式模态与 raw data 来源
 
-Core data pipeline:
+正式实验模态 key 固定为：
+
+```text
+imu
+gesture
+audio
+text
+scene
+```
+
+raw data 来源约定：
+
+- `data/raw/imu.csv`：IMU 原始数据来源。
+- `data/raw/user_A/HoloLens`：用户 A 的 HoloLens 视频来源，主要用于 audio/text。
+- `data/raw/user_A/fisheye`：用户 A 的 fisheye 视频来源，主要用于 gesture/scene。
+- `data/raw/user_B/HoloLens`、`data/raw/user_B/fisheye`：用户 B 数据来源。
+- `data/raw/user_C/HoloLens`、`data/raw/user_C/fisheye`：用户 C 数据来源。
+
+注意：`HoloLens`、`fisheye` 只作为 raw data 来源目录，不作为正式实验模态名。最终 Dataset 和模型只使用 `imu`、`gesture`、`audio`、`text`、`scene`。
+
+## 3. 数据划分
+
+训练集：
+
+```text
+user_A + user_B
+```
+
+测试集：
+
+```text
+user_C
+```
+
+该规则写在 `configs/default.yaml`：
+
+```yaml
+training:
+  split:
+    train_users:
+      - user_A
+      - user_B
+    test_users:
+      - user_C
+```
+
+成员 B 当前 `repo-mplus0/configs/noise.yaml` 和 `repo-mplus0/configs/missing_modality.yaml` 中的划分也与该规则一致。
+
+## 4. 成员 A 交付文件
+
+路径与配置：
+
+```text
+configs/default.yaml
+src/utils/paths.py
+```
+
+数据与特征：
 
 ```text
 src/data/build_samples.py
-src/data/dataset.py
 src/data/features.py
-src/data/check_dataset.py
 src/data/build_features.py
+src/data/dataset.py
+src/data/check_dataset.py
 ```
 
-End-to-end baseline entry:
+模型与训练：
 
 ```text
-experiments/train_formal_dataset.py
-```
-
-Utility files involved:
-
-```text
-src/utils/paths.py
-src/utils/logger.py
-src/utils/seed.py
-configs/default.yaml
-```
-
-Generated result files:
-
-```text
-data/processed/sample_index.csv
-results/metrics/sample_statistics.csv
-results/logs/sample_build_log.txt
-results/logs/dataset_check.log
-results/logs/feature_build.log
-results/logs/formal_dataset_train.log
-results/metrics/formal_dataset_metrics.json
-results/predictions/formal_dataset_predictions.csv
-models/formal_dataset_baseline.pt
-```
-
-## 3. Confirmed Data Results
-
-Sample index command:
-
-```bash
-source /share/home/tm1078571822880000/a893873600/wyr_ml_course_project_work/software/memberA_activate.sh
-python src/data/build_samples.py --config configs/default.yaml
-```
-
-Confirmed output:
-
-```text
-Built 39 usable samples.
-Train: 26 | Test: 13
-```
-
-Important statistics from `results/metrics/sample_statistics.csv`:
-
-```text
-total_samples: 39
-train_samples: 26
-test_samples: 13
-available_hololens_mp4: 42
-available_fisheye_avi: 42
-labeled_videos: 39
-mapped_pairs: 39
-user_counts: {"user_A": 13, "user_B": 13, "user_C": 13}
-scene_counts: {"museum": 20, "office": 19}
-intent_counts: {"brush": 6, "cancel": 6, "magnify": 6, "menu": 6, "narrow": 7, "select": 8}
-missing_mp4: []
-missing_avi: []
-missing_user: []
-missing_scene: []
-missing_mapping: []
-```
-
-Known data notes:
-
-```text
-extra_mp4_files:
-- interaction_20260131_071918.mp4
-- interaction_20260131_092133.mp4
-- interaction_20260227_124133.mp4
-
-unused_avi_files:
-- Video_20260131_151916937.avi
-- Video_20260131_172143627.avi
-- Video_20260227_204121788.avi
-```
-
-These files are not included because they currently lack complete label/mapping information.
-
-## 4. Confirmed Dataset and Feature Inputs
-
-Dataset check command:
-
-```bash
-python src/data/check_dataset.py --config configs/default.yaml --batch-size 2 --load-features
-```
-
-Confirmed feature shapes:
-
-```text
-hololens_frames: (batch, 8, 3, 112, 112)
-fisheye_frames:  (batch, 8, 3, 112, 112)
-imu:             (batch, 10, 12)
-scene:           (batch, 2)
-intent_label:    (batch,)
-```
-
-Feature cache command:
-
-```bash
-python src/data/build_features.py --config configs/default.yaml
-```
-
-Confirmed cache result:
-
-```text
-Total samples: 39
-Cache files: 78 .pt files
-Reason: 39 samples x 2 video streams
-Cache directory:
-data/processed/cache/feature_cache/video_frames/formal_v1/frames8_size112
-```
-
-Important limitation:
-
-The current raw `imu.csv` timestamps do not align directly with the 2026 video filenames. Therefore the current IMU feature is marked as `global_unaligned_sequence`. It is enough for the end-to-end baseline, but the high-score version should replace it with per-sample aligned IMU windows or recovered processed IMU features.
-
-## 5. Confirmed End-to-End Baseline
-
-Run command:
-
-```bash
-python experiments/train_formal_dataset.py --config configs/default.yaml --epochs 2 --batch-size 4
-```
-
-Confirmed output files:
-
-```text
-results/metrics/formal_dataset_metrics.json
-results/predictions/formal_dataset_predictions.csv
-models/formal_dataset_baseline.pt
-results/logs/formal_dataset_train.log
-```
-
-Smoke-run metric:
-
-```text
-final_test_acc: 0.15384615384615385
-final_test_loss: 1.792035487981943
-epochs: 2
-```
-
-Interpretation for report:
-
-This result proves the end-to-end flow can run from sample index and raw data paths to feature tensors, model training, test prediction, metrics output, and model checkpoint saving. The accuracy is only a smoke-test baseline and should not be presented as the final model performance.
-
-## 6. Screenshots Needed for Report
-
-Recommended screenshots:
-
-1. Environment/GPU screenshot
-   - Command:
-     ```bash
-     source /share/home/tm1078571822880000/a893873600/wyr_ml_course_project_work/software/memberA_activate.sh
-     python -c "import torch; print(torch.__version__); print(torch.cuda.is_available()); print(torch.cuda.device_count())"
-     ```
-   - Expected key result:
-     ```text
-     2.12.1+cu126
-     True
-     8
-     ```
-
-2. Sample index build screenshot
-   - Command:
-     ```bash
-     python src/data/build_samples.py --config configs/default.yaml
-     ```
-   - Must show:
-     ```text
-     Built 39 usable samples.
-     Train: 26 | Test: 13
-     ```
-
-3. Sample statistics screenshot
-   - Open or print:
-     ```text
-     results/metrics/sample_statistics.csv
-     ```
-   - Must show user split, scene counts, intent counts, and no missing mapped files.
-
-4. Dataset feature check screenshot
-   - Command:
-     ```bash
-     python src/data/check_dataset.py --config configs/default.yaml --batch-size 2 --load-features
-     ```
-   - Must show feature shapes:
-     ```text
-     hololens=(2, 8, 3, 112, 112)
-     fisheye=(2, 8, 3, 112, 112)
-     imu=(2, 10, 12)
-     scene=(2, 2)
-     ```
-
-5. Feature cache screenshot
-   - Command:
-     ```bash
-     python src/data/build_features.py --config configs/default.yaml
-     ```
-   - Must show:
-     ```text
-     Total samples: 39
-     Feature shapes per sample: {'hololens_frames': (8, 3, 112, 112), ...}
-     ```
-
-6. End-to-end training screenshot
-   - Command:
-     ```bash
-     python experiments/train_formal_dataset.py --config configs/default.yaml --epochs 2 --batch-size 4
-     ```
-   - Must show output paths:
-     ```text
-     Metrics: results/metrics/formal_dataset_metrics.json
-     Predictions: results/predictions/formal_dataset_predictions.csv
-     Model: models/formal_dataset_baseline.pt
-     ```
-
-7. VS Code file tree screenshot
-   - Show these files in Explorer:
-     ```text
-     src/data/build_samples.py
-     src/data/dataset.py
-     src/data/features.py
-     src/data/check_dataset.py
-     src/data/build_features.py
-     experiments/train_formal_dataset.py
-     results/metrics/
-     results/logs/
-     results/predictions/
-     ```
-
-## 7. Report Text Draft for Member A Contribution
-
-Member A was responsible for data flow construction and end-to-end refactoring. The work started from checking the remote project environment, CUDA/PyTorch availability, raw data paths, and local model/data resources. A structured sample index was built from the original HoloLens videos, fisheye videos, intent labels, scene labels, user split, and IMU path. The final index contains 39 usable samples, including 26 training samples from users A/B and 13 testing samples from user C.
-
-Based on this index, a reusable `MultimodalIntentDataset` was implemented. The Dataset supports both lightweight metadata loading and formal feature loading. The formal input pipeline samples HoloLens and fisheye frames into fixed-size tensors, builds IMU numeric tensors, encodes scene labels as one-hot vectors, and caches video tensors for efficient reuse. A feature cache was generated for all 39 samples, producing 78 cached video tensor files.
-
-Finally, an end-to-end baseline training script was added to verify the full pipeline. The script reads the formal Dataset, trains a compact multimodal classifier, evaluates on user C, and saves metrics, predictions, logs, and model checkpoints. This verifies that the project can run from data index and raw-data-derived tensors to model training and evaluation. The current baseline is mainly used as a runnable proof of the end-to-end pipeline; further accuracy improvements are assigned to the experimental/model-improvement stage.
-
-## 8. Handoff Notes for Member B
-
-Member B can start from:
-
-```bash
-source /share/home/tm1078571822880000/a893873600/wyr_ml_course_project_work/software/memberA_activate.sh
-cd /share/home/tm1078571822880000/multimodal-intention-recognition
-python src/data/check_dataset.py --config configs/default.yaml --batch-size 2 --load-features
-python experiments/train_formal_dataset.py --config configs/default.yaml --epochs 20 --batch-size 4
-```
-
-Recommended Member B work:
-
-1. Use `experiments/train_formal_dataset.py` as the clean runnable baseline.
-2. Replace the compact CNN with pretrained CLIP/ViT feature caches using local model files under `data/raw/models/`.
-3. Add validation split and best-checkpoint selection.
-4. Add modality noise and missing-modality transforms.
-5. Improve IMU handling by recovering processed IMU feature files or aligning the raw IMU timeline per sample.
-6. Produce final experiment tables from `results/metrics/*.json` or `*.csv`.
-
-Do not treat the smoke-run `0.1538` accuracy as final performance. It only proves that the end-to-end pipeline works.
-
-## 9. Current Caveats
-
-1. The current IMU tensor is not per-video aligned because the raw IMU timestamp range does not directly match the 2026 video filenames.
-2. The current model is a compact baseline, not the final improved model.
-3. The old teammate path `E:\smart AR` appears in legacy code, but the new data pipeline avoids importing those side-effect modules directly.
-4. Some generated files may be ignored by Git, especially caches, logs, checkpoints, and predictions. They still exist on the remote machine and can be used for screenshots/report evidence.
-
-
-## 10. Standard Train/Test Interface Update
-
-The project now matches the expected stage-2 interface with:
-
-```text
+src/models/formal_baseline.py
+src/training/engine.py
 experiments/train.py
 experiments/test.py
 ```
 
-Standard handoff commands for Member B:
-
-```bash
-source /share/home/tm1078571822880000/a893873600/wyr_ml_course_project_work/software/memberA_activate.sh
-cd /share/home/tm1078571822880000/multimodal-intention-recognition
-python experiments/train.py --config configs/default.yaml --epochs 20 --batch-size 4
-python experiments/test.py --config configs/default.yaml --checkpoint results/checkpoints/best.pt --batch-size 4
-```
-
-Architecture cleanup:
+文档：
 
 ```text
-src/models/formal_baseline.py     # compact clean-baseline model
-src/training/engine.py            # shared train/evaluate/prediction helpers
-experiments/train.py              # standard training entry
-experiments/test.py               # standard test entry
-experiments/train_formal_dataset.py # compatibility wrapper for old notes
-experiments/train_and_test.py     # legacy/original reference, kept for comparison
+README_CHINESE.md
+docs/collaboration_log.md
+docs/memberA_report_and_handoff.md
 ```
 
-Do not delete `experiments/train_and_test.py` before GitHub submission. It is a useful original/legacy reference for Member B and for comparing against the teacher-provided baseline. The standard commands should use `experiments/train.py` and `experiments/test.py`.
+保留参考：
 
+```text
+experiments/train_and_test.py
+```
+
+该文件作为老师原始/旧版训练测试逻辑参考保留，不作为当前成员 A clean baseline 标准入口。
+
+## 5. 端到端调用链
+
+成员 A 当前标准链路如下：
+
+```text
+data/raw 原始数据
+-> src/data/build_samples.py 构建样本索引
+-> src/data/features.py / src/data/build_features.py 读取或构建五模态特征
+-> src/data/dataset.py 输出 MultimodalIntentDataset
+-> src/models/formal_baseline.py 五模态融合模型
+-> src/training/engine.py 训练与评估
+-> experiments/train.py / experiments/test.py 输出 intent prediction
+```
+
+模型主输出为：
+
+```text
+intent_logits
+```
+
+可选辅助输出：
+
+```text
+scene_logits
+joint_logits
+```
+
+## 6. Dataset 接口
+
+`MultimodalIntentDataset` 支持：
+
+```python
+MultimodalIntentDataset(records, transform=None, config=config)
+```
+
+标准 sample 输出：
+
+```python
+sample = {
+    "features": {
+        "imu": ...,
+        "gesture": ...,
+        "audio": ...,
+        "text": ...,
+        "scene": ...,
+    },
+    "intent_label": ...,
+    "scene_label": ...,
+    "joint_label": ...,
+    "sample_id": ...,
+    "user": ...,
+    "split": ...,
+    "modality_mask": ...,
+}
+```
+
+缺失模态处理：
+
+- 五个模态 key 始终存在。
+- 缺失模态使用 zero-fill。
+- `modality_mask` 标记该模态是否真实存在。
+- 不删除 `features` 中的模态 key，避免成员 B 做 missing modality 实验时出现 `KeyError`。
+
+## 7. 特征缓存规则
+
+完整五模态样本缓存目录：
+
+```text
+data/processed/cache/feature_cache
+```
+
+scene cache 目录：
+
+```text
+data/processed/cache/scene_cache_real_vit
+```
+
+缓存读取规则：
+
+1. `MultimodalIntentDataset.from_metadata_samples(...)` 默认 `use_cache=True`、`rebuild_cache=False`。
+2. `load_or_build_sample_features(...)` 会先根据 `sample_id` 查找完整五模态缓存。
+3. 如果缓存存在，直接返回 `FeatureBundle`，不会重新读取源特征文件，也不会重新提取 raw data。
+4. 如果缓存不存在，才读取 sample metadata 中的 `feature_paths` 并构建缓存。
+5. 如果缓存和源特征文件都不存在，会抛出清晰错误，不会伪造特征。
+
+因此，成员 A 提取完特征后，成员 B 后续训练测试可以直接复用缓存，前提是成员 B 使用同一套成员 A Dataset 或指向同一个缓存目录。
+
+成员 B 使用时注意：
+
+- 不要使用 `--rebuild-cache`，否则会强制重建。
+- 不要使用 `--no-cache`，否则会禁用缓存。
+- 如果成员 B 在 `repo-mplus0` 中独立运行，需要让配置指向 `repo-main` 的同一份缓存，或复制缓存目录，否则相对路径会指向 `repo-mplus0/data/processed/cache/...`。
+
+## 8. 运行命令
+
+路径检查：
+
+```bash
+python src/utils/paths.py
+```
+
+Dataset 检查：
+
+```bash
+python src/data/check_dataset.py --config configs/default.yaml
+```
+
+特征 dry-run：
+
+```bash
+python src/data/build_features.py --config configs/default.yaml --dry-run
+```
+
+clean baseline smoke test：
+
+```bash
+python experiments/train.py --config configs/default.yaml --smoke-test --epochs 1 --batch-size 2
+python experiments/test.py --config configs/default.yaml --smoke-test --checkpoint results/checkpoints/best.pt --batch-size 2
+```
+
+正式训练和测试：
+
+```bash
+python experiments/train.py --config configs/default.yaml
+python experiments/test.py --config configs/default.yaml --checkpoint results/checkpoints/best.pt
+```
+
+正式训练和测试需要先准备 raw data 与本地模型资源。
+
+## 9. 输出文件
+
+metrics：
+
+```text
+results/metrics/clean_baseline_metrics.csv
+results/metrics/clean_baseline_summary.json
+results/metrics/clean_baseline_test_metrics.csv
+results/metrics/clean_baseline_test_summary.json
+```
+
+logs：
+
+```text
+results/logs/clean_baseline.log
+```
+
+predictions：
+
+```text
+results/predictions/clean_baseline_predictions.csv
+```
+
+checkpoints：
+
+```text
+results/checkpoints/best.pt
+results/checkpoints/final.pt
+```
+
+figures：
+
+```text
+figures/loss_curve.png
+figures/confusion_matrix.png
+```
+
+## 10. 当前验证状态
+
+已完成：
+
+- Dataset 接口检查。
+- 单 batch 模型 forward smoke test。
+- `train.py --smoke-test --epochs 1 --batch-size 2`。
+- `test.py --smoke-test --checkpoint results/checkpoints/best.pt --batch-size 2`。
+- metrics、predictions、logs、checkpoints、figures 输出检查。
+- 成员 A / 成员 B 接口兼容性检查。
+- README 与报告入口整理。
+
+当前 smoke test 只证明工程链路可运行，不代表正式实验性能。
+
+正式 clean baseline 指标当前为 TBD。
+
+## 11. 当前缺失资源
+
+正式运行需要准备以下资源：
+
+```text
+data/raw/imu.csv
+data/raw/user_A
+data/raw/user_B
+data/raw/user_C
+data/raw/models/all-MiniLM-L6-v2
+data/raw/models/clip_teacher_model/vit-base-patch16-224
+```
+
+这些资源缺失是正常的，因为大体积 raw data 和本地模型资源不应默认提交到 Git 仓库。
+
+## 12. 成员 B 可直接复用的接口
+
+成员 B 可以直接复用：
+
+1. `MultimodalIntentDataset(..., transform=None)`。
+2. `features` 中固定的五个模态 key。
+3. `modality_mask` 和 zero-fill 缺失模态约定。
+4. `results/predictions/clean_baseline_predictions.csv` 的字段：
+   ```text
+   sample_id,user,split,intent_true,intent_pred,intent_true_name,intent_pred_name,intent_correct,joint_label
+   ```
+5. `results/metrics/*.csv` 的核心字段：
+   ```text
+   accuracy,macro_f1,weighted_f1,training_time,avg_test_time_per_sample
+   ```
+6. `results/checkpoints/best.pt` 和 `results/checkpoints/final.pt`。
+
+## 13. 成员 B 后续需要补的部分
+
+以下内容不属于成员 A 当前阶段，不在本文件中实现：
+
+1. `apply_modal_noise(...)`。
+2. `apply_missing_modalities(...)`。
+3. `run_noise_baseline.py` 的真实训练逻辑。
+4. `run_missing_baseline.py` 的真实训练逻辑。
+5. improved model 的结构或损失函数。
+6. 正式实验表格和报告性能结论。
+
+## 14. 报告撰写建议
+
+报告中可以将成员 A 的贡献概括为：
+
+> 成员 A 负责五模态端到端 clean baseline 主线，完成了项目相对路径配置、样本索引、五模态特征读取和缓存、统一 Dataset、五模态 baseline 模型、训练/测试入口、metrics/predictions/checkpoints/figures 输出，以及与成员 B 后续实验的接口兼容性检查。
+
+报告中不应把 smoke test 指标当作正式模型性能。正式结果需要在 raw data 与本地模型资源准备完成后重新运行生成。
