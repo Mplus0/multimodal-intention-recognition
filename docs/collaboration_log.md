@@ -1,65 +1,4 @@
-## 2026-06-22 - 路径配置规范化
-
-### 贡献者
-- 姓名：Mplus0
-- 角色：文档 / 配置
-
-### 修改文件
-- `configs/default.yaml`：创建项目相对路径的统一配置约定文件。
-- `docs/path_setup.md`：创建中文路径设置说明，解释本地数据集、模型、缓存、输出、图表和报告材料的放置规则。
-
-### 修改目的
-标准化团队协作中的文件夹路径约定，便于成员理解本地数据、模型、缓存、中间文件和实验输出应放置的位置。本次修改不改变现有源码或实验流程。
-
-### 运行方式
-本次任务只涉及配置和文档，不需要运行命令。
-
-### 输出文件
-- `configs/default.yaml`
-- `docs/path_setup.md`
-
-### 当前状态
-- 已完成
-
-### 给报告撰写者的说明
-本步骤只记录本地数据集、本地模型、缓存文件、处理后数据、实验结果、图表和报告材料的推荐放置位置。
-
-### 遗留问题
-- 当前训练和测试代码尚未接入 `configs/default.yaml`。
-- 本次任务未运行任何实验。
-
-## 2026-06-22 - 路径工具文件创建
-
-### 贡献者
-- 姓名：Mplus0
-- 角色：代码 / 文档
-
-### 修改文件
-- `src/utils/paths.py`：创建轻量级路径工具文件，用于读取 `configs/default.yaml` 并解析项目相对路径。
-- `docs/collaboration_log.md`：追加本次路径工具创建记录。
-
-### 修改目的
-为团队协作提供可复用的路径读取、路径解析、运行时目录创建、Hugging Face 缓存环境变量设置和路径报告打印工具。当前工具尚未接入 baseline、训练、测试或特征提取流程。
-
-### 运行方式
-```bash
-python src/utils/paths.py
-```
-
-### 输出文件
-- `src/utils/paths.py`
-- `docs/collaboration_log.md`
-
-### 当前状态
-- 已完成
-
-### 给报告撰写者的说明
-本次修改只提供路径配置读取工具，不涉及实验结果、模型结构或训练流程变化。
-
-### 遗留问题
-- 运行 `src/utils/paths.py` 前需要确保 `configs/default.yaml` 已存在。
-- 本次任务未运行任何实验。
-
+# 协作日志
 
 ## 2026-06-24 - 成员 A 五模态端到端主线整理
 
@@ -80,8 +19,8 @@ python src/utils/paths.py
 - `experiments/train.py`：实现 clean baseline 训练入口。
 - `experiments/test.py`：实现 checkpoint 测试入口。
 - `README_CHINESE.md`：补充成员 A clean baseline 运行说明、端到端链路、输出路径和当前结果状态。
+- `docs/collaboration_log.md`：整理为中文协作日志。
 - `docs/memberA_report_and_handoff.md`：整理为中文报告与交接说明。
-- `docs/collaboration_log.md`：在保留原有协作日志基础上追加本记录。
 
 ### 目标
 建立成员 A 负责的五模态端到端 clean baseline 主线，并为成员 B 后续 noise、missing、improved model 实验预留稳定接口。本阶段不展开成员 B 的实验实现。

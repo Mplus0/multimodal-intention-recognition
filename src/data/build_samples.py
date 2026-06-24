@@ -1,25 +1,102 @@
-"""Build and validate the project sample index.
+"""Build sample metadata for the formal five-modality pipeline.
 
-This script turns the teacher-provided video lists, intent labels, and
-fisheye-to-HoloLens mapping into a tabular sample index. The index is the
-first reusable input for the end-to-end train/test pipeline.
+The sample index is based on configured user directories. It keeps the formal
+modality keys fixed as ``imu``, ``gesture``, ``audio``, ``text``, and ``scene``.
+Raw video folders are treated only as sources, not as experiment modality names.
 """
 
 from __future__ import annotations
 
 import argparse
-import csv
 import json
 import sys
-from dataclasses import asdict, dataclass
+from collections import Counter
 from pathlib import Path
-from typing import Iterable
+from typing import Any
 
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
-if str(PROJECT_ROOT) not in sys.path:
-    sys.path.insert(0, str(PROJECT_ROOT))
+if __package__ is None or __package__ == "":
+    repo_root = Path(__file__).resolve().parents[2]
+    if str(repo_root) not in sys.path:
+        sys.path.insert(0, str(repo_root))
 
-from src.utils.paths import ensure_runtime_dirs, get_path, load_paths_config
+from src.data.features import MODALITY_KEYS  # noqa: E402
+from src.utils.paths import get_path, load_config, resolve_path  # noqa: E402
+
+
+INTENT_NAMES = {
+    0: "menu",
+    1: "select",
+    2: "magnify",
+    3: "narrow",
+    4: "brush",
+    5: "cancel",
+}
+SCENE_NAME_TO_ID = {"office": 0, "museum": 1}
+SCENE_ID_TO_NAME = {value: key for key, value in SCENE_NAME_TO_ID.items()}
+
+TEACHER_VIDEO_LABELS = {
+    "interaction_20260306_072344.mp4": 0,
+    "interaction_20260227_122606.mp4": 1,
+    "interaction_20260227_122952.mp4": 2,
+    "interaction_20260227_123354.mp4": 3,
+    "interaction_20260227_124559.mp4": 4,
+    "interaction_20260227_123745.mp4": 5,
+    "interaction_20260131_120024.mp4": 0,
+    "interaction_20260227_132951.mp4": 1,
+    "interaction_20260227_133408.mp4": 2,
+    "interaction_20260131_114156.mp4": 3,
+    "interaction_20260131_115150.mp4": 4,
+    "interaction_20260131_114852.mp4": 5,
+    "interaction_20260301_073041.mp4": 0,
+    "interaction_20260301_064753.mp4": 1,
+    "interaction_20260306_072721.mp4": 2,
+    "interaction_20260301_071948.mp4": 3,
+    "interaction_20260131_121548.mp4": 3,
+    "interaction_20260301_073435.mp4": 4,
+    "interaction_20260301_072503.mp4": 5,
+    "interaction_20260131_071552.mp4": 0,
+    "interaction_20260131_072412.mp4": 1,
+    "interaction_20260131_084300.mp4": 1,
+    "interaction_20260131_085611.mp4": 2,
+    "interaction_20260131_090139.mp4": 3,
+    "interaction_20260131_085207.mp4": 4,
+    "interaction_20260131_084732.mp4": 5,
+    "interaction_20260131_090917.mp4": 0,
+    "interaction_20260131_090541.mp4": 1,
+    "interaction_20260131_065459.mp4": 2,
+    "interaction_20260131_070722.mp4": 3,
+    "interaction_20260131_091657.mp4": 4,
+    "interaction_20260131_091249.mp4": 5,
+    "interaction_20260306_082346.mp4": 2,
+    "interaction_20260306_083107.mp4": 3,
+    "interaction_20260306_083434.mp4": 1,
+    "interaction_20260306_084406.mp4": 0,
+    "interaction_20260306_084853.mp4": 5,
+    "interaction_20260306_085830.mp4": 4,
+    "interaction_20260306_090441.mp4": 1,
+}
+
+OFFICE_VIDEO_NAMES = {
+    "interaction_20260306_072344.mp4",
+    "interaction_20260227_122606.mp4",
+    "interaction_20260227_122952.mp4",
+    "interaction_20260227_123354.mp4",
+    "interaction_20260227_124559.mp4",
+    "interaction_20260227_123745.mp4",
+    "interaction_20260131_120024.mp4",
+    "interaction_20260227_132951.mp4",
+    "interaction_20260227_133408.mp4",
+    "interaction_20260131_114156.mp4",
+    "interaction_20260131_115150.mp4",
+    "interaction_20260131_114852.mp4",
+    "interaction_20260301_073041.mp4",
+    "interaction_20260301_064753.mp4",
+    "interaction_20260306_072721.mp4",
+    "interaction_20260301_071948.mp4",
+    "interaction_20260131_121548.mp4",
+    "interaction_20260301_073435.mp4",
+    "interaction_20260301_072503.mp4",
+}
 
 AVI_TO_MP4_MAP = {
     "Video_20260306_152340690.avi": "interaction_20260306_072344.mp4",
@@ -62,388 +139,192 @@ AVI_TO_MP4_MAP = {
     "Video_20260306_165839689.avi": "interaction_20260306_085830.mp4",
     "Video_20260306_170449073.avi": "interaction_20260306_090441.mp4",
 }
-
-INTENT_NAMES = {
-    0: "menu",
-    1: "select",
-    2: "magnify",
-    3: "narrow",
-    4: "brush",
-    5: "cancel",
-}
-
-VIDEO_LABELS = {
-    "interaction_20260306_072344.mp4": 0,
-    "interaction_20260227_122606.mp4": 1,
-    "interaction_20260227_122952.mp4": 2,
-    "interaction_20260227_123354.mp4": 3,
-    "interaction_20260227_124559.mp4": 4,
-    "interaction_20260227_123745.mp4": 5,
-    "interaction_20260131_120024.mp4": 0,
-    "interaction_20260227_132951.mp4": 1,
-    "interaction_20260227_133408.mp4": 2,
-    "interaction_20260131_114156.mp4": 3,
-    "interaction_20260131_115150.mp4": 4,
-    "interaction_20260131_114852.mp4": 5,
-    "interaction_20260301_073041.mp4": 0,
-    "interaction_20260301_064753.mp4": 1,
-    "interaction_20260306_072721.mp4": 2,
-    "interaction_20260301_071948.mp4": 3,
-    "interaction_20260131_121548.mp4": 3,
-    "interaction_20260301_073435.mp4": 4,
-    "interaction_20260301_072503.mp4": 5,
-    "interaction_20260131_071552.mp4": 0,
-    "interaction_20260131_072412.mp4": 1,
-    "interaction_20260131_084300.mp4": 1,
-    "interaction_20260131_085611.mp4": 2,
-    "interaction_20260131_090139.mp4": 3,
-    "interaction_20260131_085207.mp4": 4,
-    "interaction_20260131_084732.mp4": 5,
-    "interaction_20260131_090917.mp4": 0,
-    "interaction_20260131_090541.mp4": 1,
-    "interaction_20260131_065459.mp4": 2,
-    "interaction_20260131_070722.mp4": 3,
-    "interaction_20260131_091657.mp4": 4,
-    "interaction_20260131_091249.mp4": 5,
-    "interaction_20260306_082346.mp4": 2,
-    "interaction_20260306_083107.mp4": 3,
-    "interaction_20260306_083434.mp4": 1,
-    "interaction_20260306_084406.mp4": 0,
-    "interaction_20260306_084853.mp4": 5,
-    "interaction_20260306_085830.mp4": 4,
-    "interaction_20260306_090441.mp4": 1,
-}
-
-TEST_VIDEO_NAMES = [
-    "interaction_20260306_072344.mp4",
-    "interaction_20260227_122606.mp4",
-    "interaction_20260227_122952.mp4",
-    "interaction_20260227_123354.mp4",
-    "interaction_20260227_124559.mp4",
-    "interaction_20260227_123745.mp4",
-    "interaction_20260306_082346.mp4",
-    "interaction_20260306_083107.mp4",
-    "interaction_20260306_083434.mp4",
-    "interaction_20260306_084406.mp4",
-    "interaction_20260306_084853.mp4",
-    "interaction_20260306_085830.mp4",
-    "interaction_20260306_090441.mp4",
-]
-
-OFFICE_VIDEO_NAMES = {
-    "interaction_20260306_072344.mp4",
-    "interaction_20260227_122606.mp4",
-    "interaction_20260227_122952.mp4",
-    "interaction_20260227_123354.mp4",
-    "interaction_20260227_124559.mp4",
-    "interaction_20260227_123745.mp4",
-    "interaction_20260131_120024.mp4",
-    "interaction_20260227_132951.mp4",
-    "interaction_20260227_133408.mp4",
-    "interaction_20260131_114156.mp4",
-    "interaction_20260131_115150.mp4",
-    "interaction_20260131_114852.mp4",
-    "interaction_20260301_073041.mp4",
-    "interaction_20260301_064753.mp4",
-    "interaction_20260306_072721.mp4",
-    "interaction_20260301_071948.mp4",
-    "interaction_20260131_121548.mp4",
-    "interaction_20260301_073435.mp4",
-    "interaction_20260301_072503.mp4",
-}
-
-SCENE_BY_VIDEO = {video_name: "office" for video_name in OFFICE_VIDEO_NAMES}
-SCENE_BY_VIDEO.update({video_name: "museum" for video_name in set(VIDEO_LABELS) - OFFICE_VIDEO_NAMES})
-
-USER_BY_SOURCE = {
-    "Luo": "user_A",
-    "Gu": "user_B",
-    "Bian": "user_C",
-}
-
-LUO_VIDEO_NAMES = {
-    "interaction_20260131_120024.mp4",
-    "interaction_20260227_132951.mp4",
-    "interaction_20260227_133408.mp4",
-    "interaction_20260131_114156.mp4",
-    "interaction_20260131_115150.mp4",
-    "interaction_20260131_114852.mp4",
-    "interaction_20260131_071552.mp4",
-    "interaction_20260131_072412.mp4",
-    "interaction_20260131_084300.mp4",
-    "interaction_20260131_084732.mp4",
-    "interaction_20260131_085207.mp4",
-    "interaction_20260131_085611.mp4",
-    "interaction_20260131_090139.mp4",
-}
-
-GU_VIDEO_NAMES = {
-    "interaction_20260301_073041.mp4",
-    "interaction_20260301_064753.mp4",
-    "interaction_20260306_072721.mp4",
-    "interaction_20260301_071948.mp4",
-    "interaction_20260131_121548.mp4",
-    "interaction_20260301_073435.mp4",
-    "interaction_20260301_072503.mp4",
-    "interaction_20260131_065459.mp4",
-    "interaction_20260131_070722.mp4",
-    "interaction_20260131_090541.mp4",
-    "interaction_20260131_090917.mp4",
-    "interaction_20260131_091249.mp4",
-    "interaction_20260131_091657.mp4",
-}
-
-BIAN_VIDEO_NAMES = set(TEST_VIDEO_NAMES)
-
-SOURCE_BY_VIDEO = {video_name: "Luo" for video_name in LUO_VIDEO_NAMES}
-SOURCE_BY_VIDEO.update({video_name: "Gu" for video_name in GU_VIDEO_NAMES})
-SOURCE_BY_VIDEO.update({video_name: "Bian" for video_name in BIAN_VIDEO_NAMES})
+MP4_TO_AVI_MAP = {mp4: avi for avi, mp4 in AVI_TO_MP4_MAP.items()}
 
 
-@dataclass(frozen=True)
-class SampleRecord:
-    sample_id: str
-    split: str
-    user: str
-    source_person: str
-    scene: str
-    intent_label: int
-    intent_name: str
-    hololens_video: str
-    fisheye_video: str
-    hololens_path: str
-    fisheye_path: str
-    imu_path: str
+def _config_user_key(user_name: str) -> str:
+    return user_name.lower()
 
 
-def _relative_to_project(path: Path, project_root: Path) -> str:
-    try:
-        return path.relative_to(project_root).as_posix()
-    except ValueError:
-        try:
-            return path.resolve().relative_to(project_root.resolve()).as_posix()
-        except ValueError:
-            return path.as_posix()
-
-
-def _list_file_names(path: Path, pattern: str) -> set[str]:
-    if not path.exists():
-        return set()
-    return {file_path.name for file_path in path.glob(pattern) if file_path.is_file()}
-
-
-def _write_csv(path: Path, rows: Iterable[dict[str, object]], fieldnames: list[str]) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    with path.open("w", newline="", encoding="utf-8") as file:
-        writer = csv.DictWriter(file, fieldnames=fieldnames)
-        writer.writeheader()
-        for row in rows:
-            writer.writerow(row)
-
-
-def _write_log(path: Path, lines: list[str]) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text("\n".join(lines) + "\n", encoding="utf-8")
-
-
-def _count_by(records: list[SampleRecord], key: str) -> dict[str, int]:
-    counts: dict[str, int] = {}
-    for record in records:
-        value = str(getattr(record, key))
-        counts[value] = counts.get(value, 0) + 1
-    return dict(sorted(counts.items()))
-
-
-def build_sample_index(config_path: Path | None = None) -> tuple[list[SampleRecord], dict[str, object]]:
-    config = load_paths_config(config_path)
-    ensure_runtime_dirs(config)
-
-    project_root = get_path("project", "root", config=config)
-    raw_dir = get_path("data", "raw_dir", config=config)
-    imu_path = get_path("data", "imu_csv", config=config)
-    hololens_dir = raw_dir / config["data"]["subdirs"]["hololens"]
-    fisheye_dir = raw_dir / config["data"]["subdirs"]["fisheye"]
-
-    available_mp4 = _list_file_names(hololens_dir, "interaction_*.mp4")
-    available_avi = _list_file_names(fisheye_dir, "*.avi")
-    mp4_to_avi = {mp4_name: avi_name for avi_name, mp4_name in AVI_TO_MP4_MAP.items()}
-
-    records: list[SampleRecord] = []
-    missing_mp4: list[str] = []
-    missing_avi: list[str] = []
-    missing_user: list[str] = []
-    missing_scene: list[str] = []
-    missing_mapping: list[str] = []
-
-    for video_name in sorted(VIDEO_LABELS):
-        if video_name not in available_mp4:
-            missing_mp4.append(video_name)
+def _iter_video_files(directory: Path, suffixes: tuple[str, ...]) -> list[Path]:
+    if not directory.exists():
+        return []
+    files = []
+    for path in directory.iterdir():
+        if path.name.startswith("._") or path.name == ".DS_Store":
             continue
-        if video_name not in mp4_to_avi:
-            missing_mapping.append(video_name)
-            continue
+        if path.is_file() and path.suffix.lower() in suffixes:
+            files.append(path)
+    return sorted(files)
 
-        avi_name = mp4_to_avi[video_name]
-        if avi_name not in available_avi:
-            missing_avi.append(avi_name)
-            continue
 
-        if video_name not in SOURCE_BY_VIDEO:
-            missing_user.append(video_name)
-            continue
-        if video_name not in SCENE_BY_VIDEO:
-            missing_scene.append(video_name)
-            continue
+def _split_for_user(user_name: str, config: dict[str, Any]) -> str:
+    split_config = config.get("training", {}).get("split", {})
+    train_users = set(split_config.get("train_users", ["user_A", "user_B"]))
+    test_users = set(split_config.get("test_users", ["user_C"]))
+    if user_name in train_users:
+        return "train"
+    if user_name in test_users:
+        return "test"
+    return "unknown"
 
-        source_person = SOURCE_BY_VIDEO[video_name]
-        intent_label = int(VIDEO_LABELS[video_name])
-        split = "test" if video_name in TEST_VIDEO_NAMES else "train"
-        scene = SCENE_BY_VIDEO[video_name]
-        sample_id = f"{split}_{source_person.lower()}_{Path(video_name).stem.replace('interaction_', '')}"
 
-        records.append(
-            SampleRecord(
-                sample_id=sample_id,
-                split=split,
-                user=USER_BY_SOURCE[source_person],
-                source_person=source_person,
-                scene=scene,
-                intent_label=intent_label,
-                intent_name=INTENT_NAMES[intent_label],
-                hololens_video=video_name,
-                fisheye_video=avi_name,
-                hololens_path=_relative_to_project(hololens_dir / video_name, project_root),
-                fisheye_path=_relative_to_project(fisheye_dir / avi_name, project_root),
-                imu_path=_relative_to_project(imu_path, project_root),
-            )
-        )
+def _scene_for_video(video_name: str) -> tuple[int | None, str | None]:
+    if video_name in OFFICE_VIDEO_NAMES:
+        return SCENE_NAME_TO_ID["office"], "office"
+    if video_name in TEACHER_VIDEO_LABELS:
+        return SCENE_NAME_TO_ID["museum"], "museum"
+    return None, None
 
-    mapped_mp4 = set(mp4_to_avi)
-    labeled_mp4 = set(VIDEO_LABELS)
-    used_mp4 = {record.hololens_video for record in records}
-    used_avi = {record.fisheye_video for record in records}
 
-    stats: dict[str, object] = {
-        "total_samples": len(records),
-        "train_samples": sum(record.split == "train" for record in records),
-        "test_samples": sum(record.split == "test" for record in records),
-        "available_hololens_mp4": len(available_mp4),
-        "available_fisheye_avi": len(available_avi),
-        "labeled_videos": len(labeled_mp4),
-        "mapped_pairs": len(AVI_TO_MP4_MAP),
-        "split_counts": _count_by(records, "split"),
-        "user_counts": _count_by(records, "user"),
-        "scene_counts": _count_by(records, "scene"),
-        "intent_counts": _count_by(records, "intent_name"),
-        "missing_mp4": missing_mp4,
-        "missing_avi": missing_avi,
-        "missing_user": missing_user,
-        "missing_scene": missing_scene,
-        "missing_mapping": missing_mapping,
-        "extra_mp4_files": sorted(available_mp4 - labeled_mp4),
-        "mapped_but_unlabeled_mp4": sorted(mapped_mp4 - labeled_mp4),
-        "labeled_but_unmapped_mp4": sorted(labeled_mp4 - mapped_mp4),
-        "unused_avi_files": sorted(available_avi - used_avi),
-        "unused_labeled_mp4": sorted(labeled_mp4 - used_mp4),
-        "imu_exists": imu_path.exists(),
-        "hololens_dir_exists": hololens_dir.exists(),
-        "fisheye_dir_exists": fisheye_dir.exists(),
+def _feature_paths_for_video(video_path: Path, config: dict[str, Any]) -> dict[str, str]:
+    """Return existing formal-modality feature paths for a video if present."""
+    feature_root = get_path("cache", "feature_cache", config=config)
+    stem = video_path.stem
+    candidates = {
+        "imu": feature_root / "imu_features" / f"imu_features_{stem}.npy",
+        "gesture": feature_root / "strong_gesture_features" / f"strong_gesture_features_{stem}.npy",
+        "audio": feature_root / "audio_features" / f"audio_features_{stem}.npy",
+        "text": feature_root / "text_features" / f"text_features_{stem}.npy",
+        "scene": feature_root / "scene_features" / f"scene_features_{stem}.npy",
     }
-    return records, stats
+    return {key: str(path) for key, path in candidates.items() if path.exists()}
 
 
-def save_outputs(
-    records: list[SampleRecord],
-    stats: dict[str, object],
-    config_path: Path | None = None,
-) -> dict[str, Path]:
-    config = load_paths_config(config_path)
-    processed_dir = get_path("data", "processed_dir", config=config)
-    metrics_dir = get_path("outputs", "metrics_dir", config=config)
-    logs_dir = get_path("outputs", "logs_dir", config=config)
+def build_sample_index(config: dict[str, Any] | None = None) -> tuple[list[dict[str, Any]], list[str]]:
+    """Build sample metadata for configured users.
 
-    index_path = processed_dir / "sample_index.csv"
-    stats_path = metrics_dir / "sample_statistics.csv"
-    log_path = logs_dir / "sample_build_log.txt"
+    Returns:
+        A tuple of ``(samples, missing_items)``. Missing raw data is reported
+        instead of raising so check commands can be run before data is copied.
+    """
+    if config is None:
+        config = load_config()
 
-    sample_rows = [asdict(record) for record in records]
-    _write_csv(index_path, sample_rows, list(SampleRecord.__dataclass_fields__))
+    user_paths = config.get("data", {}).get("users", {})
+    subdirs = config.get("data", {}).get("subdirs", {})
+    audio_subdir = subdirs.get("hololens", "HoloLens")
+    visual_subdir = subdirs.get("fisheye", "fisheye")
+    imu_csv = get_path("data", "imu_csv", config=config)
 
-    stat_rows: list[dict[str, str]] = []
-    for key, value in stats.items():
-        if isinstance(value, (dict, list)):
-            rendered = json.dumps(value, ensure_ascii=False, sort_keys=True)
-        else:
-            rendered = str(value)
-        stat_rows.append({"metric": key, "value": rendered})
-    _write_csv(stats_path, stat_rows, ["metric", "value"])
+    samples: list[dict[str, Any]] = []
+    missing: list[str] = []
+    if not imu_csv.exists():
+        missing.append(f"data.imu_csv missing: {imu_csv}")
 
-    log_lines = [
-        "Sample index build report",
-        "=========================",
-        f"Total usable samples: {stats['total_samples']}",
-        f"Train samples: {stats['train_samples']}",
-        f"Test samples: {stats['test_samples']}",
-        f"Available HoloLens mp4: {stats['available_hololens_mp4']}",
-        f"Available fisheye avi: {stats['available_fisheye_avi']}",
-        f"Labeled videos: {stats['labeled_videos']}",
-        f"Mapped pairs: {stats['mapped_pairs']}",
-        f"Split counts: {json.dumps(stats['split_counts'], ensure_ascii=False, sort_keys=True)}",
-        f"User counts: {json.dumps(stats['user_counts'], ensure_ascii=False, sort_keys=True)}",
-        f"Scene counts: {json.dumps(stats['scene_counts'], ensure_ascii=False, sort_keys=True)}",
-        f"Intent counts: {json.dumps(stats['intent_counts'], ensure_ascii=False, sort_keys=True)}",
-        "",
-        "Data issues and notes:",
-    ]
-    for key in (
-        "missing_mp4",
-        "missing_avi",
-        "missing_user",
-        "missing_scene",
-        "missing_mapping",
-        "extra_mp4_files",
-        "mapped_but_unlabeled_mp4",
-        "labeled_but_unmapped_mp4",
-        "unused_avi_files",
-        "unused_labeled_mp4",
-    ):
-        log_lines.append(f"- {key}: {json.dumps(stats[key], ensure_ascii=False, sort_keys=True)}")
-    log_lines.extend(
-        [
-            "",
-            f"Sample index: {index_path}",
-            f"Statistics: {stats_path}",
-        ]
-    )
-    _write_log(log_path, log_lines)
+    for user_name in ("user_A", "user_B", "user_C"):
+        user_key = _config_user_key(user_name)
+        raw_user_path = user_paths.get(user_key)
+        if raw_user_path is None:
+            missing.append(f"data.users.{user_key} is not configured")
+            continue
 
-    return {"index": index_path, "statistics": stats_path, "log": log_path}
+        user_dir = resolve_path(raw_user_path)
+        if not user_dir.exists():
+            missing.append(f"{user_name} directory missing: {user_dir}")
+            continue
+
+        audio_dir = user_dir / audio_subdir
+        visual_dir = user_dir / visual_subdir
+        if not audio_dir.exists():
+            missing.append(f"{user_name} audio source directory missing: {audio_dir}")
+        if not visual_dir.exists():
+            missing.append(f"{user_name} visual source directory missing: {visual_dir}")
+
+        visual_by_name = {path.name: path for path in _iter_video_files(visual_dir, (".avi", ".mp4"))}
+        for audio_path in _iter_video_files(audio_dir, (".mp4",)):
+            visual_name = MP4_TO_AVI_MAP.get(audio_path.name)
+            visual_path = visual_by_name.get(visual_name) if visual_name else None
+            intent_label = TEACHER_VIDEO_LABELS.get(audio_path.name)
+            intent_name = INTENT_NAMES.get(intent_label) if intent_label is not None else None
+            scene_label, scene_name = _scene_for_video(audio_path.name)
+            joint_label = f"{scene_name}_{intent_name}" if scene_name and intent_name else None
+
+            raw_paths = {
+                "imu": str(imu_csv),
+                "gesture": str(visual_path) if visual_path else None,
+                "audio": str(audio_path),
+                "text": str(audio_path),
+                "scene": str(visual_path) if visual_path else None,
+            }
+            samples.append(
+                {
+                    "sample_id": audio_path.stem,
+                    "video_name": audio_path.name,
+                    "user": user_name,
+                    "split": _split_for_user(user_name, config),
+                    "raw_paths": raw_paths,
+                    "feature_paths": _feature_paths_for_video(audio_path, config),
+                    "intent_label": intent_label,
+                    "intent_name": intent_name,
+                    "scene_label": scene_label,
+                    "scene_name": scene_name,
+                    "joint_label": joint_label,
+                }
+            )
+
+            if visual_path is None:
+                missing.append(f"{audio_path.name} visual source not found under {visual_dir}")
+            if intent_label is None:
+                missing.append(f"{audio_path.name} intent label not found in teacher mapping")
+            if scene_label is None:
+                missing.append(f"{audio_path.name} scene label not found in teacher mapping")
+
+    return samples, sorted(set(missing))
+
+
+def summarize_samples(samples: list[dict[str, Any]]) -> dict[str, Any]:
+    """Return compact counts for sample index inspection."""
+    return {
+        "sample_count": len(samples),
+        "split_counts": dict(Counter(str(sample.get("split")) for sample in samples)),
+        "user_counts": dict(Counter(str(sample.get("user")) for sample in samples)),
+        "intent_counts": dict(Counter(str(sample.get("intent_name")) for sample in samples)),
+    }
+
+
+def save_sample_index(samples: list[dict[str, Any]], output_path: str | Path) -> Path:
+    """Save sample metadata as JSON."""
+    path = resolve_path(output_path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("w", encoding="utf-8") as file:
+        json.dump({"samples": samples}, file, ensure_ascii=False, indent=2)
+    return path
 
 
 def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Build the multimodal sample index.")
+    parser = argparse.ArgumentParser(description="Build formal five-modality sample metadata.")
+    parser.add_argument("--config", default="configs/default.yaml", help="Path to project YAML config.")
     parser.add_argument(
-        "--config",
-        type=Path,
-        default=None,
-        help="Path to YAML config. Defaults to configs/default.yaml.",
+        "--output",
+        default="data/processed/sample_index.json",
+        help="Where to save sample metadata JSON.",
     )
+    parser.add_argument("--no-save", action="store_true", help="Only print checks; do not write JSON.")
     return parser.parse_args()
 
 
-def main() -> None:
+def main() -> int:
     args = parse_args()
-    records, stats = build_sample_index(args.config)
-    output_paths = save_outputs(records, stats, args.config)
+    config = load_config(args.config)
+    samples, missing = build_sample_index(config)
+    summary = summarize_samples(samples)
+    print("[sample_summary]")
+    for key, value in summary.items():
+        print(f"  {key}: {value}")
 
-    print(f"Built {stats['total_samples']} usable samples.")
-    print(f"Train: {stats['train_samples']} | Test: {stats['test_samples']}")
-    print(f"Sample index: {output_paths['index']}")
-    print(f"Statistics: {output_paths['statistics']}")
-    print(f"Log: {output_paths['log']}")
-    if stats["extra_mp4_files"] or stats["unused_avi_files"]:
-        print("Warnings were recorded in the sample build log.")
+    if missing:
+        print("[missing_items]")
+        for item in missing:
+            print(f"  - {item}")
+
+    if samples and not args.no_save:
+        output_path = save_sample_index(samples, args.output)
+        print(f"[saved] {output_path}")
+    elif not samples:
+        print("[info] No samples were indexed. Check missing_items above.")
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())

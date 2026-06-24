@@ -19,7 +19,7 @@ def get_project_root() -> Path:
     return Path(__file__).resolve().parents[2]
 
 
-def load_paths_config(config_path: Path | None = None) -> dict[str, Any]:
+def load_config(config_path: str | Path | None = None) -> dict[str, Any]:
     """Load the YAML path configuration.
 
     Args:
@@ -48,6 +48,11 @@ def load_paths_config(config_path: Path | None = None) -> dict[str, Any]:
         raise ValueError(f"Path config must be a YAML mapping: {config_path}")
 
     return config
+
+
+def load_paths_config(config_path: str | Path | None = None) -> dict[str, Any]:
+    """Backward-compatible alias for ``load_config``."""
+    return load_config(config_path)
 
 
 def resolve_path(path_value: str | Path) -> Path:
@@ -82,7 +87,7 @@ def get_path(*keys: str, config: dict[str, Any] | None = None) -> Path:
         get_path("outputs", "metrics_dir")
     """
     if config is None:
-        config = load_paths_config()
+        config = load_config()
 
     path_value = _get_nested_value(config, tuple(keys))
     if not isinstance(path_value, (str, Path)):
@@ -110,6 +115,7 @@ _RUNTIME_DIR_KEYS: tuple[tuple[str, ...], ...] = (
     ("outputs", "metrics_dir"),
     ("outputs", "logs_dir"),
     ("outputs", "prediction_dir"),
+    ("outputs", "checkpoint_dir"),
     ("outputs", "figure_dir"),
     ("outputs", "model_dir"),
     ("outputs", "report_dir"),
@@ -123,7 +129,7 @@ def ensure_runtime_dirs(config: dict[str, Any] | None = None) -> None:
     This function does not create raw dataset directories automatically.
     """
     if config is None:
-        config = load_paths_config()
+        config = load_config()
 
     for keys in _RUNTIME_DIR_KEYS:
         try:
@@ -136,7 +142,7 @@ def ensure_runtime_dirs(config: dict[str, Any] | None = None) -> None:
 def setup_huggingface_env(config: dict[str, Any] | None = None) -> None:
     """Set Hugging Face cache environment variables if they are not set."""
     if config is None:
-        config = load_paths_config()
+        config = load_config()
 
     env_to_keys = {
         "HF_HOME": ("cache", "huggingface"),
@@ -158,6 +164,7 @@ _VALIDATION_KEYS: tuple[tuple[str, ...], ...] = (
     ("data", "users", "user_a"),
     ("data", "users", "user_b"),
     ("data", "users", "user_c"),
+    ("data", "raw_sources", "imu", "file"),
     ("local_models", "root"),
     ("local_models", "sentence_model"),
     ("local_models", "clip_teacher_model"),
@@ -173,6 +180,7 @@ _VALIDATION_KEYS: tuple[tuple[str, ...], ...] = (
     ("outputs", "metrics_dir"),
     ("outputs", "logs_dir"),
     ("outputs", "prediction_dir"),
+    ("outputs", "checkpoint_dir"),
     ("outputs", "figure_dir"),
     ("outputs", "report_dir"),
     ("report", "screenshots_dir"),
@@ -187,7 +195,7 @@ def _dotted(keys: tuple[str, ...]) -> str:
 def validate_paths(config: dict[str, Any] | None = None) -> dict[str, bool]:
     """Check important configured paths without failing on missing local data."""
     if config is None:
-        config = load_paths_config()
+        config = load_config()
 
     results: dict[str, bool] = {}
     for keys in _VALIDATION_KEYS:
@@ -202,7 +210,7 @@ def validate_paths(config: dict[str, Any] | None = None) -> dict[str, bool]:
 def print_path_report(config: dict[str, Any] | None = None) -> None:
     """Print a readable report for important project paths."""
     if config is None:
-        config = load_paths_config()
+        config = load_config()
 
     validation = validate_paths(config)
     for keys in _VALIDATION_KEYS:
@@ -218,7 +226,7 @@ def print_path_report(config: dict[str, Any] | None = None) -> None:
 
 
 if __name__ == "__main__":
-    paths_config = load_paths_config()
+    paths_config = load_config()
     setup_huggingface_env(paths_config)
     ensure_runtime_dirs(paths_config)
     print_path_report(paths_config)

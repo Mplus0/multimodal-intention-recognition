@@ -1,80 +1,164 @@
-"""Precompute cached feature tensors for indexed samples."""
+"""Build or inspect five-modality features from sample metadata.
+
+This command is intentionally lightweight for Member A stage 2. It can run a
+dry-run path/config check without raw data, and it can build actual feature
+arrays when a sample metadata JSON file provides source feature paths.
+"""
 
 from __future__ import annotations
 
 import argparse
-import time
+import json
 import sys
 from pathlib import Path
+from typing import Any
 
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
-if str(PROJECT_ROOT) not in sys.path:
-    sys.path.insert(0, str(PROJECT_ROOT))
+if __package__ is None or __package__ == "":
+    repo_root = Path(__file__).resolve().parents[2]
+    if str(repo_root) not in sys.path:
+        sys.path.insert(0, str(repo_root))
 
-from src.data.dataset import MultimodalIntentDataset
-from src.data.features import FeatureConfig, get_feature_cache_dir
-from src.utils.logger import setup_experiment_logger
+from src.data.features import (  # noqa: E402
+    MODALITY_KEYS,
+    aggregate_feature_bundles,
+    describe_feature_shapes,
+    get_feature_dims,
+    get_modality_keys,
+    get_target_timesteps,
+    load_or_build_sample_features,
+)
+from src.utils.paths import (  # noqa: E402
+    ensure_runtime_dirs,
+    get_path,
+    load_config,
+    setup_huggingface_env,
+)
 
 
 def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Build cached multimodal feature tensors.")
-    parser.add_argument("--config", type=Path, default=None)
-    parser.add_argument("--sample-index", type=Path, default=None)
-    parser.add_argument("--splits", nargs="+", default=["train", "test"], choices=["train", "test"])
-    parser.add_argument("--num-video-frames", type=int, default=8)
-    parser.add_argument("--image-size", type=int, default=112)
-    parser.add_argument("--imu-steps", type=int, default=10)
-    parser.add_argument("--rebuild-cache", action="store_true")
+    parser = argparse.ArgumentParser(description="Build or dry-run five-modality features.")
+    parser.add_argument(
+        "--config",
+        default="configs/default.yaml",
+        help="Path to project YAML config.",
+    )
+    parser.add_argument(
+        "--metadata-json",
+        help=(
+            "Optional sample metadata JSON. It may be a list of samples or a "
+            "mapping with a 'samples' list. Each sample should provide sample_id "
+            "and feature_paths for imu, gesture, audio, text, scene."
+        ),
+    )
+    parser.add_argument("--limit", type=int, default=1, help="Maximum samples to inspect.")
+    parser.add_argument("--rebuild-cache", action="store_true", help="Ignore existing feature cache.")
+    parser.add_argument("--no-cache", action="store_true", help="Do not read or write complete feature cache.")
+    parser.add_argument("--dry-run", action="store_true", help="Only print config/path checks when no metadata is given.")
     return parser.parse_args()
 
 
-def main() -> None:
-    args = parse_args()
-    logger, log_path = setup_experiment_logger("feature_build", file_mode="w")
-    feature_config = FeatureConfig(
-        num_video_frames=args.num_video_frames,
-        image_size=args.image_size,
-        imu_steps=args.imu_steps,
-        rebuild_cache=args.rebuild_cache,
+def _load_samples(metadata_path: str | Path) -> list[dict[str, Any]]:
+    path = Path(metadata_path)
+    if not path.is_absolute():
+        path = Path.cwd() / path
+    with path.open("r", encoding="utf-8") as file:
+        payload = json.load(file)
+
+    if isinstance(payload, dict):
+        samples = payload.get("samples")
+    else:
+        samples = payload
+
+    if not isinstance(samples, list):
+        raise ValueError("Sample metadata JSON must be a list or contain a 'samples' list.")
+    for index, sample in enumerate(samples):
+        if not isinstance(sample, dict):
+            raise ValueError(f"Sample metadata item {index} is not a mapping.")
+    return samples
+
+
+def _print_expected_shapes(config: dict[str, Any]) -> None:
+    dims = get_feature_dims(config)
+    target_steps = get_target_timesteps(config)
+    print("[expected_shapes]")
+    for key in MODALITY_KEYS:
+        if key == "scene":
+            print(f"  {key}: (N, {dims[key]})")
+        else:
+            print(f"  {key}: (N, {target_steps}, {dims[key]})")
+
+
+def _print_source_path_status(config: dict[str, Any]) -> None:
+    checks = (
+        ("data.raw_dir", ("data", "raw_dir")),
+        ("data.imu_csv", ("data", "imu_csv")),
+        ("data.users.user_a", ("data", "users", "user_a")),
+        ("data.users.user_b", ("data", "users", "user_b")),
+        ("data.users.user_c", ("data", "users", "user_c")),
+        ("local_models.sentence_model", ("local_models", "sentence_model")),
+        ("local_models.vit_model", ("local_models", "vit_model")),
+        ("cache.feature_cache", ("cache", "feature_cache")),
+        ("cache.scene_cache", ("cache", "scene_cache")),
+    )
+    print("[path_status]")
+    for name, keys in checks:
+        path = get_path(*keys, config=config)
+        status = "OK" if path.exists() else "MISSING"
+        print(f"  [{status}] {name} -> {path}")
+
+
+def dry_run(config: dict[str, Any]) -> None:
+    get_modality_keys(config)
+    ensure_runtime_dirs(config)
+    setup_huggingface_env(config)
+    print("[modalities]", ", ".join(MODALITY_KEYS))
+    print(f"[target_timesteps] {get_target_timesteps(config)}")
+    _print_expected_shapes(config)
+    _print_source_path_status(config)
+    print(
+        "[dry_run] No sample metadata was provided, so no actual feature arrays "
+        "were built. Provide --metadata-json to print real output shapes."
     )
 
-    start_time = time.time()
-    total_samples = 0
-    last_shapes: dict[str, tuple[int, ...]] = {}
-    cache_dir = get_feature_cache_dir(args.config)
 
-    for split in args.splits:
-        dataset = MultimodalIntentDataset(
-            split=split,
-            config_path=args.config,
-            sample_index_path=args.sample_index,
-            validate_files=True,
-            load_features=True,
-            feature_config=feature_config,
+def build_from_metadata(args: argparse.Namespace, config: dict[str, Any]) -> int:
+    samples = _load_samples(args.metadata_json)
+    if not samples:
+        print("[ERROR] Sample metadata JSON contains no samples.")
+        return 2
+
+    selected = samples[: max(args.limit, 1)]
+    bundles = []
+    for sample in selected:
+        bundles.append(
+            load_or_build_sample_features(
+                sample,
+                config=config,
+                use_cache=not args.no_cache,
+                rebuild_cache=args.rebuild_cache,
+            )
         )
-        logger.info("Building features for split=%s samples=%s", split, len(dataset))
-        for index in range(len(dataset)):
-            item = dataset[index]
-            features = item["features"]
-            last_shapes = {key: tuple(value.shape) for key, value in features.items()}
-            total_samples += 1
-            if (index + 1) % 5 == 0 or index + 1 == len(dataset):
-                logger.info("split=%s cached %s/%s", split, index + 1, len(dataset))
 
-    elapsed = time.time() - start_time
-    logger.info("Feature build complete. total_samples=%s elapsed_sec=%.2f", total_samples, elapsed)
-    logger.info("Feature shapes per sample: %s", last_shapes)
-    logger.info("Cache dir: %s", cache_dir)
-    logger.info("Log file: %s", log_path)
+    features = aggregate_feature_bundles(bundles)
+    print("[actual_shapes]")
+    for key, shape in describe_feature_shapes(features).items():
+        print(f"  {key}: {shape}")
+    return 0
 
-    print("Feature build complete.")
-    print(f"Total samples: {total_samples}")
-    print(f"Elapsed seconds: {elapsed:.2f}")
-    print(f"Feature shapes per sample: {last_shapes}")
-    print(f"Cache dir: {cache_dir}")
-    print(f"Log: {log_path}")
+
+def main() -> int:
+    args = parse_args()
+    config = load_config(args.config)
+    if args.metadata_json:
+        try:
+            return build_from_metadata(args, config)
+        except (FileNotFoundError, ValueError, RuntimeError, KeyError) as error:
+            print(f"[ERROR] {error}")
+            return 2
+
+    dry_run(config)
+    return 0
 
 
 if __name__ == "__main__":
-    main()
-
+    raise SystemExit(main())

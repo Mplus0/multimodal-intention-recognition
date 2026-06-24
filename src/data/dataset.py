@@ -1,303 +1,238 @@
-"""Dataset and DataLoader utilities for the sample index.
-
-The first version keeps data loading intentionally lightweight: it validates
-indexed file paths and returns labels plus metadata. Feature extraction can be
-plugged in later without changing the train/test split contract.
-"""
+"""Dataset interface for formal five-modality intention recognition samples."""
 
 from __future__ import annotations
 
-import csv
 import sys
-from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Callable, Iterable
+from typing import Any, Sequence
 
+import numpy as np
 import torch
-from torch.utils.data import DataLoader, Dataset
+from torch.utils.data import Dataset
 
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
-if str(PROJECT_ROOT) not in sys.path:
-    sys.path.insert(0, str(PROJECT_ROOT))
+if __package__ is None or __package__ == "":
+    repo_root = Path(__file__).resolve().parents[2]
+    if str(repo_root) not in sys.path:
+        sys.path.insert(0, str(repo_root))
 
-from src.data.features import (
-    FeatureConfig,
-    build_imu_sequence,
-    build_scene_tensor,
-    get_feature_cache_dir,
-    load_or_build_video_frames,
+from src.data.features import (  # noqa: E402
+    MODALITY_KEYS,
+    FeatureBundle,
+    get_feature_dims,
+    get_target_timesteps,
+    load_or_build_sample_features,
 )
-from src.utils.paths import get_project_root, get_path, load_paths_config
-from src.utils.seed import DEFAULT_SEED, make_generator, seed_worker
+from src.utils.paths import load_config  # noqa: E402
 
 
-REQUIRED_COLUMNS = (
-    "sample_id",
-    "split",
-    "user",
-    "source_person",
-    "scene",
-    "intent_label",
-    "intent_name",
-    "hololens_video",
-    "fisheye_video",
-    "hololens_path",
-    "fisheye_path",
-    "imu_path",
-)
+def _zero_feature(modality: str, feature_dims: dict[str, int], target_steps: int) -> np.ndarray:
+    dim = int(feature_dims[modality])
+    if modality == "scene":
+        return np.zeros((dim,), dtype=np.float32)
+    return np.zeros((target_steps, dim), dtype=np.float32)
 
 
-@dataclass(frozen=True)
-class IndexedSample:
-    """One row from ``data/processed/sample_index.csv`` with resolved paths."""
+def _normalize_single_feature(
+    modality: str,
+    value: Any,
+    feature_dims: dict[str, int],
+    target_steps: int,
+) -> np.ndarray:
+    array = np.asarray(value, dtype=np.float32)
+    expected_dim = int(feature_dims[modality])
+    if modality == "scene":
+        if array.ndim == 2 and array.shape[0] == 1:
+            array = array[0]
+        if array.shape != (expected_dim,):
+            raise ValueError(f"Expected scene feature shape ({expected_dim},), got {array.shape}.")
+        return array
 
-    sample_id: str
-    split: str
-    user: str
-    source_person: str
-    scene: str
-    intent_label: int
-    intent_name: str
-    hololens_video: str
-    fisheye_video: str
-    hololens_path: Path
-    fisheye_path: Path
-    imu_path: Path
-
-
-def _resolve_index_path(config_path: Path | None = None, sample_index_path: Path | None = None) -> Path:
-    """Return the sample-index CSV path from an explicit path or config."""
-    if sample_index_path is not None:
-        path = Path(sample_index_path)
-        return path if path.is_absolute() else get_project_root() / path
-
-    config = load_paths_config(config_path)
-    try:
-        return get_path("data", "sample_index", config=config)
-    except KeyError:
-        return get_path("data", "processed_dir", config=config) / "sample_index.csv"
-
-
-def _resolve_project_path(path_value: str | Path, root: Path) -> Path:
-    """Resolve a path from the index against the repository root."""
-    path = Path(path_value)
-    return path if path.is_absolute() else root / path
-
-
-def read_sample_index(
-    config_path: Path | None = None,
-    sample_index_path: Path | None = None,
-) -> list[IndexedSample]:
-    """Read and validate the generated sample index.
-
-    Args:
-        config_path: Optional YAML config path.
-        sample_index_path: Optional direct CSV path. Relative paths are
-            resolved from the repository root.
-
-    Raises:
-        FileNotFoundError: If the sample index does not exist.
-        ValueError: If required columns are missing or labels are invalid.
-    """
-    index_path = _resolve_index_path(config_path, sample_index_path)
-    if not index_path.exists():
-        raise FileNotFoundError(
-            f"Sample index not found: {index_path}. "
-            "Run `python src/data/build_samples.py --config configs/default.yaml` first."
+    if array.ndim == 3 and array.shape[0] == 1:
+        array = array[0]
+    if array.shape != (target_steps, expected_dim):
+        raise ValueError(
+            f"Expected {modality} feature shape ({target_steps}, {expected_dim}), got {array.shape}."
         )
+    return array
 
-    root = get_project_root()
-    samples: list[IndexedSample] = []
-    with index_path.open("r", newline="", encoding="utf-8") as file:
-        reader = csv.DictReader(file)
-        columns = set(reader.fieldnames or [])
-        missing_columns = [column for column in REQUIRED_COLUMNS if column not in columns]
-        if missing_columns:
-            raise ValueError(f"Sample index missing columns: {missing_columns}")
 
-        for row_number, row in enumerate(reader, start=2):
-            try:
-                intent_label = int(row["intent_label"])
-            except ValueError as error:
-                raise ValueError(f"Invalid intent_label at row {row_number}: {row['intent_label']}") from error
+def _as_int_label(value: Any, default: int = -1) -> int:
+    if value is None:
+        return default
+    try:
+        return int(value)
+    except (TypeError, ValueError):
+        return default
 
-            samples.append(
-                IndexedSample(
-                    sample_id=row["sample_id"],
-                    split=row["split"],
-                    user=row["user"],
-                    source_person=row["source_person"],
-                    scene=row["scene"],
-                    intent_label=intent_label,
-                    intent_name=row["intent_name"],
-                    hololens_video=row["hololens_video"],
-                    fisheye_video=row["fisheye_video"],
-                    hololens_path=_resolve_project_path(row["hololens_path"], root),
-                    fisheye_path=_resolve_project_path(row["fisheye_path"], root),
-                    imu_path=_resolve_project_path(row["imu_path"], root),
-                )
+
+def make_dataset_record(
+    *,
+    features: dict[str, Any] | None,
+    sample_id: str,
+    user: str,
+    split: str,
+    intent_label: Any = None,
+    scene_label: Any = None,
+    joint_label: Any = None,
+    feature_dims: dict[str, int] | None = None,
+    target_steps: int = 10,
+) -> dict[str, Any]:
+    """Create one item-level dataset record with stable modality keys."""
+    dims = feature_dims or get_feature_dims()
+    input_features = features or {}
+    normalized_features: dict[str, np.ndarray] = {}
+    modality_mask: dict[str, bool] = {}
+    for modality in MODALITY_KEYS:
+        if modality in input_features and input_features[modality] is not None:
+            normalized_features[modality] = _normalize_single_feature(
+                modality,
+                input_features[modality],
+                dims,
+                target_steps,
             )
+            modality_mask[modality] = True
+        else:
+            normalized_features[modality] = _zero_feature(modality, dims, target_steps)
+            modality_mask[modality] = False
 
-    return samples
+    return {
+        "features": normalized_features,
+        "intent_label": _as_int_label(intent_label),
+        "scene_label": _as_int_label(scene_label),
+        "joint_label": str(joint_label) if joint_label is not None else "unknown_unknown",
+        "sample_id": str(sample_id),
+        "user": str(user),
+        "split": str(split),
+        "modality_mask": modality_mask,
+    }
 
 
-class MultimodalIntentDataset(Dataset[dict[str, Any]]):
-    """Lightweight Dataset backed by the generated sample index.
-
-    The returned dictionary is deliberately stable for future work: metadata
-    and raw paths are available now, while optional transforms can later add
-    decoded frames, IMU windows, cached features, or fused tensors.
-    """
+class MultimodalIntentDataset(Dataset):
+    """PyTorch Dataset returning the standard Member A sample dictionary."""
 
     def __init__(
         self,
-        split: str,
-        config_path: Path | None = None,
-        sample_index_path: Path | None = None,
-        transform: Callable[[dict[str, Any]], dict[str, Any]] | None = None,
-        validate_files: bool = True,
-        load_features: bool = False,
-        feature_config: FeatureConfig | None = None,
-    ) -> None:
-        self.split = split
+        records: Sequence[dict[str, Any]],
+        transform=None,
+        config: dict[str, Any] | None = None,
+    ):
+        self.config = config or load_config()
+        self.feature_dims = get_feature_dims(self.config)
+        self.target_steps = get_target_timesteps(self.config)
+        self.records = [
+            make_dataset_record(
+                features=record.get("features"),
+                sample_id=record.get("sample_id", index),
+                user=record.get("user", "unknown"),
+                split=record.get("split", "unknown"),
+                intent_label=record.get("intent_label"),
+                scene_label=record.get("scene_label"),
+                joint_label=record.get("joint_label"),
+                feature_dims=self.feature_dims,
+                target_steps=self.target_steps,
+            )
+            for index, record in enumerate(records)
+        ]
         self.transform = transform
-        self.config_path = config_path
-        self.load_features = load_features
-        self.feature_config = feature_config or FeatureConfig()
-        self.feature_cache_dir = get_feature_cache_dir(config_path)
-        all_samples = read_sample_index(config_path=config_path, sample_index_path=sample_index_path)
-        self.samples = [sample for sample in all_samples if sample.split == split]
-
-        if not self.samples:
-            available = sorted({sample.split for sample in all_samples})
-            raise ValueError(f"No samples found for split={split!r}. Available splits: {available}")
-
-        if validate_files:
-            self.validate_files()
 
     def __len__(self) -> int:
-        return len(self.samples)
+        return len(self.records)
 
     def __getitem__(self, index: int) -> dict[str, Any]:
-        sample = self.samples[index]
-        item: dict[str, Any] = {
-            "sample_id": sample.sample_id,
-            "split": sample.split,
-            "user": sample.user,
-            "source_person": sample.source_person,
-            "scene": sample.scene,
-            "intent_label": torch.tensor(sample.intent_label, dtype=torch.long),
-            "intent_name": sample.intent_name,
-            "hololens_video": sample.hololens_video,
-            "fisheye_video": sample.fisheye_video,
-            "paths": {
-                "hololens": str(sample.hololens_path),
-                "fisheye": str(sample.fisheye_path),
-                "imu": str(sample.imu_path),
+        record = self.records[index]
+        sample = {
+            "features": {
+                key: torch.from_numpy(record["features"][key].astype(np.float32))
+                for key in MODALITY_KEYS
+            },
+            "intent_label": torch.tensor(record["intent_label"], dtype=torch.long),
+            "scene_label": torch.tensor(record["scene_label"], dtype=torch.long),
+            "joint_label": record["joint_label"],
+            "sample_id": record["sample_id"],
+            "user": record["user"],
+            "split": record["split"],
+            "modality_mask": {
+                key: torch.tensor(bool(record["modality_mask"][key]), dtype=torch.bool)
+                for key in MODALITY_KEYS
             },
         }
-
-        if self.load_features:
-            item["features"] = {
-                "hololens_frames": load_or_build_video_frames(
-                    sample_id=sample.sample_id,
-                    stream_name="hololens",
-                    video_path=sample.hololens_path,
-                    cache_dir=self.feature_cache_dir,
-                    feature_config=self.feature_config,
-                ),
-                "fisheye_frames": load_or_build_video_frames(
-                    sample_id=sample.sample_id,
-                    stream_name="fisheye",
-                    video_path=sample.fisheye_path,
-                    cache_dir=self.feature_cache_dir,
-                    feature_config=self.feature_config,
-                ),
-                "imu": build_imu_sequence(sample.imu_path, self.feature_config.imu_steps),
-                "scene": build_scene_tensor(sample.scene),
-            }
-            item["feature_status"] = {
-                "video": "uniform_frame_sampling",
-                "imu": "global_unaligned_sequence",
-                "scene": "one_hot",
-            }
-
         if self.transform is not None:
-            item = self.transform(item)
+            sample = self.transform(sample)
+        return sample
 
-        return item
+    @classmethod
+    def from_feature_bundles(
+        cls,
+        bundles: Sequence[FeatureBundle],
+        metadata: Sequence[dict[str, Any]] | None = None,
+        transform=None,
+        config: dict[str, Any] | None = None,
+    ) -> "MultimodalIntentDataset":
+        """Expand video/sample-level feature bundles into item-level records."""
+        records: list[dict[str, Any]] = []
+        metadata_by_id = {
+            str(item.get("sample_id", item.get("video_name", index))): item
+            for index, item in enumerate(metadata or [])
+        }
+        for bundle in bundles:
+            meta = metadata_by_id.get(bundle.sample_id, {})
+            first_feature = bundle.features[MODALITY_KEYS[0]]
+            item_count = int(first_feature.shape[0]) if first_feature.ndim >= 2 else 1
+            for item_index in range(item_count):
+                item_features = {
+                    key: (
+                        value[item_index]
+                        if value.ndim > (1 if key == "scene" else 2)
+                        else value
+                    )
+                    for key, value in bundle.features.items()
+                }
+                intent_label = (
+                    bundle.intent_labels[item_index]
+                    if bundle.intent_labels is not None and len(bundle.intent_labels) > item_index
+                    else meta.get("intent_label")
+                )
+                scene_label = (
+                    bundle.scene_labels[item_index]
+                    if bundle.scene_labels is not None and len(bundle.scene_labels) > item_index
+                    else meta.get("scene_label")
+                )
+                records.append(
+                    {
+                        "features": item_features,
+                        "intent_label": intent_label,
+                        "scene_label": scene_label,
+                        "joint_label": meta.get("joint_label"),
+                        "sample_id": f"{bundle.sample_id}#{item_index}",
+                        "user": meta.get("user", "unknown"),
+                        "split": meta.get("split", "unknown"),
+                    }
+                )
+        return cls(records, transform=transform, config=config)
 
-    def validate_files(self) -> None:
-        """Raise if any indexed raw file is missing."""
-        missing: list[str] = []
-        for sample in self.samples:
-            for path in (sample.hololens_path, sample.fisheye_path, sample.imu_path):
-                if not path.exists():
-                    missing.append(f"{sample.sample_id}: {path}")
-
-        if missing:
-            preview = "\n".join(missing[:10])
-            suffix = "" if len(missing) <= 10 else f"\n... and {len(missing) - 10} more"
-            raise FileNotFoundError(f"Missing indexed files:\n{preview}{suffix}")
-
-    def labels(self) -> list[int]:
-        """Return intent labels in dataset order."""
-        return [sample.intent_label for sample in self.samples]
-
-
-def build_dataloaders(
-    config_path: Path | None = None,
-    sample_index_path: Path | None = None,
-    batch_size: int = 4,
-    num_workers: int = 0,
-    seed: int = DEFAULT_SEED,
-    validate_files: bool = True,
-    load_features: bool = False,
-    feature_config: FeatureConfig | None = None,
-) -> tuple[DataLoader[dict[str, Any]], DataLoader[dict[str, Any]]]:
-    """Build train and test DataLoaders for the lightweight Dataset."""
-    train_dataset = MultimodalIntentDataset(
-        split="train",
-        config_path=config_path,
-        sample_index_path=sample_index_path,
-        validate_files=validate_files,
-        load_features=load_features,
-        feature_config=feature_config,
-    )
-    test_dataset = MultimodalIntentDataset(
-        split="test",
-        config_path=config_path,
-        sample_index_path=sample_index_path,
-        validate_files=validate_files,
-        load_features=load_features,
-        feature_config=feature_config,
-    )
-
-    pin_memory = bool(torch.cuda.is_available())
-    generator = make_generator(seed)
-    train_loader = DataLoader(
-        train_dataset,
-        batch_size=batch_size,
-        shuffle=True,
-        num_workers=num_workers,
-        pin_memory=pin_memory,
-        worker_init_fn=seed_worker if num_workers > 0 else None,
-        generator=generator,
-    )
-    test_loader = DataLoader(
-        test_dataset,
-        batch_size=batch_size,
-        shuffle=False,
-        num_workers=num_workers,
-        pin_memory=pin_memory,
-        worker_init_fn=seed_worker if num_workers > 0 else None,
-    )
-    return train_loader, test_loader
-
-
-def count_labels(labels: Iterable[int]) -> dict[int, int]:
-    """Return sorted label counts for quick diagnostics."""
-    counts: dict[int, int] = {}
-    for label in labels:
-        counts[int(label)] = counts.get(int(label), 0) + 1
-    return dict(sorted(counts.items()))
+    @classmethod
+    def from_metadata_samples(
+        cls,
+        samples: Sequence[dict[str, Any]],
+        transform=None,
+        config: dict[str, Any] | None = None,
+        use_cache: bool = True,
+        rebuild_cache: bool = False,
+    ) -> "MultimodalIntentDataset":
+        """Load features from sample metadata and return an item-level Dataset."""
+        active_config = config or load_config()
+        bundles = [
+            load_or_build_sample_features(
+                sample,
+                config=active_config,
+                use_cache=use_cache,
+                rebuild_cache=rebuild_cache,
+            )
+            for sample in samples
+        ]
+        return cls.from_feature_bundles(
+            bundles,
+            metadata=samples,
+            transform=transform,
+            config=active_config,
+        )
