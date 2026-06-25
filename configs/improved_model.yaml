@@ -1,0 +1,95 @@
+experiment:
+  name: improved_model
+  model_type: ReliabilityGatedMultimodalModel
+  seed: 42
+
+model:
+  improved:
+    model_dim: 128
+    num_heads: 4
+    depth: 2
+    dropout: 0.1
+    ff_multiplier: 4
+    num_intent_classes: 6
+    num_scene_classes: 2
+    num_joint_classes: 12
+    use_reliability_gate: true
+    use_modality_mask: true
+    gate_bias_init: 2.0
+
+training:
+  epochs: 5
+  lr: 0.001
+  modality_dropout:
+    enabled: true
+    drop_prob: 0.3
+    max_drop_modalities: 2
+    min_keep_modalities: 1
+    modalities:
+      - imu
+      - gesture
+      - audio
+      - text
+      - scene
+
+evaluation:
+  mode: all
+  run_clean: true
+  run_noise: true
+  run_missing: true
+  run_ablation: true
+
+noise:
+  ratios:
+    - 0.2
+    - 0.4
+    - 0.6
+  modalities:
+    - imu
+    - gesture
+    - audio
+    - text
+    - scene
+
+missing_modality:
+  single:
+    - [imu]
+    - [gesture]
+    - [audio]
+    - [text]
+    - [scene]
+  pairs:
+    - [imu, gesture]
+    - [imu, audio]
+    - [imu, text]
+    - [imu, scene]
+    - [gesture, audio]
+    - [gesture, text]
+    - [gesture, scene]
+    - [audio, text]
+    - [audio, scene]
+    - [text, scene]
+
+ablation:
+  variants:
+    - name: improved_gate_only
+      use_reliability_gate: true
+      use_modality_dropout: false
+    - name: improved_dropout_only
+      use_reliability_gate: false
+      use_modality_dropout: true
+    - name: improved_gate_dropout
+      use_reliability_gate: true
+      use_modality_dropout: true
+
+outputs:
+  metrics_prefix: improved
+  logs_prefix: improved
+  predictions_prefix: improved
+  checkpoints_prefix: improved
+  figures_prefix: improved
+
+notes:
+  - This config is only for improved-model experiments.
+  - Formal dataset paths, modality dimensions, output directories, and train/test users are read from configs/default.yaml.
+  - Do not use smoke-test, max-samples, or short-run results as official report metrics.
