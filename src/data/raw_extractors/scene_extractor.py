@@ -39,7 +39,7 @@ def _avi_start_utc(avi_path: Path) -> datetime:
 
 def _read_scene_frame(video_path: Path, timestamp_value: str):
     cv2 = optional_import("cv2", "opencv-python-headless")
-    Image = __import__("PIL.Image", fromlist=["Image"]).Image
+    Image = __import__("PIL.Image", fromlist=["Image"])
     utc_target = _parse_utc_timestamp(timestamp_value)
     offset_ms = (utc_target - _avi_start_utc(video_path)).total_seconds() * 1000.0
 

@@ -148,7 +148,7 @@ class _GestureBackbone:
 
         self.np = optional_import("numpy")
         self.cv2 = optional_import("cv2", "opencv-python-headless")
-        self.Image = __import__("PIL.Image", fromlist=["Image"]).Image
+        self.Image = __import__("PIL.Image", fromlist=["Image"])
         self.torch = torch
         self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
         self.hands = mediapipe.solutions.hands.Hands(
