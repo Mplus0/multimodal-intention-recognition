@@ -374,3 +374,34 @@ python experiments/run_improved_model.py --config configs/improved_model.yaml --
 - 本机缺少 `torch`、`yaml` 等依赖，无法执行运行级 smoke test。
 - 需要上传课程服务器执行上述 smoke test 和真实数据短跑。
 - 服务器验证通过后，才能进行 clean、noise、missing 和 ablation 的全量 improved 实验。
+
+## 2026-06-25 - 服务器验证反馈修复：improved_transforms 直接运行导入路径
+
+### Contributor
+- Name: Codex
+- Role: Code
+
+### Files Changed
+- `src/data/improved_transforms.py`：补充直接运行脚本时的项目根目录 `sys.path` 注入逻辑，使 `python src/data/improved_transforms.py` 能正确导入 `src.data.transforms`。
+- `docs/collaboration_log.md`：追加本次服务器反馈修复记录。
+
+### Purpose
+服务器运行 `python src/data/improved_transforms.py` 时出现 `ModuleNotFoundError: No module named 'src'`。原因是该文件作为脚本直接执行时，Python 默认搜索路径不包含项目根目录。本次修复与项目中其他可直接运行文件的处理方式保持一致。
+
+### How to Run
+```bash
+python src/data/improved_transforms.py
+```
+
+### Output Files
+- 本次修复不生成正式实验输出文件。
+
+### Current Status
+- Completed; waiting for server re-test
+
+### Notes for Report Writer
+本次属于工程入口修复，不涉及模型方法或实验结果变化。
+
+### Remaining Problems
+- 需要将修复后的 `src/data/improved_transforms.py` 上传服务器后重新执行 smoke test。
+- 其他 improved runner 命令仍需要服务器继续验证。
