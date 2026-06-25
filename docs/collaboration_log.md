@@ -436,3 +436,36 @@ python experiments/run_improved_model.py --config configs/improved_model.yaml --
 ### Remaining Problems
 - 需要将修复后的 `src/data/improved_transforms.py` 上传服务器后重新执行 improved clean smoke test。
 - 服务器通过 smoke test 后，再进行真实数据短跑。
+
+## 2026-06-25 - 更新全项目运行与截图保存文档
+
+### Contributor
+- Name: Codex
+- Role: Report / Experiment
+
+### Files Changed
+- `MEMBER_A_FORMAL_RUN_PLAN.md`：重写为全项目服务器运行手册，覆盖环境检查、数据与模型路径检查、样本索引、端到端特征构建、clean baseline、noise baseline、missing baseline、improved model、输出检查、终端日志保存和截图清单。
+- `docs/collaboration_log.md`：追加本次运行文档更新记录。
+
+### Purpose
+将原先只覆盖成员 A clean 主线的运行方案扩展为完整课程项目全流程运行文档，方便服务器正式运行、报告截图收集、终端日志保存和最终结果核查。
+
+### How to Run
+本次任务只更新 Markdown 文档，不运行训练或测试命令。正式命令详见：
+```bash
+less MEMBER_A_FORMAL_RUN_PLAN.md
+```
+
+### Output Files
+- `MEMBER_A_FORMAL_RUN_PLAN.md`
+- `docs/collaboration_log.md`
+
+### Current Status
+- Completed
+
+### Notes for Report Writer
+报告撰写时可依据 `MEMBER_A_FORMAL_RUN_PLAN.md` 的截图清单检查证据是否齐全。正式实验指标仍必须来自完整数据运行后的 `results/metrics/*.csv`。
+
+### Remaining Problems
+- 需要按该文档在服务器上完成全量 clean、noise、missing 和 improved 实验。
+- 需要将最终截图保存到 `report/screenshots/`，终端文本保存到 `report/terminal_logs/`。
