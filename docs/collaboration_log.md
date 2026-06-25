@@ -469,3 +469,35 @@ less MEMBER_A_FORMAL_RUN_PLAN.md
 ### Remaining Problems
 - 需要按该文档在服务器上完成全量 clean、noise、missing 和 improved 实验。
 - 需要将最终截图保存到 `report/screenshots/`，终端文本保存到 `report/terminal_logs/`。
+
+## 2026-06-25 - 同步更新中英文 README
+
+### Contributor
+- Name: Codex
+- Role: Report / Documentation
+
+### Files Changed
+- `README.md`：重写英文 README，整理当前仓库结构、已实现代码能力、运行入口、输出目录、论文编写材料和当前无正式结果文件的状态说明。
+- `README_CHINESE.md`：同步重写中文 README，与英文版保持内容一致。
+- `docs/collaboration_log.md`：追加本次 README 更新记录。
+
+### Purpose
+根据当前项目状态更新仓库首页说明，方便团队成员和报告撰写者快速理解仓库内容、运行入口、实验分组、输出位置和当前“代码已可运行但尚未正式训练、未放置结果文件”的状态。
+
+### How to Run
+本次任务只更新文档，不运行训练或测试命令。
+
+### Output Files
+- `README.md`
+- `README_CHINESE.md`
+- `docs/collaboration_log.md`
+
+### Current Status
+- Completed
+
+### Notes for Report Writer
+README 中已经整理了论文/报告编写可参考的文件列表、建议报告结构和正式指标来源说明。报告中的正式实验结果仍需来自服务器全量运行后的 `results/metrics/*.csv`。
+
+### Remaining Problems
+- 当前仓库仍未包含正式训练结果、checkpoint 或最终图表。
+- 需要后续完成服务器全量训练，并将可提交的轻量结果表格或图表按课程要求整理。
