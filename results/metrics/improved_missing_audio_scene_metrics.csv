@@ -1,0 +1,2 @@
+experiment_name,model_type,accuracy,macro_f1,weighted_f1,loss,scene_accuracy,joint_accuracy,training_time,avg_test_time_per_sample,status,notes
+improved_missing_audio_scene,ReliabilityGatedMultimodalModel,0.9798387096774194,0.9788864551980695,0.9796774641786458,0.10112439254198664,0.41397849462365593,0.0,1.5725,0.000169,completed,

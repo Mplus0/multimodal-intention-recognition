@@ -1,0 +1,2 @@
+experiment_name,model_type,accuracy,macro_f1,weighted_f1,loss,scene_accuracy,joint_accuracy,training_time,avg_test_time_per_sample,status,notes
+clean_baseline_test,FormalMultimodalBaseline,0.9879032258064516,0.9874005883439175,0.9878196274287827,0.07383012060596737,0.5309139784946236,0.0,,0.001102,completed,

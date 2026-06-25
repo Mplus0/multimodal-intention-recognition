@@ -1,0 +1,8 @@
+2026-06-25 22:03:17 | INFO | modal_noise_baseline_text_60 | seed=42 cuda_available=True
+2026-06-25 22:03:18 | INFO | modal_noise_baseline_text_60 | sample_index={'sample_count': 39, 'split_counts': {'train': 26, 'test': 13}, 'user_counts': {'user_A': 13, 'user_B': 13, 'user_C': 13}, 'intent_counts': {'menu': 6, 'select': 8, 'cancel': 6, 'brush': 6, 'magnify': 6, 'narrow': 7}}
+2026-06-25 22:03:19 | INFO | modal_noise_baseline_text_60 | epoch=1 train_loss=0.8314 train_acc=0.7924 val_loss=0.2830 val_acc=0.9463 val_macro_f1=0.7851
+2026-06-25 22:03:20 | INFO | modal_noise_baseline_text_60 | epoch=2 train_loss=0.0987 train_acc=0.9821 val_loss=0.2614 val_acc=0.9362 val_macro_f1=0.7906
+2026-06-25 22:03:21 | INFO | modal_noise_baseline_text_60 | epoch=3 train_loss=0.0346 train_acc=0.9937 val_loss=0.2618 val_acc=0.9463 val_macro_f1=0.9429
+2026-06-25 22:03:22 | INFO | modal_noise_baseline_text_60 | epoch=4 train_loss=0.0219 train_acc=0.9926 val_loss=0.3147 val_acc=0.9362 val_macro_f1=0.9321
+2026-06-25 22:03:23 | INFO | modal_noise_baseline_text_60 | epoch=5 train_loss=0.0165 train_acc=0.9968 val_loss=0.2421 val_acc=0.9564 val_macro_f1=0.7930
+2026-06-25 22:03:23 | INFO | modal_noise_baseline_text_60 | final_metrics={'accuracy': 0.9865591397849462, 'macro_f1': 0.9859575609088123, 'weighted_f1': 0.9864697992826703, 'loss': 0.07322975969122301, 'scene_accuracy': 0.4986559139784946, 'joint_accuracy': 0.0, 'experiment_name': 'modal_noise_baseline_text_60', 'model_type': 'baseline', 'training_time': 4.6954, 'avg_test_time_per_sample': 0.000263, 'status': 'completed', 'notes': '', 'target_modality': 'text', 'noise_ratio': 0.6, 'missing_modalities': 'none'}

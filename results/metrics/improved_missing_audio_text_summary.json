@@ -1,0 +1,35 @@
+{
+  "metrics": {
+    "accuracy": 0.21908602150537634,
+    "macro_f1": 0.1848219484993371,
+    "weighted_f1": 0.19162990835098556,
+    "loss": 4.2506040398792555,
+    "scene_accuracy": 0.4274193548387097,
+    "joint_accuracy": 0.0,
+    "experiment_name": "improved_missing_audio_text",
+    "model_type": "ReliabilityGatedMultimodalModel",
+    "training_time": 1.5655,
+    "avg_test_time_per_sample": 0.000165,
+    "status": "completed",
+    "notes": "",
+    "use_reliability_gate": true,
+    "use_modality_dropout": true,
+    "target_modality": "none",
+    "noise_ratio": "none",
+    "missing_modalities": "audio+text",
+    "ablation_variant": "none"
+  },
+  "epochs": 5,
+  "smoke_test": false,
+  "missing_items_count": 0,
+  "output_paths": {
+    "best": "/share/home/tm1078571822880000/a1086482920/Mplus0/multimodal-intention-recognition/results/checkpoints/improved_missing_audio_text_best.pt",
+    "final": "/share/home/tm1078571822880000/a1086482920/Mplus0/multimodal-intention-recognition/results/checkpoints/improved_missing_audio_text_final.pt",
+    "metrics": "/share/home/tm1078571822880000/a1086482920/Mplus0/multimodal-intention-recognition/results/metrics/improved_missing_audio_text_metrics.csv",
+    "summary": "/share/home/tm1078571822880000/a1086482920/Mplus0/multimodal-intention-recognition/results/metrics/improved_missing_audio_text_summary.json",
+    "predictions": "/share/home/tm1078571822880000/a1086482920/Mplus0/multimodal-intention-recognition/results/predictions/improved_missing_audio_text_predictions.csv",
+    "log": "/share/home/tm1078571822880000/a1086482920/Mplus0/multimodal-intention-recognition/results/logs/improved_missing_audio_text.log",
+    "loss_curve": "/share/home/tm1078571822880000/a1086482920/Mplus0/multimodal-intention-recognition/figures/improved_missing_audio_text_loss_curve.png",
+    "confusion_matrix": "/share/home/tm1078571822880000/a1086482920/Mplus0/multimodal-intention-recognition/figures/improved_missing_audio_text_confusion_matrix.png"
+  }
+}

@@ -501,3 +501,35 @@ README 中已经整理了论文/报告编写可参考的文件列表、建议报
 ### Remaining Problems
 - 当前仓库仍未包含正式训练结果、checkpoint 或最终图表。
 - 需要后续完成服务器全量训练，并将可提交的轻量结果表格或图表按课程要求整理。
+
+## 2026-06-25 - 放行轻量训练结果文件
+
+### Contributor
+- Name: Codex
+- Role: Documentation / Repository Maintenance
+
+### Files Changed
+- `.gitignore`：调整结果文件忽略规则，允许提交轻量级训练结果和报告证据文件，包括 `results/metrics/*.csv`、`results/metrics/*.json`、`results/logs/*.log`、`results/predictions/*.csv`、`figures/*.png`、`report/screenshots/*.png` 和 `report/terminal_logs/*.log`。
+- `docs/collaboration_log.md`：追加本次仓库维护记录。
+
+### Purpose
+当前 GitHub 仓库仅用于团队内部共创，需要提交可参考的训练结果文件，便于成员查看指标、日志、预测结果、截图和图表。本次修改只放行轻量级结果文件，仍然忽略原始数据、本地大模型、feature cache、checkpoint 和媒体文件。
+
+### How to Run
+无需运行训练命令。修改后可用以下命令检查待提交文件：
+```bash
+git status --short
+git check-ignore -v results/metrics/*.csv results/logs/*.log results/predictions/*.csv
+```
+
+### Output Files
+- 本次任务不生成实验输出文件。
+
+### Current Status
+- Completed
+
+### Notes for Report Writer
+放行后的 metrics、logs、predictions、figures 和 report evidence 文件可作为团队报告撰写参考材料。正式报告仍应优先引用 `results/metrics/*.csv` 中的完整数据运行结果。
+
+### Remaining Problems
+- `results/checkpoints/**`、`*.pt`、`data/raw/**`、`data/processed/**` 等大文件仍被忽略，不会进入 GitHub。

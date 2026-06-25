@@ -1,0 +1,26 @@
+{
+  "metrics": {
+    "accuracy": 0.9879032258064516,
+    "macro_f1": 0.9874005883439175,
+    "weighted_f1": 0.9878196274287827,
+    "loss": 0.07383012060596737,
+    "scene_accuracy": 0.5309139784946236,
+    "joint_accuracy": 0.0,
+    "experiment_name": "clean_baseline_test",
+    "model_type": "FormalMultimodalBaseline",
+    "training_time": "",
+    "avg_test_time_per_sample": 0.001102,
+    "status": "completed",
+    "notes": ""
+  },
+  "checkpoint": "results/checkpoints/best.pt",
+  "smoke_test": false,
+  "missing_items_count": 0,
+  "output_paths": {
+    "metrics": "/share/home/tm1078571822880000/a1086482920/Mplus0/multimodal-intention-recognition/results/metrics/clean_baseline_test_metrics.csv",
+    "summary": "/share/home/tm1078571822880000/a1086482920/Mplus0/multimodal-intention-recognition/results/metrics/clean_baseline_test_summary.json",
+    "predictions": "/share/home/tm1078571822880000/a1086482920/Mplus0/multimodal-intention-recognition/results/predictions/clean_baseline_predictions.csv",
+    "log": "/share/home/tm1078571822880000/a1086482920/Mplus0/multimodal-intention-recognition/results/logs/clean_baseline.log",
+    "confusion_matrix": "/share/home/tm1078571822880000/a1086482920/Mplus0/multimodal-intention-recognition/figures/confusion_matrix.png"
+  }
+}

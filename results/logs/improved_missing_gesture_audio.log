@@ -1,0 +1,8 @@
+2026-06-25 22:28:33 | INFO | improved_missing_gesture_audio | seed=42 cuda_available=True
+2026-06-25 22:28:33 | INFO | improved_missing_gesture_audio | indexed_sample_count=39 missing_items_count=0
+2026-06-25 22:28:34 | INFO | improved_missing_gesture_audio | epoch=1 train_loss=0.8391 train_acc=0.7629 val_loss=0.2584 val_acc=0.9597 val_macro_f1=0.9564
+2026-06-25 22:28:34 | INFO | improved_missing_gesture_audio | epoch=2 train_loss=0.2084 train_acc=0.9294 val_loss=0.1968 val_acc=0.9497 val_macro_f1=0.7920
+2026-06-25 22:28:34 | INFO | improved_missing_gesture_audio | epoch=3 train_loss=0.0760 train_acc=0.9800 val_loss=0.1939 val_acc=0.9497 val_macro_f1=0.7997
+2026-06-25 22:28:35 | INFO | improved_missing_gesture_audio | epoch=4 train_loss=0.0562 train_acc=0.9810 val_loss=0.1950 val_acc=0.9463 val_macro_f1=0.9394
+2026-06-25 22:28:36 | INFO | improved_missing_gesture_audio | epoch=5 train_loss=0.0376 train_acc=0.9874 val_loss=0.1926 val_acc=0.9597 val_macro_f1=0.8001
+2026-06-25 22:28:36 | INFO | improved_missing_gesture_audio | final_metrics={'accuracy': 0.9838709677419355, 'macro_f1': 0.983503201685394, 'weighted_f1': 0.9837565135111681, 'loss': 0.05963406456454146, 'scene_accuracy': 0.39919354838709675, 'joint_accuracy': 0.0, 'experiment_name': 'improved_missing_gesture_audio', 'model_type': 'ReliabilityGatedMultimodalModel', 'training_time': 2.5113, 'avg_test_time_per_sample': 0.00019, 'status': 'completed', 'notes': '', 'use_reliability_gate': True, 'use_modality_dropout': True, 'target_modality': 'none', 'noise_ratio': 'none', 'missing_modalities': 'gesture+audio', 'ablation_variant': 'none'}

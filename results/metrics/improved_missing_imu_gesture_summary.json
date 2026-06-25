@@ -1,0 +1,35 @@
+{
+  "metrics": {
+    "accuracy": 0.967741935483871,
+    "macro_f1": 0.9653195181503788,
+    "weighted_f1": 0.9669518703948194,
+    "loss": 0.10833927424203965,
+    "scene_accuracy": 0.44086021505376344,
+    "joint_accuracy": 0.0,
+    "experiment_name": "improved_missing_imu_gesture",
+    "model_type": "ReliabilityGatedMultimodalModel",
+    "training_time": 4.0642,
+    "avg_test_time_per_sample": 0.000191,
+    "status": "completed",
+    "notes": "",
+    "use_reliability_gate": true,
+    "use_modality_dropout": true,
+    "target_modality": "none",
+    "noise_ratio": "none",
+    "missing_modalities": "imu+gesture",
+    "ablation_variant": "none"
+  },
+  "epochs": 5,
+  "smoke_test": false,
+  "missing_items_count": 0,
+  "output_paths": {
+    "best": "/share/home/tm1078571822880000/a1086482920/Mplus0/multimodal-intention-recognition/results/checkpoints/improved_missing_imu_gesture_best.pt",
+    "final": "/share/home/tm1078571822880000/a1086482920/Mplus0/multimodal-intention-recognition/results/checkpoints/improved_missing_imu_gesture_final.pt",
+    "metrics": "/share/home/tm1078571822880000/a1086482920/Mplus0/multimodal-intention-recognition/results/metrics/improved_missing_imu_gesture_metrics.csv",
+    "summary": "/share/home/tm1078571822880000/a1086482920/Mplus0/multimodal-intention-recognition/results/metrics/improved_missing_imu_gesture_summary.json",
+    "predictions": "/share/home/tm1078571822880000/a1086482920/Mplus0/multimodal-intention-recognition/results/predictions/improved_missing_imu_gesture_predictions.csv",
+    "log": "/share/home/tm1078571822880000/a1086482920/Mplus0/multimodal-intention-recognition/results/logs/improved_missing_imu_gesture.log",
+    "loss_curve": "/share/home/tm1078571822880000/a1086482920/Mplus0/multimodal-intention-recognition/figures/improved_missing_imu_gesture_loss_curve.png",
+    "confusion_matrix": "/share/home/tm1078571822880000/a1086482920/Mplus0/multimodal-intention-recognition/figures/improved_missing_imu_gesture_confusion_matrix.png"
+  }
+}

@@ -1,0 +1,2 @@
+experiment_name,model_type,accuracy,macro_f1,weighted_f1,loss,scene_accuracy,joint_accuracy,training_time,avg_test_time_per_sample,status,notes
+improved_missing_text_scene,ReliabilityGatedMultimodalModel,0.16666666666666666,0.12441411588384621,0.13373594291952526,4.039445513038225,0.396505376344086,0.0,1.5987,0.000184,completed,

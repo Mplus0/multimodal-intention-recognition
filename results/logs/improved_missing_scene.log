@@ -1,0 +1,8 @@
+2026-06-25 22:28:07 | INFO | improved_missing_scene | seed=42 cuda_available=True
+2026-06-25 22:28:08 | INFO | improved_missing_scene | indexed_sample_count=39 missing_items_count=0
+2026-06-25 22:28:08 | INFO | improved_missing_scene | epoch=1 train_loss=0.9032 train_acc=0.7534 val_loss=0.3322 val_acc=0.9497 val_macro_f1=0.7886
+2026-06-25 22:28:08 | INFO | improved_missing_scene | epoch=2 train_loss=0.2191 train_acc=0.9368 val_loss=0.2343 val_acc=0.9396 val_macro_f1=0.7913
+2026-06-25 22:28:09 | INFO | improved_missing_scene | epoch=3 train_loss=0.1486 train_acc=0.9589 val_loss=0.3358 val_acc=0.9262 val_macro_f1=0.7740
+2026-06-25 22:28:09 | INFO | improved_missing_scene | epoch=4 train_loss=0.0911 train_acc=0.9715 val_loss=0.2638 val_acc=0.9396 val_macro_f1=0.9422
+2026-06-25 22:28:09 | INFO | improved_missing_scene | epoch=5 train_loss=0.0499 train_acc=0.9842 val_loss=0.2843 val_acc=0.9295 val_macro_f1=0.7671
+2026-06-25 22:28:10 | INFO | improved_missing_scene | final_metrics={'accuracy': 0.9717741935483871, 'macro_f1': 0.9701722613103333, 'weighted_f1': 0.9713333398627064, 'loss': 0.11511424022616558, 'scene_accuracy': 0.49193548387096775, 'joint_accuracy': 0.0, 'experiment_name': 'improved_missing_scene', 'model_type': 'ReliabilityGatedMultimodalModel', 'training_time': 1.5938, 'avg_test_time_per_sample': 0.000171, 'status': 'completed', 'notes': '', 'use_reliability_gate': True, 'use_modality_dropout': True, 'target_modality': 'none', 'noise_ratio': 'none', 'missing_modalities': 'scene', 'ablation_variant': 'none'}

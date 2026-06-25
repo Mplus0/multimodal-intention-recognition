@@ -1,0 +1,2 @@
+experiment_name,model_type,accuracy,macro_f1,weighted_f1,loss,scene_accuracy,joint_accuracy,training_time,avg_test_time_per_sample,status,notes
+missing_modality_baseline_gesture_scene,baseline,0.9852150537634409,0.9845263371725627,0.985165268726561,0.05267423297208484,0.5255376344086021,0.0,3.1574,0.000194,completed,

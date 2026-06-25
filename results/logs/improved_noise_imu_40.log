@@ -1,0 +1,8 @@
+2026-06-25 22:19:40 | INFO | improved_noise_imu_40 | seed=42 cuda_available=True
+2026-06-25 22:19:40 | INFO | improved_noise_imu_40 | indexed_sample_count=39 missing_items_count=0
+2026-06-25 22:19:41 | INFO | improved_noise_imu_40 | epoch=1 train_loss=0.8985 train_acc=0.7545 val_loss=0.3322 val_acc=0.9497 val_macro_f1=0.7879
+2026-06-25 22:19:43 | INFO | improved_noise_imu_40 | epoch=2 train_loss=0.1718 train_acc=0.9526 val_loss=0.2159 val_acc=0.9564 val_macro_f1=0.7991
+2026-06-25 22:19:44 | INFO | improved_noise_imu_40 | epoch=3 train_loss=0.0659 train_acc=0.9842 val_loss=0.2537 val_acc=0.9530 val_macro_f1=0.7978
+2026-06-25 22:19:45 | INFO | improved_noise_imu_40 | epoch=4 train_loss=0.0185 train_acc=0.9968 val_loss=0.2156 val_acc=0.9497 val_macro_f1=0.7908
+2026-06-25 22:19:46 | INFO | improved_noise_imu_40 | epoch=5 train_loss=0.0092 train_acc=0.9979 val_loss=0.2365 val_acc=0.9530 val_macro_f1=0.9540
+2026-06-25 22:19:46 | INFO | improved_noise_imu_40 | final_metrics={'accuracy': 0.9811827956989247, 'macro_f1': 0.9800911545327652, 'weighted_f1': 0.9809965849665222, 'loss': 0.09308292193999214, 'scene_accuracy': 0.4731182795698925, 'joint_accuracy': 0.0, 'experiment_name': 'improved_noise_imu_40', 'model_type': 'ReliabilityGatedMultimodalModel', 'training_time': 5.0883, 'avg_test_time_per_sample': 0.000253, 'status': 'completed', 'notes': '', 'use_reliability_gate': True, 'use_modality_dropout': True, 'target_modality': 'imu', 'noise_ratio': 0.4, 'missing_modalities': 'none', 'ablation_variant': 'none'}

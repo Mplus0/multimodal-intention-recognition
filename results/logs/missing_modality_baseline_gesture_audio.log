@@ -1,0 +1,8 @@
+2026-06-25 22:08:44 | INFO | missing_modality_baseline_gesture_audio | seed=42 cuda_available=True
+2026-06-25 22:08:45 | INFO | missing_modality_baseline_gesture_audio | sample_index={'sample_count': 39, 'split_counts': {'train': 26, 'test': 13}, 'user_counts': {'user_A': 13, 'user_B': 13, 'user_C': 13}, 'intent_counts': {'menu': 6, 'select': 8, 'cancel': 6, 'brush': 6, 'magnify': 6, 'narrow': 7}}
+2026-06-25 22:08:46 | INFO | missing_modality_baseline_gesture_audio | epoch=1 train_loss=0.8131 train_acc=0.7861 val_loss=0.2440 val_acc=0.9463 val_macro_f1=0.7854
+2026-06-25 22:08:46 | INFO | missing_modality_baseline_gesture_audio | epoch=2 train_loss=0.1196 train_acc=0.9705 val_loss=0.2821 val_acc=0.9128 val_macro_f1=0.7815
+2026-06-25 22:08:47 | INFO | missing_modality_baseline_gesture_audio | epoch=3 train_loss=0.0347 train_acc=0.9926 val_loss=0.2306 val_acc=0.9530 val_macro_f1=0.9515
+2026-06-25 22:08:47 | INFO | missing_modality_baseline_gesture_audio | epoch=4 train_loss=0.0211 train_acc=0.9947 val_loss=0.2188 val_acc=0.9530 val_macro_f1=0.9431
+2026-06-25 22:08:48 | INFO | missing_modality_baseline_gesture_audio | epoch=5 train_loss=0.0104 train_acc=0.9989 val_loss=0.2267 val_acc=0.9564 val_macro_f1=0.9555
+2026-06-25 22:08:49 | INFO | missing_modality_baseline_gesture_audio | final_metrics={'accuracy': 0.9650537634408602, 'macro_f1': 0.9619162772436284, 'weighted_f1': 0.9641676377709175, 'loss': 0.13513232109647605, 'scene_accuracy': 0.532258064516129, 'joint_accuracy': 0.0, 'experiment_name': 'missing_modality_baseline_gesture_audio', 'model_type': 'baseline', 'training_time': 3.08, 'avg_test_time_per_sample': 0.000173, 'status': 'completed', 'notes': '', 'target_modality': 'none', 'noise_ratio': 'none', 'missing_modalities': 'gesture+audio'}

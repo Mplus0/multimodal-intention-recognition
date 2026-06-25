@@ -1,0 +1,2 @@
+experiment_name,model_type,accuracy,macro_f1,weighted_f1,loss,scene_accuracy,joint_accuracy,training_time,avg_test_time_per_sample,status,notes
+improved_noise_scene_20,ReliabilityGatedMultimodalModel,0.9825268817204301,0.9815802876941597,0.9823902176905172,0.0912797592970873,0.46102150537634407,0.0,5.157,0.000251,completed,

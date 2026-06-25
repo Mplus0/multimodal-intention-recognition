@@ -1,0 +1,8 @@
+2026-06-25 22:09:02 | INFO | missing_modality_baseline_audio_scene | seed=42 cuda_available=True
+2026-06-25 22:09:03 | INFO | missing_modality_baseline_audio_scene | sample_index={'sample_count': 39, 'split_counts': {'train': 26, 'test': 13}, 'user_counts': {'user_A': 13, 'user_B': 13, 'user_C': 13}, 'intent_counts': {'menu': 6, 'select': 8, 'cancel': 6, 'brush': 6, 'magnify': 6, 'narrow': 7}}
+2026-06-25 22:09:04 | INFO | missing_modality_baseline_audio_scene | epoch=1 train_loss=0.8135 train_acc=0.8030 val_loss=0.2859 val_acc=0.9396 val_macro_f1=0.7785
+2026-06-25 22:09:04 | INFO | missing_modality_baseline_audio_scene | epoch=2 train_loss=0.1088 train_acc=0.9789 val_loss=0.2132 val_acc=0.9564 val_macro_f1=0.8009
+2026-06-25 22:09:05 | INFO | missing_modality_baseline_audio_scene | epoch=3 train_loss=0.0557 train_acc=0.9863 val_loss=0.3180 val_acc=0.9463 val_macro_f1=0.9446
+2026-06-25 22:09:06 | INFO | missing_modality_baseline_audio_scene | epoch=4 train_loss=0.0302 train_acc=0.9884 val_loss=0.2202 val_acc=0.9597 val_macro_f1=0.8006
+2026-06-25 22:09:06 | INFO | missing_modality_baseline_audio_scene | epoch=5 train_loss=0.0158 train_acc=0.9968 val_loss=0.3665 val_acc=0.9396 val_macro_f1=0.9321
+2026-06-25 22:09:07 | INFO | missing_modality_baseline_audio_scene | final_metrics={'accuracy': 0.9731182795698925, 'macro_f1': 0.9707464034397736, 'weighted_f1': 0.9724755403363067, 'loss': 0.13191753866211062, 'scene_accuracy': 0.478494623655914, 'joint_accuracy': 0.0, 'experiment_name': 'missing_modality_baseline_audio_scene', 'model_type': 'baseline', 'training_time': 3.3006, 'avg_test_time_per_sample': 0.000166, 'status': 'completed', 'notes': '', 'target_modality': 'none', 'noise_ratio': 'none', 'missing_modalities': 'audio+scene'}

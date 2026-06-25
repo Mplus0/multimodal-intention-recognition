@@ -1,0 +1,2 @@
+experiment_name,model_type,accuracy,macro_f1,weighted_f1,loss,scene_accuracy,joint_accuracy,training_time,avg_test_time_per_sample,status,notes
+missing_modality_baseline_audio,baseline,0.9717741935483871,0.969874882713576,0.971278200036465,0.09045554506241955,0.47580645161290325,0.0,3.0645,0.000179,completed,

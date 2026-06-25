@@ -1,0 +1,32 @@
+{
+  "metrics": {
+    "accuracy": 0.9852150537634409,
+    "macro_f1": 0.9844885235558793,
+    "weighted_f1": 0.9851008461606423,
+    "loss": 0.07620933034046683,
+    "scene_accuracy": 0.4959677419354839,
+    "joint_accuracy": 0.0,
+    "experiment_name": "modal_noise_baseline_scene_40",
+    "model_type": "baseline",
+    "training_time": 2.2018,
+    "avg_test_time_per_sample": 0.000218,
+    "status": "completed",
+    "notes": "",
+    "target_modality": "scene",
+    "noise_ratio": 0.4,
+    "missing_modalities": "none"
+  },
+  "epochs": 5,
+  "smoke_test": false,
+  "missing_items_count": 0,
+  "output_paths": {
+    "best": "/share/home/tm1078571822880000/a1086482920/Mplus0/multimodal-intention-recognition/results/checkpoints/modal_noise_baseline_scene_40_best.pt",
+    "final": "/share/home/tm1078571822880000/a1086482920/Mplus0/multimodal-intention-recognition/results/checkpoints/modal_noise_baseline_scene_40_final.pt",
+    "metrics": "/share/home/tm1078571822880000/a1086482920/Mplus0/multimodal-intention-recognition/results/metrics/modal_noise_baseline_scene_40_metrics.csv",
+    "summary": "/share/home/tm1078571822880000/a1086482920/Mplus0/multimodal-intention-recognition/results/metrics/modal_noise_baseline_scene_40_summary.json",
+    "predictions": "/share/home/tm1078571822880000/a1086482920/Mplus0/multimodal-intention-recognition/results/predictions/modal_noise_baseline_scene_40_predictions.csv",
+    "log": "/share/home/tm1078571822880000/a1086482920/Mplus0/multimodal-intention-recognition/results/logs/modal_noise_baseline_scene_40.log",
+    "loss_curve": "/share/home/tm1078571822880000/a1086482920/Mplus0/multimodal-intention-recognition/figures/modal_noise_baseline_scene_40_loss_curve.png",
+    "confusion_matrix": "/share/home/tm1078571822880000/a1086482920/Mplus0/multimodal-intention-recognition/figures/modal_noise_baseline_scene_40_confusion_matrix.png"
+  }
+}

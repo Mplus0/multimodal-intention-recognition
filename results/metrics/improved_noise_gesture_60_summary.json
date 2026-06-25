@@ -1,0 +1,35 @@
+{
+  "metrics": {
+    "accuracy": 0.9811827956989247,
+    "macro_f1": 0.9801150370796218,
+    "weighted_f1": 0.9810242597358411,
+    "loss": 0.09299374837929042,
+    "scene_accuracy": 0.4731182795698925,
+    "joint_accuracy": 0.0,
+    "experiment_name": "improved_noise_gesture_60",
+    "model_type": "ReliabilityGatedMultimodalModel",
+    "training_time": 6.3645,
+    "avg_test_time_per_sample": 0.000353,
+    "status": "completed",
+    "notes": "",
+    "use_reliability_gate": true,
+    "use_modality_dropout": true,
+    "target_modality": "gesture",
+    "noise_ratio": 0.6,
+    "missing_modalities": "none",
+    "ablation_variant": "none"
+  },
+  "epochs": 5,
+  "smoke_test": false,
+  "missing_items_count": 0,
+  "output_paths": {
+    "best": "/share/home/tm1078571822880000/a1086482920/Mplus0/multimodal-intention-recognition/results/checkpoints/improved_noise_gesture_60_best.pt",
+    "final": "/share/home/tm1078571822880000/a1086482920/Mplus0/multimodal-intention-recognition/results/checkpoints/improved_noise_gesture_60_final.pt",
+    "metrics": "/share/home/tm1078571822880000/a1086482920/Mplus0/multimodal-intention-recognition/results/metrics/improved_noise_gesture_60_metrics.csv",
+    "summary": "/share/home/tm1078571822880000/a1086482920/Mplus0/multimodal-intention-recognition/results/metrics/improved_noise_gesture_60_summary.json",
+    "predictions": "/share/home/tm1078571822880000/a1086482920/Mplus0/multimodal-intention-recognition/results/predictions/improved_noise_gesture_60_predictions.csv",
+    "log": "/share/home/tm1078571822880000/a1086482920/Mplus0/multimodal-intention-recognition/results/logs/improved_noise_gesture_60.log",
+    "loss_curve": "/share/home/tm1078571822880000/a1086482920/Mplus0/multimodal-intention-recognition/figures/improved_noise_gesture_60_loss_curve.png",
+    "confusion_matrix": "/share/home/tm1078571822880000/a1086482920/Mplus0/multimodal-intention-recognition/figures/improved_noise_gesture_60_confusion_matrix.png"
+  }
+}
