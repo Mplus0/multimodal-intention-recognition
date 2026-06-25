@@ -1,0 +1,35 @@
+{
+  "metrics": {
+    "accuracy": 0.9838709677419355,
+    "macro_f1": 0.983503201685394,
+    "weighted_f1": 0.9837565135111681,
+    "loss": 0.05963406456454146,
+    "scene_accuracy": 0.39919354838709675,
+    "joint_accuracy": 0.0,
+    "experiment_name": "improved_missing_gesture_audio",
+    "model_type": "ReliabilityGatedMultimodalModel",
+    "training_time": 2.5113,
+    "avg_test_time_per_sample": 0.00019,
+    "status": "completed",
+    "notes": "",
+    "use_reliability_gate": true,
+    "use_modality_dropout": true,
+    "target_modality": "none",
+    "noise_ratio": "none",
+    "missing_modalities": "gesture+audio",
+    "ablation_variant": "none"
+  },
+  "epochs": 5,
+  "smoke_test": false,
+  "missing_items_count": 0,
+  "output_paths": {
+    "best": "/share/home/tm1078571822880000/a1086482920/Mplus0/multimodal-intention-recognition/results/checkpoints/improved_missing_gesture_audio_best.pt",
+    "final": "/share/home/tm1078571822880000/a1086482920/Mplus0/multimodal-intention-recognition/results/checkpoints/improved_missing_gesture_audio_final.pt",
+    "metrics": "/share/home/tm1078571822880000/a1086482920/Mplus0/multimodal-intention-recognition/results/metrics/improved_missing_gesture_audio_metrics.csv",
+    "summary": "/share/home/tm1078571822880000/a1086482920/Mplus0/multimodal-intention-recognition/results/metrics/improved_missing_gesture_audio_summary.json",
+    "predictions": "/share/home/tm1078571822880000/a1086482920/Mplus0/multimodal-intention-recognition/results/predictions/improved_missing_gesture_audio_predictions.csv",
+    "log": "/share/home/tm1078571822880000/a1086482920/Mplus0/multimodal-intention-recognition/results/logs/improved_missing_gesture_audio.log",
+    "loss_curve": "/share/home/tm1078571822880000/a1086482920/Mplus0/multimodal-intention-recognition/figures/improved_missing_gesture_audio_loss_curve.png",
+    "confusion_matrix": "/share/home/tm1078571822880000/a1086482920/Mplus0/multimodal-intention-recognition/figures/improved_missing_gesture_audio_confusion_matrix.png"
+  }
+}

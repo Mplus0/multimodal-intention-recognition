@@ -1,0 +1,6 @@
+[actual_shapes]
+  imu: (26, 10, 12)
+  gesture: (26, 10, 768)
+  audio: (26, 10, 39)
+  text: (26, 10, 384)
+  scene: (26, 768)

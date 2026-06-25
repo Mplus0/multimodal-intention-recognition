@@ -1,0 +1,7 @@
+[random_modality_dropout_smoke_test]
+  dropped_modalities: audio
+  imu: mask=True feature_sum=120.0
+  gesture: mask=True feature_sum=7680.0
+  audio: mask=False feature_sum=0.0
+  text: mask=True feature_sum=3840.0
+  scene: mask=True feature_sum=768.0

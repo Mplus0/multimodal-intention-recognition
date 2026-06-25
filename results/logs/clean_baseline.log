@@ -1,0 +1,9 @@
+2026-06-25 21:51:16 | INFO | clean_baseline | seed=42 cuda_available=True
+2026-06-25 21:51:18 | INFO | clean_baseline | sample_index={'sample_count': 39, 'split_counts': {'train': 26, 'test': 13}, 'user_counts': {'user_A': 13, 'user_B': 13, 'user_C': 13}, 'intent_counts': {'menu': 6, 'select': 8, 'cancel': 6, 'brush': 6, 'magnify': 6, 'narrow': 7}}
+2026-06-25 21:51:25 | INFO | clean_baseline | epoch=1 train_loss=0.8310 train_acc=0.7935 val_loss=0.2825 val_acc=0.9463 val_macro_f1=0.7851
+2026-06-25 21:51:25 | INFO | clean_baseline | epoch=2 train_loss=0.0985 train_acc=0.9821 val_loss=0.2623 val_acc=0.9295 val_macro_f1=0.7867
+2026-06-25 21:51:26 | INFO | clean_baseline | epoch=3 train_loss=0.0344 train_acc=0.9937 val_loss=0.2599 val_acc=0.9463 val_macro_f1=0.9428
+2026-06-25 21:51:26 | INFO | clean_baseline | epoch=4 train_loss=0.0231 train_acc=0.9905 val_loss=0.3115 val_acc=0.9362 val_macro_f1=0.9321
+2026-06-25 21:51:27 | INFO | clean_baseline | epoch=5 train_loss=0.0166 train_acc=0.9958 val_loss=0.2368 val_acc=0.9497 val_macro_f1=0.7850
+2026-06-25 21:54:56 | INFO | clean_baseline_test | sample_index={'sample_count': 39, 'split_counts': {'train': 26, 'test': 13}, 'user_counts': {'user_A': 13, 'user_B': 13, 'user_C': 13}, 'intent_counts': {'menu': 6, 'select': 8, 'cancel': 6, 'brush': 6, 'magnify': 6, 'narrow': 7}}
+2026-06-25 21:54:57 | INFO | clean_baseline_test | test_metrics={'accuracy': 0.9879032258064516, 'macro_f1': 0.9874005883439175, 'weighted_f1': 0.9878196274287827, 'loss': 0.07383012060596737, 'scene_accuracy': 0.5309139784946236, 'joint_accuracy': 0.0, 'experiment_name': 'clean_baseline_test', 'model_type': 'FormalMultimodalBaseline', 'training_time': '', 'avg_test_time_per_sample': 0.001102, 'status': 'completed', 'notes': ''}

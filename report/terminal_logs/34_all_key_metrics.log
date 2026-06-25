@@ -1,0 +1,79 @@
+===== clean_baseline_test_metrics.csv =====
+experiment_name,model_type,accuracy,macro_f1,weighted_f1,loss,scene_accuracy,joint_accuracy,training_time,avg_test_time_per_sample,status,notes
+clean_baseline_test,FormalMultimodalBaseline,0.9879032258064516,0.9874005883439175,0.9878196274287827,0.07383012060596737,0.5309139784946236,0.0,,0.001102,completed,
+===== noise_baseline_metrics.csv =====
+experiment_name,model_type,accuracy,macro_f1,weighted_f1,loss,scene_accuracy,joint_accuracy,training_time,avg_test_time_per_sample,target_modality,noise_ratio,missing_modalities,status,notes
+modal_noise_baseline_imu_20,baseline,0.9838709677419355,0.9832662696791558,0.9837540506034471,0.07399101187825523,0.4946236559139785,0.0,4.524,0.000208,imu,0.2,none,completed,
+modal_noise_baseline_imu_40,baseline,0.9838709677419355,0.9832662696791558,0.9837540506034471,0.07392020204094468,0.4959677419354839,0.0,2.0992,0.000213,imu,0.4,none,completed,
+modal_noise_baseline_imu_60,baseline,0.9838709677419355,0.9832662696791558,0.9837540506034471,0.07815611651868269,0.4946236559139785,0.0,1.4406,0.000188,imu,0.6,none,completed,
+modal_noise_baseline_gesture_20,baseline,0.9838709677419355,0.9832662696791558,0.9837540506034471,0.07462220665027378,0.4959677419354839,0.0,2.0915,0.000292,gesture,0.2,none,completed,
+modal_noise_baseline_gesture_40,baseline,0.9838709677419355,0.9832662696791558,0.9837540506034471,0.0734108622956981,0.4932795698924731,0.0,2.2026,0.000309,gesture,0.4,none,completed,
+modal_noise_baseline_gesture_60,baseline,0.9838709677419355,0.9832662696791558,0.9837540506034471,0.07078711984939473,0.4959677419354839,0.0,2.2026,0.000309,gesture,0.6,none,completed,
+modal_noise_baseline_audio_20,baseline,0.9838709677419355,0.9832662696791558,0.9837540506034471,0.07485494541344784,0.49193548387096775,0.0,1.5267,0.000194,audio,0.2,none,completed,
+modal_noise_baseline_audio_40,baseline,0.9838709677419355,0.9832662696791558,0.9837540506034471,0.07502137101505713,0.4946236559139785,0.0,3.9976,0.000228,audio,0.4,none,completed,
+modal_noise_baseline_audio_60,baseline,0.9838709677419355,0.9832662696791558,0.9837540506034471,0.07468498233825929,0.49193548387096775,0.0,4.0912,0.000229,audio,0.6,none,completed,
+modal_noise_baseline_text_20,baseline,0.9838709677419355,0.9832662696791558,0.9837540506034471,0.07455827930681808,0.4959677419354839,0.0,4.7153,0.000255,text,0.2,none,completed,
+modal_noise_baseline_text_40,baseline,0.9838709677419355,0.9832662696791558,0.9837540506034471,0.06761018967916889,0.4959677419354839,0.0,4.7364,0.000262,text,0.4,none,completed,
+modal_noise_baseline_text_60,baseline,0.9865591397849462,0.9859575609088123,0.9864697992826703,0.07322975969122301,0.4986559139784946,0.0,4.6954,0.000263,text,0.6,none,completed,
+modal_noise_baseline_scene_20,baseline,0.9838709677419355,0.9832662696791558,0.9837540506034471,0.07508376079501324,0.4932795698924731,0.0,3.7174,0.000219,scene,0.2,none,completed,
+modal_noise_baseline_scene_40,baseline,0.9852150537634409,0.9844885235558793,0.9851008461606423,0.07620933034046683,0.4959677419354839,0.0,2.2018,0.000218,scene,0.4,none,completed,
+modal_noise_baseline_scene_60,baseline,0.9852150537634409,0.9847353070320887,0.9851230037254753,0.07791991601948456,0.49193548387096775,0.0,1.5268,0.000199,scene,0.6,none,completed,
+===== missing_modality_metrics.csv =====
+experiment_name,model_type,accuracy,macro_f1,weighted_f1,loss,scene_accuracy,joint_accuracy,training_time,avg_test_time_per_sample,target_modality,noise_ratio,missing_modalities,status,notes
+missing_modality_baseline_imu,baseline,0.9475806451612904,0.9432303811464231,0.9460615126975093,0.15487644517974508,0.5201612903225806,0.0,3.5541,0.000185,none,none,imu,completed,
+missing_modality_baseline_gesture,baseline,0.9825268817204301,0.9820306361052079,0.9824002073887215,0.09069844401912183,0.5389784946236559,0.0,2.9399,0.00018,none,none,gesture,completed,
+missing_modality_baseline_audio,baseline,0.9717741935483871,0.969874882713576,0.971278200036465,0.09045554506241955,0.47580645161290325,0.0,3.0645,0.000179,none,none,audio,completed,
+missing_modality_baseline_text,baseline,0.21370967741935484,0.17996790607528276,0.18461666123992324,3.9595778578071186,0.24327956989247312,0.0,3.1372,0.000178,none,none,text,completed,
+missing_modality_baseline_scene,baseline,0.956989247311828,0.9522612583816157,0.9552135394708516,0.13805061980320882,0.5336021505376344,0.0,3.1465,0.000188,none,none,scene,completed,
+missing_modality_baseline_imu_gesture,baseline,0.9838709677419355,0.9834888854607978,0.983760063022481,0.07313693138540432,0.5349462365591398,0.0,3.1808,0.000175,none,none,imu+gesture,completed,
+missing_modality_baseline_imu_audio,baseline,0.9838709677419355,0.982771803162362,0.983715416254788,0.07920179823513633,0.5336021505376344,0.0,3.215,0.000189,none,none,imu+audio,completed,
+missing_modality_baseline_imu_text,baseline,0.22580645161290322,0.18257048952315888,0.19169517064915625,3.594811137004565,0.34543010752688175,0.0,3.1188,0.000174,none,none,imu+text,completed,
+missing_modality_baseline_imu_scene,baseline,0.9260752688172043,0.9207969135983013,0.9262822905256582,0.19887415343715298,0.5336021505376344,0.0,3.2441,0.000175,none,none,imu+scene,completed,
+missing_modality_baseline_gesture_audio,baseline,0.9650537634408602,0.9619162772436284,0.9641676377709175,0.13513232109647605,0.532258064516129,0.0,3.08,0.000173,none,none,gesture+audio,completed,
+missing_modality_baseline_gesture_text,baseline,0.18951612903225806,0.14189626519580437,0.15055282809675555,4.330567636797505,0.4153225806451613,0.0,3.137,0.000174,none,none,gesture+text,completed,
+missing_modality_baseline_gesture_scene,baseline,0.9852150537634409,0.9845263371725627,0.985165268726561,0.05267423297208484,0.5255376344086021,0.0,3.1574,0.000194,none,none,gesture+scene,completed,
+missing_modality_baseline_audio_text,baseline,0.23387096774193547,0.18619167160498387,0.19417568874467436,4.055560373490857,0.33736559139784944,0.0,3.1557,0.000175,none,none,audio+text,completed,
+missing_modality_baseline_audio_scene,baseline,0.9731182795698925,0.9707464034397736,0.9724755403363067,0.13191753866211062,0.478494623655914,0.0,3.3006,0.000166,none,none,audio+scene,completed,
+missing_modality_baseline_text_scene,baseline,0.24059139784946237,0.258212377569813,0.2591067024363628,2.878968115775816,0.26344086021505375,0.0,3.153,0.000176,none,none,text+scene,completed,
+===== improved_clean_metrics.csv =====
+experiment_name,model_type,accuracy,macro_f1,weighted_f1,loss,scene_accuracy,joint_accuracy,training_time,avg_test_time_per_sample,status,notes
+improved_clean,ReliabilityGatedMultimodalModel,0.9811827956989247,0.9801150370796218,0.9810242597358411,0.09377767642839782,0.4596774193548387,0.0,4.617,0.0002,completed,
+===== improved_ablation_metrics.csv =====
+experiment_name,model_type,accuracy,macro_f1,weighted_f1,loss,scene_accuracy,joint_accuracy,training_time,avg_test_time_per_sample,target_modality,noise_ratio,missing_modalities,status,notes,use_reliability_gate,use_modality_dropout,ablation_variant
+improved_gate_only,ReliabilityGatedMultimodalModel,0.956989247311828,0.9539488888639598,0.9570682856147077,0.13573070997071843,0.4368279569892473,0.0,4.2711,0.000197,none,none,none,completed,,True,False,improved_gate_only
+improved_dropout_only,ReliabilityGatedMultimodalModel,0.9395161290322581,0.9351855307720959,0.9388892548650395,0.18821586317492908,0.4368279569892473,0.0,3.4571,0.000182,none,none,none,completed,,False,True,improved_dropout_only
+improved_gate_dropout,ReliabilityGatedMultimodalModel,0.9811827956989247,0.9801150370796218,0.9810242597358411,0.09377767642839782,0.4596774193548387,0.0,1.5231,0.000164,none,none,none,completed,,True,True,improved_gate_dropout
+===== improved_noise_metrics.csv =====
+experiment_name,model_type,accuracy,macro_f1,weighted_f1,loss,scene_accuracy,joint_accuracy,training_time,avg_test_time_per_sample,target_modality,noise_ratio,missing_modalities,status,notes,use_reliability_gate,use_modality_dropout,ablation_variant
+improved_noise_imu_20,ReliabilityGatedMultimodalModel,0.9798387096774194,0.9786486036326584,0.9796570458320916,0.09826475428417325,0.4596774193548387,0.0,5.5365,0.000253,imu,0.2,none,completed,,True,True,none
+improved_noise_imu_40,ReliabilityGatedMultimodalModel,0.9811827956989247,0.9800911545327652,0.9809965849665222,0.09308292193999214,0.4731182795698925,0.0,5.0883,0.000253,imu,0.4,none,completed,,True,True,none
+improved_noise_imu_60,ReliabilityGatedMultimodalModel,0.9825268817204301,0.9815802876941597,0.9823902176905172,0.08999761279111587,0.46236559139784944,0.0,5.0476,0.000246,imu,0.6,none,completed,,True,True,none
+improved_noise_gesture_20,ReliabilityGatedMultimodalModel,0.9811827956989247,0.9801150370796218,0.9810242597358411,0.09447958623810161,0.45698924731182794,0.0,6.3161,0.000449,gesture,0.2,none,completed,,True,True,none
+improved_noise_gesture_40,ReliabilityGatedMultimodalModel,0.9811827956989247,0.9801150370796218,0.9810242597358411,0.09656612135930567,0.46102150537634407,0.0,6.2926,0.00035,gesture,0.4,none,completed,,True,True,none
+improved_noise_gesture_60,ReliabilityGatedMultimodalModel,0.9811827956989247,0.9801150370796218,0.9810242597358411,0.09299374837929042,0.4731182795698925,0.0,6.3645,0.000353,gesture,0.6,none,completed,,True,True,none
+improved_noise_audio_20,ReliabilityGatedMultimodalModel,0.9811827956989247,0.9801150370796218,0.9810242597358411,0.09384257780508168,0.4583333333333333,0.0,5.1832,0.000247,audio,0.2,none,completed,,True,True,none
+improved_noise_audio_40,ReliabilityGatedMultimodalModel,0.9825268817204301,0.9815802876941597,0.9823902176905172,0.09110981660584609,0.4596774193548387,0.0,5.2653,0.00025,audio,0.4,none,completed,,True,True,none
+improved_noise_audio_60,ReliabilityGatedMultimodalModel,0.9825268817204301,0.9815802876941597,0.9823902176905172,0.0911056931851612,0.46236559139784944,0.0,5.0855,0.000259,audio,0.6,none,completed,,True,True,none
+improved_noise_text_20,ReliabilityGatedMultimodalModel,0.9811827956989247,0.9801150370796218,0.9810242597358411,0.09514603521975298,0.46102150537634407,0.0,5.7344,0.000293,text,0.2,none,completed,,True,True,none
+improved_noise_text_40,ReliabilityGatedMultimodalModel,0.9811827956989247,0.9801150370796218,0.9810242597358411,0.09689741265229,0.45698924731182794,0.0,5.6996,0.000293,text,0.4,none,completed,,True,True,none
+improved_noise_text_60,ReliabilityGatedMultimodalModel,0.9811827956989247,0.9801150370796218,0.9810242597358411,0.09333957794813379,0.4637096774193548,0.0,5.8137,0.000292,text,0.6,none,completed,,True,True,none
+improved_noise_scene_20,ReliabilityGatedMultimodalModel,0.9825268817204301,0.9815802876941597,0.9823902176905172,0.0912797592970873,0.46102150537634407,0.0,5.157,0.000251,scene,0.2,none,completed,,True,True,none
+improved_noise_scene_40,ReliabilityGatedMultimodalModel,0.9798387096774194,0.9786189389886961,0.9796240552638207,0.09678681953359515,0.46908602150537637,0.0,5.182,0.000251,scene,0.4,none,completed,,True,True,none
+improved_noise_scene_60,ReliabilityGatedMultimodalModel,0.9825268817204301,0.9815622613738589,0.982367926871419,0.09220151206158021,0.46639784946236557,0.0,5.2531,0.000253,scene,0.6,none,completed,,True,True,none
+===== improved_missing_modality_metrics.csv =====
+experiment_name,model_type,accuracy,macro_f1,weighted_f1,loss,scene_accuracy,joint_accuracy,training_time,avg_test_time_per_sample,target_modality,noise_ratio,missing_modalities,status,notes,use_reliability_gate,use_modality_dropout,ablation_variant
+improved_missing_imu,ReliabilityGatedMultimodalModel,0.9811827956989247,0.980757559311527,0.9810144811481284,0.08357775073137975,0.49193548387096775,0.0,5.4844,0.000201,none,none,imu,completed,,True,True,none
+improved_missing_gesture,ReliabilityGatedMultimodalModel,0.9798387096774194,0.9790621258851294,0.9796231355729618,0.09141574262250815,0.38306451612903225,0.0,4.3299,0.000194,none,none,gesture,completed,,True,True,none
+improved_missing_audio,ReliabilityGatedMultimodalModel,0.9811827956989247,0.9807594450131263,0.9809992962334007,0.08263750963153378,0.478494623655914,0.0,4.2317,0.000186,none,none,audio,completed,,True,True,none
+improved_missing_text,ReliabilityGatedMultimodalModel,0.23521505376344087,0.1737110947416981,0.18456361653137898,4.188226951065884,0.45161290322580644,0.0,4.3056,0.000184,none,none,text,completed,,True,True,none
+improved_missing_scene,ReliabilityGatedMultimodalModel,0.9717741935483871,0.9701722613103333,0.9713333398627064,0.11511424022616558,0.49193548387096775,0.0,1.5938,0.000171,none,none,scene,completed,,True,True,none
+improved_missing_imu_gesture,ReliabilityGatedMultimodalModel,0.967741935483871,0.9653195181503788,0.9669518703948194,0.10833927424203965,0.44086021505376344,0.0,4.0642,0.000191,none,none,imu+gesture,completed,,True,True,none
+improved_missing_imu_audio,ReliabilityGatedMultimodalModel,0.9475806451612904,0.9435380588658012,0.9460665775895317,0.17108100392324951,0.4771505376344086,0.0,3.6964,0.000196,none,none,imu+audio,completed,,True,True,none
+improved_missing_imu_text,ReliabilityGatedMultimodalModel,0.2567204301075269,0.19306939021184033,0.19983253199306583,3.8474279167831584,0.6196236559139785,0.0,4.5298,0.000193,none,none,imu+text,completed,,True,True,none
+improved_missing_imu_scene,ReliabilityGatedMultimodalModel,0.9529569892473119,0.9488680271222902,0.9516575632720247,0.13753452907086058,0.43548387096774194,0.0,4.3886,0.000204,none,none,imu+scene,completed,,True,True,none
+improved_missing_gesture_audio,ReliabilityGatedMultimodalModel,0.9838709677419355,0.983503201685394,0.9837565135111681,0.05963406456454146,0.39919354838709675,0.0,2.5113,0.00019,none,none,gesture+audio,completed,,True,True,none
+improved_missing_gesture_text,ReliabilityGatedMultimodalModel,0.2620967741935484,0.22026865146482053,0.2285443003602543,3.3814579491974204,0.32526881720430106,0.0,1.5768,0.000166,none,none,gesture+text,completed,,True,True,none
+improved_missing_gesture_scene,ReliabilityGatedMultimodalModel,0.9852150537634409,0.9845268916526981,0.9851601746481593,0.04532194299803626,0.4368279569892473,0.0,2.2369,0.000166,none,none,gesture+scene,completed,,True,True,none
+improved_missing_audio_text,ReliabilityGatedMultimodalModel,0.21908602150537634,0.1848219484993371,0.19162990835098556,4.2506040398792555,0.4274193548387097,0.0,1.5655,0.000165,none,none,audio+text,completed,,True,True,none
+improved_missing_audio_scene,ReliabilityGatedMultimodalModel,0.9798387096774194,0.9788864551980695,0.9796774641786458,0.10112439254198664,0.41397849462365593,0.0,1.5725,0.000169,none,none,audio+scene,completed,,True,True,none
+improved_missing_text_scene,ReliabilityGatedMultimodalModel,0.16666666666666666,0.12441411588384621,0.13373594291952526,4.039445513038225,0.396505376344086,0.0,1.5987,0.000184,none,none,text+scene,completed,,True,True,none

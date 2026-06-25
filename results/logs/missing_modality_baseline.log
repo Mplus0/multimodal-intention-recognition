@@ -1,0 +1,17 @@
+2026-06-25 22:07:58 | INFO | missing_modality_baseline | Missing-modality experiment count: 15
+2026-06-25 22:07:58 | INFO | missing_modality_baseline | Running missing_modality_baseline_imu
+2026-06-25 22:08:08 | INFO | missing_modality_baseline | Running missing_modality_baseline_gesture
+2026-06-25 22:08:13 | INFO | missing_modality_baseline | Running missing_modality_baseline_audio
+2026-06-25 22:08:17 | INFO | missing_modality_baseline | Running missing_modality_baseline_text
+2026-06-25 22:08:21 | INFO | missing_modality_baseline | Running missing_modality_baseline_scene
+2026-06-25 22:08:26 | INFO | missing_modality_baseline | Running missing_modality_baseline_imu_gesture
+2026-06-25 22:08:30 | INFO | missing_modality_baseline | Running missing_modality_baseline_imu_audio
+2026-06-25 22:08:35 | INFO | missing_modality_baseline | Running missing_modality_baseline_imu_text
+2026-06-25 22:08:40 | INFO | missing_modality_baseline | Running missing_modality_baseline_imu_scene
+2026-06-25 22:08:44 | INFO | missing_modality_baseline | Running missing_modality_baseline_gesture_audio
+2026-06-25 22:08:49 | INFO | missing_modality_baseline | Running missing_modality_baseline_gesture_text
+2026-06-25 22:08:53 | INFO | missing_modality_baseline | Running missing_modality_baseline_gesture_scene
+2026-06-25 22:08:58 | INFO | missing_modality_baseline | Running missing_modality_baseline_audio_text
+2026-06-25 22:09:02 | INFO | missing_modality_baseline | Running missing_modality_baseline_audio_scene
+2026-06-25 22:09:07 | INFO | missing_modality_baseline | Running missing_modality_baseline_text_scene
+2026-06-25 22:09:11 | INFO | missing_modality_baseline | Saved aggregate metrics: /share/home/tm1078571822880000/a1086482920/Mplus0/multimodal-intention-recognition/results/metrics/missing_modality_metrics.csv

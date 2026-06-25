@@ -1,0 +1,8 @@
+2026-06-25 22:07:58 | INFO | missing_modality_baseline_imu | seed=42 cuda_available=True
+2026-06-25 22:07:59 | INFO | missing_modality_baseline_imu | sample_index={'sample_count': 39, 'split_counts': {'train': 26, 'test': 13}, 'user_counts': {'user_A': 13, 'user_B': 13, 'user_C': 13}, 'intent_counts': {'menu': 6, 'select': 8, 'cancel': 6, 'brush': 6, 'magnify': 6, 'narrow': 7}}
+2026-06-25 22:08:05 | INFO | missing_modality_baseline_imu | epoch=1 train_loss=0.8672 train_acc=0.7777 val_loss=0.2941 val_acc=0.9497 val_macro_f1=0.8023
+2026-06-25 22:08:06 | INFO | missing_modality_baseline_imu | epoch=2 train_loss=0.1105 train_acc=0.9789 val_loss=0.2415 val_acc=0.9128 val_macro_f1=0.7771
+2026-06-25 22:08:06 | INFO | missing_modality_baseline_imu | epoch=3 train_loss=0.0406 train_acc=0.9895 val_loss=0.2740 val_acc=0.9430 val_macro_f1=0.9421
+2026-06-25 22:08:07 | INFO | missing_modality_baseline_imu | epoch=4 train_loss=0.0288 train_acc=0.9937 val_loss=0.2657 val_acc=0.9530 val_macro_f1=0.9526
+2026-06-25 22:08:07 | INFO | missing_modality_baseline_imu | epoch=5 train_loss=0.0148 train_acc=0.9968 val_loss=0.3316 val_acc=0.9362 val_macro_f1=0.9249
+2026-06-25 22:08:08 | INFO | missing_modality_baseline_imu | final_metrics={'accuracy': 0.9475806451612904, 'macro_f1': 0.9432303811464231, 'weighted_f1': 0.9460615126975093, 'loss': 0.15487644517974508, 'scene_accuracy': 0.5201612903225806, 'joint_accuracy': 0.0, 'experiment_name': 'missing_modality_baseline_imu', 'model_type': 'baseline', 'training_time': 3.5541, 'avg_test_time_per_sample': 0.000185, 'status': 'completed', 'notes': '', 'target_modality': 'none', 'noise_ratio': 'none', 'missing_modalities': 'imu'}

@@ -1,9 +1,9 @@
-"""Scaffold runner for modal-noise baseline experiments."""
+"""Run modal-noise baseline experiments with the formal five-modality baseline."""
 
 from __future__ import annotations
 
 import argparse
-import csv
+import copy
 import sys
 from pathlib import Path
 from typing import Any
@@ -12,108 +12,55 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
-from src.data.transforms import build_noise_experiment_matrix
-from src.training.evaluate import METRIC_FIELDS, build_empty_metric_row
-
-
-MEMBER_A_TODO = (
-    "TODO(member A): connect to the finalized train/test API before running "
-    "this experiment."
-)
+from src.data.transforms import ModalNoiseTransform, build_noise_experiment_matrix
+from src.training.experiment_runner import ratio_suffix, run_single_experiment, save_metrics_table
+from src.utils.logger import setup_logger
+from src.utils.paths import ensure_runtime_dirs, get_path, load_config
 
 
 def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Prepare modal-noise baseline pending outputs.")
-    parser.add_argument(
-        "--config",
-        required=True,
-        help="Path to the modal-noise YAML config, e.g. configs/noise.yaml.",
-    )
+    parser = argparse.ArgumentParser(description="Run modal-noise baseline experiments.")
+    parser.add_argument("--config", default="configs/noise.yaml", help="Modal-noise YAML config.")
+    parser.add_argument("--base-config", default="configs/default.yaml", help="Base project YAML config.")
+    parser.add_argument("--epochs", type=int, default=5, help="Training epochs per run.")
+    parser.add_argument("--batch-size", type=int, default=None, help="Override config batch size.")
+    parser.add_argument("--lr", type=float, default=1e-3, help="Learning rate.")
+    parser.add_argument("--max-samples", type=int, default=None, help="Limit indexed samples for quick server checks.")
+    parser.add_argument("--smoke-test", action="store_true", help="Use synthetic samples; not official results.")
     return parser.parse_args()
 
 
-def _resolve_project_path(path_value: str | Path) -> Path:
-    path = Path(path_value)
-    if path.is_absolute():
-        return path
-    return REPO_ROOT / path
+def _config_seed(exp_config: dict[str, Any], base_config: dict[str, Any]) -> int:
+    experiment = exp_config.get("experiment", {})
+    if isinstance(experiment, dict) and "seed" in experiment:
+        return int(experiment["seed"])
+    return int(base_config.get("training", {}).get("seed", 42))
 
 
-def load_config(config_path: str | Path) -> dict[str, Any]:
-    path = _resolve_project_path(config_path)
-    if not path.exists():
-        raise FileNotFoundError(f"Config file not found: {path}")
-
-    import yaml
-
-    with path.open("r", encoding="utf-8") as file:
-        config = yaml.safe_load(file) or {}
-
-    if not isinstance(config, dict):
-        raise ValueError(f"Config must be a YAML mapping: {path}")
+def _with_seed(base_config: dict[str, Any], seed: int) -> dict[str, Any]:
+    config = copy.deepcopy(base_config)
+    config.setdefault("training", {})["seed"] = int(seed)
     return config
 
 
-def ensure_output_dirs(config: dict[str, Any]) -> dict[str, Path]:
-    outputs = config.get("outputs", {})
-    if not isinstance(outputs, dict):
-        raise ValueError("Config key 'outputs' must be a mapping when provided.")
-
-    defaults = {
-        "metrics": "results/metrics",
-        "logs": "results/logs",
-        "predictions": "results/predictions",
-        "figures": "figures",
-    }
-    dirs: dict[str, Path] = {}
-    for key, default_path in defaults.items():
-        path = _resolve_project_path(outputs.get(key, default_path))
-        path.mkdir(parents=True, exist_ok=True)
-        dirs[key] = path
-    return dirs
-
-
-def save_metric_template(rows: list[dict], output_path: Path) -> None:
-    fieldnames = list(METRIC_FIELDS)
-    for row in rows:
-        for key in row:
-            if key not in fieldnames:
-                fieldnames.append(key)
-
-    with output_path.open("w", newline="", encoding="utf-8") as file:
-        writer = csv.DictWriter(file, fieldnames=fieldnames)
-        writer.writeheader()
-        writer.writerows(rows)
-
-
-def train_and_test_placeholder() -> None:
-    # TODO(member A): replace this placeholder after train.py/test.py expose stable APIs.
-    raise NotImplementedError(MEMBER_A_TODO)
-
-
-def _ratio_suffix(noise_ratio: float) -> str:
-    return str(int(round(noise_ratio * 100)))
-
-
-def main() -> None:
+def main() -> int:
     args = parse_args()
-    config = load_config(args.config)
+    base_config = load_config(args.base_config)
+    exp_config = load_config(args.config)
+    seed = _config_seed(exp_config, base_config)
+    active_config = _with_seed(base_config, seed)
+    ensure_runtime_dirs(active_config)
 
-    from src.utils.logger import setup_logger
-    from src.utils.seed import DEFAULT_SEED, set_seed
-
-    experiment_config = config.get("experiment", {})
+    experiment_config = exp_config.get("experiment", {})
     if not isinstance(experiment_config, dict):
         raise ValueError("Config key 'experiment' must be a mapping when provided.")
-
     experiment_name = str(experiment_config.get("name", "modal_noise_baseline"))
-    model_type = str(experiment_config.get("model_type", "baseline"))
-    seed = int(experiment_config.get("seed", DEFAULT_SEED))
+    model_type = str(experiment_config.get("model_type", "FormalMultimodalBaseline"))
 
-    modalities = config.get("modalities")
+    modalities = exp_config.get("modalities")
     if not isinstance(modalities, list):
         raise ValueError("Config key 'modalities' must be a list.")
-    noise = config.get("noise", {})
+    noise = exp_config.get("noise", {})
     if not isinstance(noise, dict):
         raise ValueError("Config key 'noise' must be a mapping.")
     noise_ratios = noise.get("ratios")
@@ -121,37 +68,53 @@ def main() -> None:
         raise ValueError("Config key 'noise.ratios' must be a list.")
 
     matrix = build_noise_experiment_matrix(modalities, noise_ratios)
-    output_dirs = ensure_output_dirs(config)
     logger = setup_logger(
         experiment_name,
-        log_file=output_dirs["logs"] / f"{experiment_name}.log",
+        log_file=get_path("outputs", "logs_dir", config=active_config) / f"{experiment_name}.log",
         file_mode="w",
     )
-    seed_state = set_seed(seed)
-    logger.info("Prepared modal-noise baseline scaffold. seed_state=%s", seed_state)
     logger.info("Noise experiment count: %d", len(matrix))
 
-    rows = []
+    rows: list[dict[str, Any]] = []
     for item in matrix:
         target_modality = item["target_modality"]
-        noise_ratio = item["noise_ratio"]
-        run_name = f"{experiment_name}_{target_modality}_{_ratio_suffix(noise_ratio)}"
-        rows.append(
-            build_empty_metric_row(
-                experiment_name=run_name,
-                model_type=model_type,
-                target_modality=target_modality,
-                noise_ratio=noise_ratio,
-                missing_modalities="none",
-            )
+        noise_ratio = float(item["noise_ratio"])
+        suffix = ratio_suffix(noise_ratio)
+        run_name = f"{experiment_name}_{target_modality}_{suffix}"
+        transform = ModalNoiseTransform(
+            target_modality=target_modality,
+            noise_ratio=noise_ratio,
+            seed=seed,
         )
+        logger.info("Running %s", run_name)
+        metrics = run_single_experiment(
+            base_config=active_config,
+            experiment_name=run_name,
+            model_type=model_type,
+            output_prefix=run_name,
+            train_transform=transform,
+            val_transform=transform,
+            test_transform=transform,
+            epochs=args.epochs,
+            batch_size=args.batch_size,
+            lr=args.lr,
+            max_samples=args.max_samples,
+            smoke_test=args.smoke_test,
+            metric_overrides={
+                "target_modality": target_modality,
+                "noise_ratio": noise_ratio,
+                "missing_modalities": "none",
+            },
+        )
+        rows.append(metrics)
 
-    metrics_path = output_dirs["metrics"] / "noise_baseline_metrics.csv"
-    save_metric_template(rows, metrics_path)
-    logger.info("Saved pending metric template: %s", metrics_path)
-
-    train_and_test_placeholder()
+    metrics_path = get_path("outputs", "metrics_dir", config=active_config) / "noise_baseline_metrics.csv"
+    save_metrics_table(rows, metrics_path)
+    logger.info("Saved aggregate metrics: %s", metrics_path)
+    print("[noise_baseline_done]")
+    print(f"  metrics: {metrics_path}")
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())

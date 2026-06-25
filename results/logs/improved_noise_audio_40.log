@@ -1,0 +1,8 @@
+2026-06-25 22:20:23 | INFO | improved_noise_audio_40 | seed=42 cuda_available=True
+2026-06-25 22:20:24 | INFO | improved_noise_audio_40 | indexed_sample_count=39 missing_items_count=0
+2026-06-25 22:20:25 | INFO | improved_noise_audio_40 | epoch=1 train_loss=0.8996 train_acc=0.7492 val_loss=0.3331 val_acc=0.9497 val_macro_f1=0.7879
+2026-06-25 22:20:26 | INFO | improved_noise_audio_40 | epoch=2 train_loss=0.1720 train_acc=0.9526 val_loss=0.2157 val_acc=0.9564 val_macro_f1=0.7991
+2026-06-25 22:20:27 | INFO | improved_noise_audio_40 | epoch=3 train_loss=0.0660 train_acc=0.9831 val_loss=0.2543 val_acc=0.9530 val_macro_f1=0.7978
+2026-06-25 22:20:28 | INFO | improved_noise_audio_40 | epoch=4 train_loss=0.0184 train_acc=0.9968 val_loss=0.2129 val_acc=0.9497 val_macro_f1=0.7920
+2026-06-25 22:20:29 | INFO | improved_noise_audio_40 | epoch=5 train_loss=0.0091 train_acc=0.9989 val_loss=0.2452 val_acc=0.9530 val_macro_f1=0.9544
+2026-06-25 22:20:30 | INFO | improved_noise_audio_40 | final_metrics={'accuracy': 0.9825268817204301, 'macro_f1': 0.9815802876941597, 'weighted_f1': 0.9823902176905172, 'loss': 0.09110981660584609, 'scene_accuracy': 0.4596774193548387, 'joint_accuracy': 0.0, 'experiment_name': 'improved_noise_audio_40', 'model_type': 'ReliabilityGatedMultimodalModel', 'training_time': 5.2653, 'avg_test_time_per_sample': 0.00025, 'status': 'completed', 'notes': '', 'use_reliability_gate': True, 'use_modality_dropout': True, 'target_modality': 'audio', 'noise_ratio': 0.4, 'missing_modalities': 'none', 'ablation_variant': 'none'}

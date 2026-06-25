@@ -1,0 +1,11 @@
+drwxr-xr-x 6 root root 78398526250 Jun 24 20:54 data/raw
+drwxr-xr-x 4 root root 17339851149 Jun 24 20:52 data/raw/user_A
+drwxr-xr-x 4 root root 23418759441 Jun 24 20:52 data/raw/user_B
+drwxr-xr-x 4 root root 31548978401 Jun 24 20:52 data/raw/user_C
+drwxr-xr-x 2 root root 12260242344 Jun 24 20:52 data/raw/user_A/fisheye
+drwxr-xr-x 2 root root  5079608805 Jun 24 20:52 data/raw/user_A/HoloLens
+drwxr-xr-x 2 root root 15274695168 Jun 24 20:52 data/raw/user_B/fisheye
+drwxr-xr-x 2 root root  8144064273 Jun 24 20:52 data/raw/user_B/HoloLens
+drwxr-xr-x 2 root root 24498818048 Jun 24 20:52 data/raw/user_C/fisheye
+drwxr-xr-x 2 root root  7050160353 Jun 24 20:52 data/raw/user_C/HoloLens
+-rw-r-xr-- 1 root root 61593091 Jun 22 17:43 data/raw/imu.csv

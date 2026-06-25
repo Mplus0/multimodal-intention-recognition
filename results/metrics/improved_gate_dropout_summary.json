@@ -1,0 +1,35 @@
+{
+  "metrics": {
+    "accuracy": 0.9811827956989247,
+    "macro_f1": 0.9801150370796218,
+    "weighted_f1": 0.9810242597358411,
+    "loss": 0.09377767642839782,
+    "scene_accuracy": 0.4596774193548387,
+    "joint_accuracy": 0.0,
+    "experiment_name": "improved_gate_dropout",
+    "model_type": "ReliabilityGatedMultimodalModel",
+    "training_time": 1.5231,
+    "avg_test_time_per_sample": 0.000164,
+    "status": "completed",
+    "notes": "",
+    "use_reliability_gate": true,
+    "use_modality_dropout": true,
+    "target_modality": "none",
+    "noise_ratio": "none",
+    "missing_modalities": "none",
+    "ablation_variant": "improved_gate_dropout"
+  },
+  "epochs": 5,
+  "smoke_test": false,
+  "missing_items_count": 0,
+  "output_paths": {
+    "best": "/share/home/tm1078571822880000/a1086482920/Mplus0/multimodal-intention-recognition/results/checkpoints/improved_gate_dropout_best.pt",
+    "final": "/share/home/tm1078571822880000/a1086482920/Mplus0/multimodal-intention-recognition/results/checkpoints/improved_gate_dropout_final.pt",
+    "metrics": "/share/home/tm1078571822880000/a1086482920/Mplus0/multimodal-intention-recognition/results/metrics/improved_gate_dropout_metrics.csv",
+    "summary": "/share/home/tm1078571822880000/a1086482920/Mplus0/multimodal-intention-recognition/results/metrics/improved_gate_dropout_summary.json",
+    "predictions": "/share/home/tm1078571822880000/a1086482920/Mplus0/multimodal-intention-recognition/results/predictions/improved_gate_dropout_predictions.csv",
+    "log": "/share/home/tm1078571822880000/a1086482920/Mplus0/multimodal-intention-recognition/results/logs/improved_gate_dropout.log",
+    "loss_curve": "/share/home/tm1078571822880000/a1086482920/Mplus0/multimodal-intention-recognition/figures/improved_gate_dropout_loss_curve.png",
+    "confusion_matrix": "/share/home/tm1078571822880000/a1086482920/Mplus0/multimodal-intention-recognition/figures/improved_gate_dropout_confusion_matrix.png"
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "metrics": {
+    "accuracy": 0.9717741935483871,
+    "macro_f1": 0.9701722613103333,
+    "weighted_f1": 0.9713333398627064,
+    "loss": 0.11511424022616558,
+    "scene_accuracy": 0.49193548387096775,
+    "joint_accuracy": 0.0,
+    "experiment_name": "improved_missing_scene",
+    "model_type": "ReliabilityGatedMultimodalModel",
+    "training_time": 1.5938,
+    "avg_test_time_per_sample": 0.000171,
+    "status": "completed",
+    "notes": "",
+    "use_reliability_gate": true,
+    "use_modality_dropout": true,
+    "target_modality": "none",
+    "noise_ratio": "none",
+    "missing_modalities": "scene",
+    "ablation_variant": "none"
+  },
+  "epochs": 5,
+  "smoke_test": false,
+  "missing_items_count": 0,
+  "output_paths": {
+    "best": "/share/home/tm1078571822880000/a1086482920/Mplus0/multimodal-intention-recognition/results/checkpoints/improved_missing_scene_best.pt",
+    "final": "/share/home/tm1078571822880000/a1086482920/Mplus0/multimodal-intention-recognition/results/checkpoints/improved_missing_scene_final.pt",
+    "metrics": "/share/home/tm1078571822880000/a1086482920/Mplus0/multimodal-intention-recognition/results/metrics/improved_missing_scene_metrics.csv",
+    "summary": "/share/home/tm1078571822880000/a1086482920/Mplus0/multimodal-intention-recognition/results/metrics/improved_missing_scene_summary.json",
+    "predictions": "/share/home/tm1078571822880000/a1086482920/Mplus0/multimodal-intention-recognition/results/predictions/improved_missing_scene_predictions.csv",
+    "log": "/share/home/tm1078571822880000/a1086482920/Mplus0/multimodal-intention-recognition/results/logs/improved_missing_scene.log",
+    "loss_curve": "/share/home/tm1078571822880000/a1086482920/Mplus0/multimodal-intention-recognition/figures/improved_missing_scene_loss_curve.png",
+    "confusion_matrix": "/share/home/tm1078571822880000/a1086482920/Mplus0/multimodal-intention-recognition/figures/improved_missing_scene_confusion_matrix.png"
+  }
+}

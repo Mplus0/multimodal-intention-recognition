@@ -1,0 +1,35 @@
+{
+  "metrics": {
+    "accuracy": 0.9852150537634409,
+    "macro_f1": 0.9845268916526981,
+    "weighted_f1": 0.9851601746481593,
+    "loss": 0.04532194299803626,
+    "scene_accuracy": 0.4368279569892473,
+    "joint_accuracy": 0.0,
+    "experiment_name": "improved_missing_gesture_scene",
+    "model_type": "ReliabilityGatedMultimodalModel",
+    "training_time": 2.2369,
+    "avg_test_time_per_sample": 0.000166,
+    "status": "completed",
+    "notes": "",
+    "use_reliability_gate": true,
+    "use_modality_dropout": true,
+    "target_modality": "none",
+    "noise_ratio": "none",
+    "missing_modalities": "gesture+scene",
+    "ablation_variant": "none"
+  },
+  "epochs": 5,
+  "smoke_test": false,
+  "missing_items_count": 0,
+  "output_paths": {
+    "best": "/share/home/tm1078571822880000/a1086482920/Mplus0/multimodal-intention-recognition/results/checkpoints/improved_missing_gesture_scene_best.pt",
+    "final": "/share/home/tm1078571822880000/a1086482920/Mplus0/multimodal-intention-recognition/results/checkpoints/improved_missing_gesture_scene_final.pt",
+    "metrics": "/share/home/tm1078571822880000/a1086482920/Mplus0/multimodal-intention-recognition/results/metrics/improved_missing_gesture_scene_metrics.csv",
+    "summary": "/share/home/tm1078571822880000/a1086482920/Mplus0/multimodal-intention-recognition/results/metrics/improved_missing_gesture_scene_summary.json",
+    "predictions": "/share/home/tm1078571822880000/a1086482920/Mplus0/multimodal-intention-recognition/results/predictions/improved_missing_gesture_scene_predictions.csv",
+    "log": "/share/home/tm1078571822880000/a1086482920/Mplus0/multimodal-intention-recognition/results/logs/improved_missing_gesture_scene.log",
+    "loss_curve": "/share/home/tm1078571822880000/a1086482920/Mplus0/multimodal-intention-recognition/figures/improved_missing_gesture_scene_loss_curve.png",
+    "confusion_matrix": "/share/home/tm1078571822880000/a1086482920/Mplus0/multimodal-intention-recognition/figures/improved_missing_gesture_scene_confusion_matrix.png"
+  }
+}

@@ -1,0 +1,2 @@
+experiment_name,model_type,accuracy,macro_f1,weighted_f1,loss,scene_accuracy,joint_accuracy,training_time,avg_test_time_per_sample,status,notes
+improved_missing_gesture_text,ReliabilityGatedMultimodalModel,0.2620967741935484,0.22026865146482053,0.2285443003602543,3.3814579491974204,0.32526881720430106,0.0,1.5768,0.000166,completed,

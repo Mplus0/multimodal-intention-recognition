@@ -1,0 +1,8 @@
+2026-06-25 22:17:44 | INFO | improved_dropout_only | seed=42 cuda_available=True
+2026-06-25 22:17:45 | INFO | improved_dropout_only | indexed_sample_count=39 missing_items_count=0
+2026-06-25 22:17:45 | INFO | improved_dropout_only | epoch=1 train_loss=0.8769 train_acc=0.7534 val_loss=0.3407 val_acc=0.9530 val_macro_f1=0.9472
+2026-06-25 22:17:46 | INFO | improved_dropout_only | epoch=2 train_loss=0.1700 train_acc=0.9557 val_loss=0.2283 val_acc=0.9497 val_macro_f1=0.7951
+2026-06-25 22:17:47 | INFO | improved_dropout_only | epoch=3 train_loss=0.0747 train_acc=0.9800 val_loss=0.2280 val_acc=0.9497 val_macro_f1=0.7900
+2026-06-25 22:17:47 | INFO | improved_dropout_only | epoch=4 train_loss=0.0388 train_acc=0.9884 val_loss=0.2231 val_acc=0.9597 val_macro_f1=0.8002
+2026-06-25 22:17:48 | INFO | improved_dropout_only | epoch=5 train_loss=0.0244 train_acc=0.9937 val_loss=0.3929 val_acc=0.8960 val_macro_f1=0.7526
+2026-06-25 22:17:49 | INFO | improved_dropout_only | final_metrics={'accuracy': 0.9395161290322581, 'macro_f1': 0.9351855307720959, 'weighted_f1': 0.9388892548650395, 'loss': 0.18821586317492908, 'scene_accuracy': 0.4368279569892473, 'joint_accuracy': 0.0, 'experiment_name': 'improved_dropout_only', 'model_type': 'ReliabilityGatedMultimodalModel', 'training_time': 3.4571, 'avg_test_time_per_sample': 0.000182, 'status': 'completed', 'notes': '', 'use_reliability_gate': False, 'use_modality_dropout': True, 'target_modality': 'none', 'noise_ratio': 'none', 'missing_modalities': 'none', 'ablation_variant': 'improved_dropout_only'}

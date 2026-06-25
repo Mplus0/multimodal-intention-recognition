@@ -1,0 +1,2 @@
+experiment_name,model_type,accuracy,macro_f1,weighted_f1,loss,scene_accuracy,joint_accuracy,training_time,avg_test_time_per_sample,status,notes
+modal_noise_baseline_scene_60,baseline,0.9852150537634409,0.9847353070320887,0.9851230037254753,0.07791991601948456,0.49193548387096775,0.0,1.5268,0.000199,completed,

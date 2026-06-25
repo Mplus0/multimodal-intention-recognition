@@ -1,0 +1,2 @@
+experiment_name,model_type,accuracy,macro_f1,weighted_f1,loss,scene_accuracy,joint_accuracy,training_time,avg_test_time_per_sample,status,notes
+improved_dropout_only,ReliabilityGatedMultimodalModel,0.9395161290322581,0.9351855307720959,0.9388892548650395,0.18821586317492908,0.4368279569892473,0.0,3.4571,0.000182,completed,

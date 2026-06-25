@@ -44,9 +44,15 @@ checkpoints/**
 !checkpoints/improved/.gitkeep
 
 # Results and experiment outputs
-results/logs/**
-results/predictions/**
+# Keep lightweight reference outputs for team collaboration.
 results/metrics/*
+!results/metrics/*.csv
+!results/metrics/*.json
+results/logs/**
+!results/logs/*.log
+results/predictions/**
+!results/predictions/*.csv
+results/checkpoints/**
 
 # Keep result and figure folder structure
 !results/
@@ -63,6 +69,10 @@ results/metrics/*
 !figures/model_structure/.gitkeep
 !figures/result_charts/
 !figures/result_charts/.gitkeep
+
+# Report evidence files
+!report/screenshots/*.png
+!report/terminal_logs/*.log
 
 # Large media files
 *.mp4

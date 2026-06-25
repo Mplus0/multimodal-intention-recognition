@@ -1,0 +1,2 @@
+experiment_name,model_type,accuracy,macro_f1,weighted_f1,loss,scene_accuracy,joint_accuracy,training_time,avg_test_time_per_sample,status,notes
+missing_modality_baseline_text_scene,baseline,0.24059139784946237,0.258212377569813,0.2591067024363628,2.878968115775816,0.26344086021505375,0.0,3.153,0.000176,completed,

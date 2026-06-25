@@ -1,0 +1,6 @@
+[sample_summary]
+  sample_count: 39
+  split_counts: {'train': 26, 'test': 13}
+  user_counts: {'user_A': 13, 'user_B': 13, 'user_C': 13}
+  intent_counts: {'menu': 6, 'select': 8, 'cancel': 6, 'brush': 6, 'magnify': 6, 'narrow': 7}
+[saved] /share/home/tm1078571822880000/a1086482920/Mplus0/multimodal-intention-recognition/data/processed/sample_index.json

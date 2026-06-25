@@ -1,0 +1,17 @@
+2026-06-25 22:02:21 | INFO | modal_noise_baseline | Noise experiment count: 15
+2026-06-25 22:02:21 | INFO | modal_noise_baseline | Running modal_noise_baseline_imu_20
+2026-06-25 22:02:32 | INFO | modal_noise_baseline | Running modal_noise_baseline_imu_40
+2026-06-25 22:02:36 | INFO | modal_noise_baseline | Running modal_noise_baseline_imu_60
+2026-06-25 22:02:39 | INFO | modal_noise_baseline | Running modal_noise_baseline_gesture_20
+2026-06-25 22:02:43 | INFO | modal_noise_baseline | Running modal_noise_baseline_gesture_40
+2026-06-25 22:02:46 | INFO | modal_noise_baseline | Running modal_noise_baseline_gesture_60
+2026-06-25 22:02:50 | INFO | modal_noise_baseline | Running modal_noise_baseline_audio_20
+2026-06-25 22:02:53 | INFO | modal_noise_baseline | Running modal_noise_baseline_audio_40
+2026-06-25 22:02:59 | INFO | modal_noise_baseline | Running modal_noise_baseline_audio_60
+2026-06-25 22:03:04 | INFO | modal_noise_baseline | Running modal_noise_baseline_text_20
+2026-06-25 22:03:10 | INFO | modal_noise_baseline | Running modal_noise_baseline_text_40
+2026-06-25 22:03:17 | INFO | modal_noise_baseline | Running modal_noise_baseline_text_60
+2026-06-25 22:03:23 | INFO | modal_noise_baseline | Running modal_noise_baseline_scene_20
+2026-06-25 22:03:28 | INFO | modal_noise_baseline | Running modal_noise_baseline_scene_40
+2026-06-25 22:03:32 | INFO | modal_noise_baseline | Running modal_noise_baseline_scene_60
+2026-06-25 22:03:35 | INFO | modal_noise_baseline | Saved aggregate metrics: /share/home/tm1078571822880000/a1086482920/Mplus0/multimodal-intention-recognition/results/metrics/noise_baseline_metrics.csv

@@ -1,0 +1,8 @@
+2026-06-25 22:08:53 | INFO | missing_modality_baseline_gesture_scene | seed=42 cuda_available=True
+2026-06-25 22:08:54 | INFO | missing_modality_baseline_gesture_scene | sample_index={'sample_count': 39, 'split_counts': {'train': 26, 'test': 13}, 'user_counts': {'user_A': 13, 'user_B': 13, 'user_C': 13}, 'intent_counts': {'menu': 6, 'select': 8, 'cancel': 6, 'brush': 6, 'magnify': 6, 'narrow': 7}}
+2026-06-25 22:08:54 | INFO | missing_modality_baseline_gesture_scene | epoch=1 train_loss=0.7917 train_acc=0.7935 val_loss=0.2413 val_acc=0.9463 val_macro_f1=0.7829
+2026-06-25 22:08:55 | INFO | missing_modality_baseline_gesture_scene | epoch=2 train_loss=0.1549 train_acc=0.9621 val_loss=0.1852 val_acc=0.9530 val_macro_f1=0.9526
+2026-06-25 22:08:56 | INFO | missing_modality_baseline_gesture_scene | epoch=3 train_loss=0.0794 train_acc=0.9779 val_loss=0.2090 val_acc=0.9597 val_macro_f1=0.9630
+2026-06-25 22:08:56 | INFO | missing_modality_baseline_gesture_scene | epoch=4 train_loss=0.0584 train_acc=0.9800 val_loss=0.2117 val_acc=0.9631 val_macro_f1=0.9597
+2026-06-25 22:08:57 | INFO | missing_modality_baseline_gesture_scene | epoch=5 train_loss=0.0593 train_acc=0.9831 val_loss=0.2110 val_acc=0.9597 val_macro_f1=0.9517
+2026-06-25 22:08:58 | INFO | missing_modality_baseline_gesture_scene | final_metrics={'accuracy': 0.9852150537634409, 'macro_f1': 0.9845263371725627, 'weighted_f1': 0.985165268726561, 'loss': 0.05267423297208484, 'scene_accuracy': 0.5255376344086021, 'joint_accuracy': 0.0, 'experiment_name': 'missing_modality_baseline_gesture_scene', 'model_type': 'baseline', 'training_time': 3.1574, 'avg_test_time_per_sample': 0.000194, 'status': 'completed', 'notes': '', 'target_modality': 'none', 'noise_ratio': 'none', 'missing_modalities': 'gesture+scene'}

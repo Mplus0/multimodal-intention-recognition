@@ -1,0 +1,11 @@
+/share/home/tm1078571822880000/a1086482920/Mplus0/software/miniconda3/envs/machine_learning/lib/python3.10/site-packages/torch/nn/modules/transformer.py:508: UserWarning: The PyTorch API of nested tensors is in prototype stage and will change in the near future. We recommend specifying layout=torch.jagged when constructing a nested tensor, as this layout receives active development, has better operator coverage, and works with torch.compile. (Triggered internally at /pytorch/aten/src/ATen/NestedTensorImpl.cpp:178.)
+  output = torch._nested_tensor_from_mask(
+[improved_model_smoke_test]
+  feature_keys: ['audio', 'gesture', 'imu', 'scene', 'text']
+  intent_logits: (1, 6)
+  fused: (1, 128)
+  reliability_imu: (1, 1)
+  reliability_gesture: (1, 1)
+  reliability_audio: (1, 1)
+  reliability_text: (1, 1)
+  reliability_scene: (1, 1)

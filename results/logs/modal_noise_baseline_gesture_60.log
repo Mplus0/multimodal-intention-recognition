@@ -1,0 +1,8 @@
+2026-06-25 22:02:46 | INFO | modal_noise_baseline_gesture_60 | seed=42 cuda_available=True
+2026-06-25 22:02:47 | INFO | modal_noise_baseline_gesture_60 | sample_index={'sample_count': 39, 'split_counts': {'train': 26, 'test': 13}, 'user_counts': {'user_A': 13, 'user_B': 13, 'user_C': 13}, 'intent_counts': {'menu': 6, 'select': 8, 'cancel': 6, 'brush': 6, 'magnify': 6, 'narrow': 7}}
+2026-06-25 22:02:48 | INFO | modal_noise_baseline_gesture_60 | epoch=1 train_loss=0.8317 train_acc=0.7914 val_loss=0.2828 val_acc=0.9463 val_macro_f1=0.7851
+2026-06-25 22:02:48 | INFO | modal_noise_baseline_gesture_60 | epoch=2 train_loss=0.0985 train_acc=0.9821 val_loss=0.2631 val_acc=0.9362 val_macro_f1=0.7920
+2026-06-25 22:02:48 | INFO | modal_noise_baseline_gesture_60 | epoch=3 train_loss=0.0345 train_acc=0.9937 val_loss=0.2612 val_acc=0.9463 val_macro_f1=0.9428
+2026-06-25 22:02:49 | INFO | modal_noise_baseline_gesture_60 | epoch=4 train_loss=0.0241 train_acc=0.9916 val_loss=0.3253 val_acc=0.9262 val_macro_f1=0.9228
+2026-06-25 22:02:49 | INFO | modal_noise_baseline_gesture_60 | epoch=5 train_loss=0.0166 train_acc=0.9958 val_loss=0.2382 val_acc=0.9497 val_macro_f1=0.7850
+2026-06-25 22:02:50 | INFO | modal_noise_baseline_gesture_60 | final_metrics={'accuracy': 0.9838709677419355, 'macro_f1': 0.9832662696791558, 'weighted_f1': 0.9837540506034471, 'loss': 0.07078711984939473, 'scene_accuracy': 0.4959677419354839, 'joint_accuracy': 0.0, 'experiment_name': 'modal_noise_baseline_gesture_60', 'model_type': 'baseline', 'training_time': 2.2026, 'avg_test_time_per_sample': 0.000309, 'status': 'completed', 'notes': '', 'target_modality': 'gesture', 'noise_ratio': 0.6, 'missing_modalities': 'none'}
