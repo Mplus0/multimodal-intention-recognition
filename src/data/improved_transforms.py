@@ -96,7 +96,7 @@ class RandomModalityDropoutTransform:
             features[modality] = torch.zeros_like(feature)
             modality_mask[modality] = torch.tensor(False, dtype=torch.bool)
 
-        transformed["dropped_modalities"] = list(dropped_modalities)
+        transformed["dropped_modalities"] = "+".join(dropped_modalities) if dropped_modalities else "none"
         return transformed
 
 

@@ -405,3 +405,34 @@ python src/data/improved_transforms.py
 ### Remaining Problems
 - 需要将修复后的 `src/data/improved_transforms.py` 上传服务器后重新执行 smoke test。
 - 其他 improved runner 命令仍需要服务器继续验证。
+
+## 2026-06-25 - 服务器验证反馈修复：模态 Dropout 批处理字段
+
+### Contributor
+- Name: Codex
+- Role: Code
+
+### Files Changed
+- `src/data/improved_transforms.py`：将 `dropped_modalities` 从变长 list 改为字符串，避免 PyTorch DataLoader 默认 collate 在 batch 内样本丢弃模态数量不一致时报错。
+- `docs/collaboration_log.md`：追加本次服务器反馈修复记录。
+
+### Purpose
+服务器运行 improved clean smoke test 时，DataLoader 报错 `RuntimeError: each element in list of batch should be of equal size`。原因是 transform 给每个 sample 添加了长度不固定的 `dropped_modalities` list。本次修复保留该调试字段，但改为 `"none"` 或 `"imu+text"` 这类字符串，避免影响 batch collate。
+
+### How to Run
+```bash
+python experiments/run_improved_model.py --config configs/improved_model.yaml --base-config configs/default.yaml --mode clean --smoke-test --epochs 1
+```
+
+### Output Files
+- 本次修复不生成正式实验输出文件。
+
+### Current Status
+- Completed; waiting for server re-test
+
+### Notes for Report Writer
+本次属于训练数据 batch 组织修复，不涉及模型方法或正式实验结果变化。
+
+### Remaining Problems
+- 需要将修复后的 `src/data/improved_transforms.py` 上传服务器后重新执行 improved clean smoke test。
+- 服务器通过 smoke test 后，再进行真实数据短跑。
