@@ -1,0 +1,4 @@
+experiment_name,model_type,accuracy,macro_f1,weighted_f1,loss,scene_accuracy,joint_accuracy,training_time,avg_test_time_per_sample,target_modality,noise_ratio,missing_modalities,status,notes,use_reliability_gate,use_modality_dropout,ablation_variant
+improved_gate_only,ReliabilityGatedMultimodalModel,0.956989247311828,0.9539488888639598,0.9570682856147077,0.13573070997071843,0.4368279569892473,0.0,4.2711,0.000197,none,none,none,completed,,True,False,improved_gate_only
+improved_dropout_only,ReliabilityGatedMultimodalModel,0.9395161290322581,0.9351855307720959,0.9388892548650395,0.18821586317492908,0.4368279569892473,0.0,3.4571,0.000182,none,none,none,completed,,False,True,improved_dropout_only
+improved_gate_dropout,ReliabilityGatedMultimodalModel,0.9811827956989247,0.9801150370796218,0.9810242597358411,0.09377767642839782,0.4596774193548387,0.0,1.5231,0.000164,none,none,none,completed,,True,True,improved_gate_dropout

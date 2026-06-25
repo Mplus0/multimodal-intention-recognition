@@ -1,0 +1,3 @@
+/share/home/tm1078571822880000/a1086482920/Mplus0/software/miniconda3/envs/machine_learning/lib/python3.10/site-packages/webrtcvad.py:1: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  import pkg_resources
+deps ok

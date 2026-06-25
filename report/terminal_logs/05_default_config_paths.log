@@ -1,0 +1,9 @@
+9:  raw_dir: "data/raw"
+11:  imu_csv: "data/raw/imu.csv"
+14:    user_a: "data/raw/user_A"
+15:    user_b: "data/raw/user_B"
+16:    user_c: "data/raw/user_C"
+49:local_models:
+51:  sentence_model: "data/raw/models/all-MiniLM-L6-v2"
+52:  clip_teacher_model: "data/raw/models/clip_teacher_model"
+53:  vit_model: "data/raw/models/clip_teacher_model/vit-base-patch16-224"
