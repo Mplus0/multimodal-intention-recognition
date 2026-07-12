@@ -42,9 +42,9 @@ Selected route:
 
 Proposed method:
 
-**Text-Aware Modality Dropout for Robust Multimodal User Intention Recognition**
+**Repetition-Aware Text Compression with Modality Dropout**
 
-The method replaces uniform random modality selection during training with a Text-aware non-uniform dropout strategy. Text receives a higher dropout priority or probability so the model learns compensatory information from non-Text modalities.
+The method keeps cached Text features unchanged, but averages the 10 repeated sentence embeddings into one Text token inside the model before projection, positional encoding, and multimodal fusion. It is combined with whole-modality dropout to reduce duplicated Text evidence and encourage non-Text compensation.
 
 This personal extension must not overwrite, silently alter, or invalidate the official group baseline, group configuration, or group results.
 
@@ -57,12 +57,12 @@ For this term paper:
 1. Keep the five-modality input protocol unchanged.
 2. Keep the Text feature shape unchanged.
 3. Do not modify Text feature extraction merely to implement the new method.
-4. Do not convert Text from 10 tokens to 1 token unless explicitly requested in another task.
+4. Keep the cached Text feature at 10 tokens; the personal model is explicitly authorized to compress it to one token inside the model.
 5. Drop the whole Text modality, not individual Text time steps.
 6. Keep the existing missing-modality representation:
    - zero-fill the dropped modality;
    - set its `modality_mask` to unavailable.
-7. Focus changes on training augmentation, configuration, experiment metadata, and evaluation.
+7. Focus changes on model-side Text compression, training augmentation, configuration, experiment metadata, and evaluation.
 8. Do not modify dataset splits, labels, modality names, or cached feature formats.
 
 ## 4. Important Files
@@ -189,6 +189,8 @@ Rules:
 7. Record result-changing bug fixes in `docs/collaboration_log.md` and `docs/experiment_log.md`.
 
 ## 7. Text-Aware Modality Dropout
+
+This section documents the earlier attempted direction. It is retained for reproducibility, but it is no longer the selected personal-paper method.
 
 Preferred implementation:
 

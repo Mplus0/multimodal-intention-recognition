@@ -59,6 +59,7 @@ class ReliabilityGatedMultimodalModel(nn.Module):
         use_reliability_gate: bool = True,
         use_modality_mask: bool = True,
         gate_bias_init: float = 2.0,
+        use_text_compression: bool = False,
     ):
         super().__init__()
         self.feature_dims = feature_dims or get_feature_dims()
@@ -66,6 +67,7 @@ class ReliabilityGatedMultimodalModel(nn.Module):
         self.model_dim = int(model_dim)
         self.use_reliability_gate = bool(use_reliability_gate)
         self.use_modality_mask = bool(use_modality_mask)
+        self.use_text_compression = bool(use_text_compression)
 
         self.projections = nn.ModuleDict(
             {
@@ -153,6 +155,22 @@ class ReliabilityGatedMultimodalModel(nn.Module):
         token = self.projections["scene"](features.float()).unsqueeze(1)
         return token + self.modality_embedding[modality_index]
 
+    def _text_tokens(self, features: torch.Tensor, modality_index: int) -> torch.Tensor:
+        """Optionally collapse repeated sentence embeddings into one Text token."""
+        if not self.use_text_compression:
+            return self._temporal_tokens(features, modality_index, "text")
+        if features.ndim != 3:
+            raise ValueError(
+                f"text must have shape (batch, time, dim), got {tuple(features.shape)}."
+            )
+        if features.shape[1] != self.target_timesteps:
+            raise ValueError(
+                f"text must have {self.target_timesteps} timesteps, got {features.shape[1]}."
+            )
+        compressed = features.float().mean(dim=1, keepdim=True)
+        token = self.projections["text"](compressed)
+        return token + self.modality_embedding[modality_index]
+
     def _tokens_by_modality(self, features: dict[str, torch.Tensor]) -> dict[str, torch.Tensor]:
         missing = [key for key in MODALITY_KEYS if key not in features]
         if missing:
@@ -161,7 +179,7 @@ class ReliabilityGatedMultimodalModel(nn.Module):
             "imu": self._temporal_tokens(features["imu"], 0, "imu"),
             "gesture": self._temporal_tokens(features["gesture"], 1, "gesture"),
             "audio": self._temporal_tokens(features["audio"], 2, "audio"),
-            "text": self._temporal_tokens(features["text"], 3, "text"),
+            "text": self._text_tokens(features["text"], 3),
             "scene": self._scene_token(features["scene"], 4),
         }
 
@@ -284,6 +302,7 @@ def build_improved_model_from_config(
         "use_reliability_gate": bool(config_value("use_reliability_gate", True)),
         "use_modality_mask": bool(config_value("use_modality_mask", True)),
         "gate_bias_init": float(config_value("gate_bias_init", 2.0)),
+        "use_text_compression": bool(config_value("use_text_compression", False)),
         "num_intent_classes": int(config_value("num_intent_classes", DEFAULT_NUM_INTENT_CLASSES)),
         "num_scene_classes": int(config_value("num_scene_classes", DEFAULT_NUM_SCENE_CLASSES)),
         "num_joint_classes": int(config_value("num_joint_classes", DEFAULT_NUM_JOINT_CLASSES)),

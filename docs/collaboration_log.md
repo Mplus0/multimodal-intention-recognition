@@ -533,3 +533,81 @@ git check-ignore -v results/metrics/*.csv results/logs/*.log results/predictions
 
 ### Remaining Problems
 - `results/checkpoints/**`、`*.pt`、`data/raw/**`、`data/processed/**` 等大文件仍被忽略，不会进入 GitHub。
+## 2026-07-13 - 实现重复感知文本压缩个人论文方法
+
+### Contributor
+- Name: Codex
+- Role: Code / Report
+
+### Files Changed
+- `src/models/improved_model.py`: 增加 `use_text_compression`，将 10 个重复 Text 向量均值压缩为一个 token。
+- `src/training/improved_experiment_runner.py`: 增加文本压缩消融开关和结果元数据。
+- `configs/term_paper_text_compression.yaml`: 新增个人方法与消融配置。
+- `experiments/run_term_paper_text_compression.py`: 新增个人入口并隔离全部输出。
+- `AGENTS.md`: 更新当前个人方法约束。
+- `docs/method_notes.md`: 记录方法设计与实验边界。
+
+### Purpose
+原 Text 特征将同一句向量重复为 10 个时间步，团队模型又加入不同时间位置编码并累计各 token 贡献。新方法在不修改缓存和数据协议的前提下，将重复 Text 表示压缩为一个 token，减少重复证据造成的依赖。
+
+### Implementation Summary
+团队配置默认保持 `use_text_compression: false`。个人配置启用该开关并保留整模态 uniform dropout。个人入口将生成文件写入 `results/term_paper/`。
+
+### How to Validate
+```bash
+python experiments/run_term_paper_text_compression.py --mode clean
+python experiments/run_term_paper_text_compression.py --mode missing
+python experiments/run_term_paper_text_compression.py --mode ablation
+```
+
+### Expected Validation Outputs
+- `results/term_paper/metrics/`
+- `results/term_paper/logs/`
+- `results/term_paper/predictions/`
+- `results/term_paper/checkpoints/`
+- `results/term_paper/figures/`
+- `results/term_paper/configs/effective_base.yaml`
+- `results/term_paper/configs/effective_method.yaml`
+
+### Current Status
+- Partially completed：代码实现与静态语法检查完成，尚未在正式环境运行。
+
+### Notes for Report Writer
+论文应描述为模型侧的重复感知 Text token 压缩，而不是修改特征提取。定量结论必须来自正式环境真实运行。
+
+### Remaining Problems
+- 需要完成 clean、Text 相关缺失模态和 ablation 实验。
+- 需要根据实际结果决定论文保留哪些消融组。
+## 2026-07-13 - 编写个人论文方法与运行指南
+
+### Contributor
+- Name: Codex
+- Role: Report / Documentation
+
+### Files Changed
+- `TERM_PAPER_TEXT_COMPRESSION_GUIDE.md`: 新增个人方法、创新点、实验设计、正式运行方法、输出检查和论文写作素材。
+- `docs/collaboration_log.md`: 记录本次文档任务。
+
+### Purpose
+将 Repetition-Aware Text Compression with Modality Dropout 的研究逻辑和代码使用方式整理为可供正式实验与英文论文编写复用的完整指南。
+
+### How to Run
+```bash
+python experiments/run_term_paper_text_compression.py --mode clean
+python experiments/run_term_paper_text_compression.py --mode missing
+python experiments/run_term_paper_text_compression.py --mode ablation
+```
+
+### Output Files
+- `TERM_PAPER_TEXT_COMPRESSION_GUIDE.md`
+- `results/term_paper/`
+
+### Current Status
+- Completed：文档已完成，本次未运行训练或测试。
+
+### Notes for Report Writer
+指南包含可直接修改使用的英文方法描述、创新点、实验表格结构和结果解释边界。所有占位结果必须由正式运行数据替换。
+
+### Remaining Problems
+- 需要在正式服务器完成真实实验。
+- 需要根据真实结果撰写最终英文结论。

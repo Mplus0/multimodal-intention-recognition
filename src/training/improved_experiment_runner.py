@@ -59,6 +59,7 @@ def _with_model_variant(
     *,
     use_reliability_gate: bool | None = None,
     use_modality_dropout: bool | None = None,
+    use_text_compression: bool | None = None,
 ) -> dict[str, Any]:
     config = {
         key: value.copy() if isinstance(value, dict) else value
@@ -72,6 +73,8 @@ def _with_model_variant(
         model_config["use_reliability_gate"] = bool(use_reliability_gate)
     if use_modality_dropout is not None:
         dropout_config["enabled"] = bool(use_modality_dropout)
+    if use_text_compression is not None:
+        model_config["use_text_compression"] = bool(use_text_compression)
 
     config["model"] = dict(config.get("model", {}))
     config["model"]["improved"] = model_config
@@ -173,6 +176,12 @@ def run_improved_single_experiment(
             "notes": "synthetic smoke data; not an official result" if smoke_test else "",
             "use_reliability_gate": bool(model_config.get("use_reliability_gate", True)),
             "use_modality_dropout": bool(dropout_config.get("enabled", True)),
+            "use_text_compression": bool(model_config.get("use_text_compression", False)),
+            "text_token_count": (
+                1
+                if bool(model_config.get("use_text_compression", False))
+                else int(base_config.get("modalities", {}).get("target_timesteps", 10))
+            ),
         }
     )
     if metric_overrides:
@@ -365,6 +374,7 @@ def run_improved_ablation(
             improved_config,
             use_reliability_gate=bool(variant.get("use_reliability_gate", True)),
             use_modality_dropout=bool(variant.get("use_modality_dropout", True)),
+            use_text_compression=bool(variant.get("use_text_compression", False)),
         )
         seed = int(variant_config.get("experiment", {}).get("seed", base_config.get("training", {}).get("seed", 42)))
         train_dropout = _training_dropout_transform(variant_config, seed)
