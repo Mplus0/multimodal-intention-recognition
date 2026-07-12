@@ -1,0 +1,72 @@
+experiment:
+  name: term_paper_text_compression
+  model_type: ReliabilityGatedMultimodalModel
+  seed: 42
+model:
+  improved:
+    model_dim: 128
+    num_heads: 4
+    depth: 2
+    dropout: 0.1
+    ff_multiplier: 4
+    num_intent_classes: 6
+    num_scene_classes: 2
+    num_joint_classes: 12
+    use_reliability_gate: true
+    use_modality_mask: true
+    gate_bias_init: 2.0
+    use_text_compression: true
+training:
+  epochs: 5
+  lr: 0.001
+  modality_dropout:
+    enabled: true
+    strategy: uniform
+    drop_prob: 0.3
+    max_drop_modalities: 2
+    min_keep_modalities: 1
+    modalities:
+    - imu
+    - gesture
+    - audio
+    - text
+    - scene
+evaluation:
+  mode: all
+  run_clean: true
+  run_noise: false
+  run_missing: true
+  run_ablation: true
+missing_modality:
+  single:
+  - - text
+  pairs:
+  - - imu
+    - text
+  - - audio
+    - text
+ablation:
+  conditions:
+  - clean
+  - missing_text
+  variants:
+  - name: term_paper_compression_only
+    use_reliability_gate: false
+    use_modality_dropout: false
+    use_text_compression: true
+  - name: term_paper_gate_compression
+    use_reliability_gate: true
+    use_modality_dropout: false
+    use_text_compression: true
+  - name: term_paper_compression_dropout
+    use_reliability_gate: false
+    use_modality_dropout: true
+    use_text_compression: true
+  - name: term_paper_proposed
+    use_reliability_gate: true
+    use_modality_dropout: true
+    use_text_compression: true
+notes:
+- Text features remain unchanged on disk with shape [10, D].
+- The proposed model averages Text over time before projection and uses one Text token.
+- All outputs are redirected by experiments/run_term_paper_text_compression.py.

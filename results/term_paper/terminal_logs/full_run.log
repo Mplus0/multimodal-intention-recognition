@@ -1,0 +1,72 @@
+2026-07-13 03:33:34 | INFO | improved_clean | seed=42 cuda_available=True
+2026-07-13 03:33:35 | INFO | improved_clean | indexed_sample_count=39 missing_items_count=0
+/datas/Mplus0/.conda/envs/Machine_Learning/lib/python3.10/site-packages/torch/autograd/graph.py:882: UserWarning: Memory Efficient attention defaults to a non-deterministic algorithm. To explicitly enable determinism call torch.use_deterministic_algorithms(True, warn_only=False). (Triggered internally at /pytorch/aten/src/ATen/native/transformers/cuda/attention_backward.cu:900.)
+  return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+/datas/Mplus0/.conda/envs/Machine_Learning/lib/python3.10/site-packages/torch/nn/modules/transformer.py:529: UserWarning: The PyTorch API of nested tensors is in prototype stage and will change in the near future. We recommend specifying layout=torch.jagged when constructing a nested tensor, as this layout receives active development, has better operator coverage, and works with torch.compile. (Triggered internally at /pytorch/aten/src/ATen/NestedTensorImpl.cpp:178.)
+  output = torch._nested_tensor_from_mask(
+2026-07-13 03:33:36 | INFO | improved_clean | epoch=1 train_loss=1.4304 train_acc=0.4299 val_loss=1.0349 val_acc=0.7617 val_macro_f1=0.6365
+2026-07-13 03:33:36 | INFO | improved_clean | epoch=2 train_loss=0.3691 train_acc=0.9305 val_loss=0.4289 val_acc=0.8993 val_macro_f1=0.7748
+2026-07-13 03:33:36 | INFO | improved_clean | epoch=3 train_loss=0.0959 train_acc=0.9768 val_loss=0.5509 val_acc=0.8523 val_macro_f1=0.7428
+2026-07-13 03:33:37 | INFO | improved_clean | epoch=4 train_loss=0.0333 train_acc=0.9937 val_loss=0.2755 val_acc=0.9329 val_macro_f1=0.7794
+2026-07-13 03:33:37 | INFO | improved_clean | epoch=5 train_loss=0.0183 train_acc=0.9947 val_loss=0.3221 val_acc=0.9195 val_macro_f1=0.7875
+2026-07-13 03:33:37 | INFO | improved_clean | final_metrics={'accuracy': 0.9811827956989247, 'macro_f1': 0.9809888089512743, 'weighted_f1': 0.9810082983131869, 'loss': 0.10586579913093198, 'scene_accuracy': 0.478494623655914, 'joint_accuracy': 0.0, 'experiment_name': 'improved_clean', 'model_type': 'ReliabilityGatedMultimodalModel', 'training_time': 2.125, 'avg_test_time_per_sample': 0.000152, 'status': 'completed', 'notes': '', 'use_reliability_gate': True, 'use_modality_dropout': True, 'use_text_compression': True, 'text_token_count': 1, 'target_modality': 'none', 'noise_ratio': 'none', 'missing_modalities': 'none', 'ablation_variant': 'none'}
+2026-07-13 03:33:37 | INFO | improved_missing_text | seed=42 cuda_available=True
+2026-07-13 03:33:38 | INFO | improved_missing_text | indexed_sample_count=39 missing_items_count=0
+2026-07-13 03:33:38 | INFO | improved_missing_text | epoch=1 train_loss=1.5555 train_acc=0.3414 val_loss=2.4832 val_acc=0.0470 val_macro_f1=0.0381
+2026-07-13 03:33:38 | INFO | improved_missing_text | epoch=2 train_loss=0.9155 train_acc=0.6765 val_loss=4.4190 val_acc=0.0000 val_macro_f1=0.0000
+2026-07-13 03:33:39 | INFO | improved_missing_text | epoch=3 train_loss=0.5800 train_acc=0.7640 val_loss=5.6724 val_acc=0.0000 val_macro_f1=0.0000
+2026-07-13 03:33:39 | INFO | improved_missing_text | epoch=4 train_loss=0.3892 train_acc=0.8525 val_loss=7.6907 val_acc=0.0000 val_macro_f1=0.0000
+2026-07-13 03:33:39 | INFO | improved_missing_text | epoch=5 train_loss=0.3089 train_acc=0.8757 val_loss=7.6553 val_acc=0.0000 val_macro_f1=0.0000
+2026-07-13 03:33:40 | INFO | improved_missing_text | final_metrics={'accuracy': 0.23655913978494625, 'macro_f1': 0.18366753431793395, 'weighted_f1': 0.19352164697520682, 'loss': 4.359296229577834, 'scene_accuracy': 0.5147849462365591, 'joint_accuracy': 0.0, 'experiment_name': 'improved_missing_text', 'model_type': 'ReliabilityGatedMultimodalModel', 'training_time': 1.4822, 'avg_test_time_per_sample': 0.000151, 'status': 'completed', 'notes': '', 'use_reliability_gate': True, 'use_modality_dropout': True, 'use_text_compression': True, 'text_token_count': 1, 'target_modality': 'none', 'noise_ratio': 'none', 'missing_modalities': 'text', 'ablation_variant': 'none'}
+2026-07-13 03:33:40 | INFO | improved_missing_imu_text | seed=42 cuda_available=True
+2026-07-13 03:33:40 | INFO | improved_missing_imu_text | indexed_sample_count=39 missing_items_count=0
+2026-07-13 03:33:41 | INFO | improved_missing_imu_text | epoch=1 train_loss=1.4894 train_acc=0.3793 val_loss=2.8176 val_acc=0.0067 val_macro_f1=0.0103
+2026-07-13 03:33:41 | INFO | improved_missing_imu_text | epoch=2 train_loss=0.8219 train_acc=0.7081 val_loss=4.7136 val_acc=0.0000 val_macro_f1=0.0000
+2026-07-13 03:33:41 | INFO | improved_missing_imu_text | epoch=3 train_loss=0.5726 train_acc=0.7829 val_loss=4.6906 val_acc=0.0436 val_macro_f1=0.0602
+2026-07-13 03:33:42 | INFO | improved_missing_imu_text | epoch=4 train_loss=0.4411 train_acc=0.8166 val_loss=6.6880 val_acc=0.0235 val_macro_f1=0.0343
+2026-07-13 03:33:42 | INFO | improved_missing_imu_text | epoch=5 train_loss=0.3577 train_acc=0.8535 val_loss=6.9627 val_acc=0.0000 val_macro_f1=0.0000
+2026-07-13 03:33:42 | INFO | improved_missing_imu_text | final_metrics={'accuracy': 0.1532258064516129, 'macro_f1': 0.12078389309858088, 'weighted_f1': 0.1282369089793063, 'loss': 4.50265154274561, 'scene_accuracy': 0.46639784946236557, 'joint_accuracy': 0.0, 'experiment_name': 'improved_missing_imu_text', 'model_type': 'ReliabilityGatedMultimodalModel', 'training_time': 1.6274, 'avg_test_time_per_sample': 0.000162, 'status': 'completed', 'notes': '', 'use_reliability_gate': True, 'use_modality_dropout': True, 'use_text_compression': True, 'text_token_count': 1, 'target_modality': 'none', 'noise_ratio': 'none', 'missing_modalities': 'imu+text', 'ablation_variant': 'none'}
+2026-07-13 03:33:42 | INFO | improved_missing_audio_text | seed=42 cuda_available=True
+2026-07-13 03:33:43 | INFO | improved_missing_audio_text | indexed_sample_count=39 missing_items_count=0
+2026-07-13 03:33:43 | INFO | improved_missing_audio_text | epoch=1 train_loss=1.4930 train_acc=0.3836 val_loss=3.1074 val_acc=0.0067 val_macro_f1=0.0106
+2026-07-13 03:33:44 | INFO | improved_missing_audio_text | epoch=2 train_loss=0.8590 train_acc=0.6807 val_loss=4.7187 val_acc=0.0000 val_macro_f1=0.0000
+2026-07-13 03:33:44 | INFO | improved_missing_audio_text | epoch=3 train_loss=0.5540 train_acc=0.7808 val_loss=5.7974 val_acc=0.0000 val_macro_f1=0.0000
+2026-07-13 03:33:44 | INFO | improved_missing_audio_text | epoch=4 train_loss=0.3197 train_acc=0.8883 val_loss=7.6975 val_acc=0.0000 val_macro_f1=0.0000
+2026-07-13 03:33:45 | INFO | improved_missing_audio_text | epoch=5 train_loss=0.2693 train_acc=0.9031 val_loss=8.0899 val_acc=0.0000 val_macro_f1=0.0000
+2026-07-13 03:33:45 | INFO | improved_missing_audio_text | final_metrics={'accuracy': 0.19623655913978494, 'macro_f1': 0.1503005901981623, 'weighted_f1': 0.15789548647463403, 'loss': 4.79962920886214, 'scene_accuracy': 0.5, 'joint_accuracy': 0.0, 'experiment_name': 'improved_missing_audio_text', 'model_type': 'ReliabilityGatedMultimodalModel', 'training_time': 1.7113, 'avg_test_time_per_sample': 0.000153, 'status': 'completed', 'notes': '', 'use_reliability_gate': True, 'use_modality_dropout': True, 'use_text_compression': True, 'text_token_count': 1, 'target_modality': 'none', 'noise_ratio': 'none', 'missing_modalities': 'audio+text', 'ablation_variant': 'none'}
+2026-07-13 03:33:45 | INFO | term_paper_compression_only | seed=42 cuda_available=True
+2026-07-13 03:33:46 | INFO | term_paper_compression_only | indexed_sample_count=39 missing_items_count=0
+2026-07-13 03:33:46 | INFO | term_paper_compression_only | epoch=1 train_loss=1.3801 train_acc=0.4932 val_loss=1.1991 val_acc=0.5872 val_macro_f1=0.5044
+2026-07-13 03:33:46 | INFO | term_paper_compression_only | epoch=2 train_loss=0.2905 train_acc=0.9621 val_loss=0.2890 val_acc=0.9396 val_macro_f1=0.7844
+2026-07-13 03:33:46 | INFO | term_paper_compression_only | epoch=3 train_loss=0.0564 train_acc=0.9884 val_loss=0.2071 val_acc=0.9396 val_macro_f1=0.7878
+2026-07-13 03:33:47 | INFO | term_paper_compression_only | epoch=4 train_loss=0.0249 train_acc=0.9937 val_loss=0.2064 val_acc=0.9564 val_macro_f1=0.7945
+2026-07-13 03:33:47 | INFO | term_paper_compression_only | epoch=5 train_loss=0.0115 train_acc=0.9989 val_loss=0.1827 val_acc=0.9564 val_macro_f1=0.7973
+2026-07-13 03:33:47 | INFO | term_paper_compression_only | final_metrics={'accuracy': 0.9825268817204301, 'macro_f1': 0.9815421974233615, 'weighted_f1': 0.9823606322298121, 'loss': 0.07885373586047721, 'scene_accuracy': 0.46908602150537637, 'joint_accuracy': 0.0, 'experiment_name': 'term_paper_compression_only', 'model_type': 'ReliabilityGatedMultimodalModel', 'training_time': 1.2623, 'avg_test_time_per_sample': 0.000146, 'status': 'completed', 'notes': '', 'use_reliability_gate': False, 'use_modality_dropout': False, 'use_text_compression': True, 'text_token_count': 1, 'target_modality': 'none', 'noise_ratio': 'none', 'missing_modalities': 'none', 'ablation_variant': 'term_paper_compression_only'}
+2026-07-13 03:33:47 | INFO | term_paper_gate_compression | seed=42 cuda_available=True
+2026-07-13 03:33:48 | INFO | term_paper_gate_compression | indexed_sample_count=39 missing_items_count=0
+2026-07-13 03:33:48 | INFO | term_paper_gate_compression | epoch=1 train_loss=1.3913 train_acc=0.4668 val_loss=1.1441 val_acc=0.6510 val_macro_f1=0.5266
+2026-07-13 03:33:49 | INFO | term_paper_gate_compression | epoch=2 train_loss=0.3029 train_acc=0.9547 val_loss=0.3524 val_acc=0.9329 val_macro_f1=0.7888
+2026-07-13 03:33:49 | INFO | term_paper_gate_compression | epoch=3 train_loss=0.0659 train_acc=0.9852 val_loss=0.3351 val_acc=0.9396 val_macro_f1=0.7943
+2026-07-13 03:33:49 | INFO | term_paper_gate_compression | epoch=4 train_loss=0.0214 train_acc=0.9958 val_loss=0.2102 val_acc=0.9463 val_macro_f1=0.7913
+2026-07-13 03:33:49 | INFO | term_paper_gate_compression | epoch=5 train_loss=0.0089 train_acc=0.9989 val_loss=0.2510 val_acc=0.9430 val_macro_f1=0.7919
+2026-07-13 03:33:50 | INFO | term_paper_gate_compression | final_metrics={'accuracy': 0.9905913978494624, 'macro_f1': 0.9903749783419009, 'weighted_f1': 0.9905797605201319, 'loss': 0.0573875907888656, 'scene_accuracy': 0.5053763440860215, 'joint_accuracy': 0.0, 'experiment_name': 'term_paper_gate_compression', 'model_type': 'ReliabilityGatedMultimodalModel', 'training_time': 1.6541, 'avg_test_time_per_sample': 0.000156, 'status': 'completed', 'notes': '', 'use_reliability_gate': True, 'use_modality_dropout': False, 'use_text_compression': True, 'text_token_count': 1, 'target_modality': 'none', 'noise_ratio': 'none', 'missing_modalities': 'none', 'ablation_variant': 'term_paper_gate_compression'}
+2026-07-13 03:33:50 | INFO | term_paper_compression_dropout | seed=42 cuda_available=True
+2026-07-13 03:33:50 | INFO | term_paper_compression_dropout | indexed_sample_count=39 missing_items_count=0
+2026-07-13 03:33:51 | INFO | term_paper_compression_dropout | epoch=1 train_loss=1.4291 train_acc=0.4679 val_loss=1.2512 val_acc=0.4765 val_macro_f1=0.3991
+2026-07-13 03:33:51 | INFO | term_paper_compression_dropout | epoch=2 train_loss=0.3821 train_acc=0.9283 val_loss=0.2867 val_acc=0.9362 val_macro_f1=0.7919
+2026-07-13 03:33:51 | INFO | term_paper_compression_dropout | epoch=3 train_loss=0.0996 train_acc=0.9747 val_loss=1.1476 val_acc=0.6376 val_macro_f1=0.6205
+2026-07-13 03:33:52 | INFO | term_paper_compression_dropout | epoch=4 train_loss=0.0395 train_acc=0.9884 val_loss=0.5931 val_acc=0.7987 val_macro_f1=0.7395
+2026-07-13 03:33:52 | INFO | term_paper_compression_dropout | epoch=5 train_loss=0.0266 train_acc=0.9926 val_loss=0.2185 val_acc=0.9530 val_macro_f1=0.7963
+2026-07-13 03:33:52 | INFO | term_paper_compression_dropout | final_metrics={'accuracy': 0.9717741935483871, 'macro_f1': 0.9700315427099367, 'weighted_f1': 0.9716839392833276, 'loss': 0.12684651724593612, 'scene_accuracy': 0.4314516129032258, 'joint_accuracy': 0.0, 'experiment_name': 'term_paper_compression_dropout', 'model_type': 'ReliabilityGatedMultimodalModel', 'training_time': 1.4277, 'avg_test_time_per_sample': 0.000147, 'status': 'completed', 'notes': '', 'use_reliability_gate': False, 'use_modality_dropout': True, 'use_text_compression': True, 'text_token_count': 1, 'target_modality': 'none', 'noise_ratio': 'none', 'missing_modalities': 'none', 'ablation_variant': 'term_paper_compression_dropout'}
+2026-07-13 03:33:52 | INFO | term_paper_proposed | seed=42 cuda_available=True
+2026-07-13 03:33:53 | INFO | term_paper_proposed | indexed_sample_count=39 missing_items_count=0
+2026-07-13 03:33:53 | INFO | term_paper_proposed | epoch=1 train_loss=1.4304 train_acc=0.4299 val_loss=1.0349 val_acc=0.7617 val_macro_f1=0.6365
+2026-07-13 03:33:54 | INFO | term_paper_proposed | epoch=2 train_loss=0.3691 train_acc=0.9305 val_loss=0.4289 val_acc=0.8993 val_macro_f1=0.7748
+2026-07-13 03:33:54 | INFO | term_paper_proposed | epoch=3 train_loss=0.0959 train_acc=0.9768 val_loss=0.5509 val_acc=0.8523 val_macro_f1=0.7428
+2026-07-13 03:33:54 | INFO | term_paper_proposed | epoch=4 train_loss=0.0333 train_acc=0.9937 val_loss=0.2755 val_acc=0.9329 val_macro_f1=0.7794
+2026-07-13 03:33:55 | INFO | term_paper_proposed | epoch=5 train_loss=0.0183 train_acc=0.9947 val_loss=0.3221 val_acc=0.9195 val_macro_f1=0.7875
+2026-07-13 03:33:55 | INFO | term_paper_proposed | final_metrics={'accuracy': 0.9811827956989247, 'macro_f1': 0.9809888089512743, 'weighted_f1': 0.9810082983131869, 'loss': 0.10586579913093198, 'scene_accuracy': 0.478494623655914, 'joint_accuracy': 0.0, 'experiment_name': 'term_paper_proposed', 'model_type': 'ReliabilityGatedMultimodalModel', 'training_time': 1.6682, 'avg_test_time_per_sample': 0.000154, 'status': 'completed', 'notes': '', 'use_reliability_gate': True, 'use_modality_dropout': True, 'use_text_compression': True, 'text_token_count': 1, 'target_modality': 'none', 'noise_ratio': 'none', 'missing_modalities': 'none', 'ablation_variant': 'term_paper_proposed'}
+[improved_model_done]
+  mode: all
+  run_count: 8
+  metrics: /datas/Mplus0/project/machine_learning/multimodal-intention-recognition/results/term_paper/metrics/improved_model_metrics.csv

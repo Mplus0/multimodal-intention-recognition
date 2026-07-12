@@ -1,0 +1,72 @@
+project:
+  root: .
+data:
+  raw_dir: data/raw
+  processed_dir: data/processed
+  imu_csv: data/raw/imu.csv
+  users:
+    user_a: data/raw/user_A
+    user_b: data/raw/user_B
+    user_c: data/raw/user_C
+  subdirs:
+    hololens: HoloLens
+    fisheye: fisheye
+  raw_sources:
+    imu:
+      file: data/raw/imu.csv
+    gesture:
+      video_dir_pattern: '{user_dir}/fisheye'
+    audio:
+      video_dir_pattern: '{user_dir}/HoloLens'
+    text:
+      audio_dir_pattern: '{user_dir}/HoloLens'
+    scene:
+      video_dir_pattern: '{user_dir}/fisheye'
+modalities:
+  keys:
+  - imu
+  - gesture
+  - audio
+  - text
+  - scene
+  feature_dims:
+    imu: 12
+    gesture: 768
+    audio: 39
+    text: 384
+    scene: 768
+  target_timesteps: 10
+local_models:
+  root: data/raw/models
+  sentence_model: data/raw/models/all-MiniLM-L6-v2
+  clip_teacher_model: data/raw/models/clip_teacher_model
+  vit_model: data/raw/models/clip_teacher_model/vit-base-patch16-224
+cache:
+  root: data/processed/cache
+  huggingface: data/processed/cache/huggingface
+  hf_hub: data/processed/cache/huggingface/hub
+  transformers: data/processed/cache/huggingface/transformers
+  scene_cache: data/processed/cache/scene_cache_real_vit
+  feature_cache: data/processed/cache/feature_cache
+outputs:
+  model_dir: results/term_paper/models
+  result_dir: results/term_paper
+  metrics_dir: results/term_paper/metrics
+  logs_dir: results/term_paper/logs
+  prediction_dir: results/term_paper/predictions
+  checkpoint_dir: results/term_paper/checkpoints
+  figure_dir: results/term_paper/figures
+  report_dir: results/term_paper/report
+report:
+  screenshots_dir: results/term_paper/report/screenshots
+  references_file: report/references.md
+training:
+  split:
+    train_users:
+    - user_A
+    - user_B
+    test_users:
+    - user_C
+  seed: 42
+  batch_size: 64
+  num_workers: 0
