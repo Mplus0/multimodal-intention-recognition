@@ -350,3 +350,36 @@ python experiments/run_improved_model.py --config configs/default.yaml
 ### 问题
 - 消融实验配置尚未完成。
 - 当前未运行该实验。
+## Term Paper Text Compression - First Full Run Protocol Audit
+
+### Date
+2026-07-13
+
+### Purpose
+审查首次 Repetition-Aware Text Compression 全量运行是否满足个人论文协议。
+
+### Command
+```bash
+python experiments/run_term_paper_text_compression.py --epochs 5 --batch-size 64 --lr 0.001
+```
+
+### Dataset Split
+- Train: user A + user B
+- Test: user C
+
+### Settings
+- Modalities: imu, gesture, audio, text, scene
+- Noise setting: none
+- Missing modality: none / text / imu+text / audio+text
+- Model: repetition-aware Text compression variants
+
+### Brief Analysis
+首次运行完成 8 个真实数据实验且输出隔离正常，但测试阶段使用训练结束时的模型，没有重新加载 validation Macro-F1 最佳 checkpoint。该次运行还缺少规范化平均训练时间字段，且消融只覆盖 clean。因此结果可用于诊断，不作为最终论文正式表格；代码修复后需要重跑。
+
+### Problems
+- Final test 未加载 best checkpoint。
+- 缺少 `avg_training_time_per_sample_sec` 和 `testing_time_total_sec`。
+- Ablation 未覆盖 `missing_text`。
+
+### Official Result Status
+- Debug only / Superseded by required rerun

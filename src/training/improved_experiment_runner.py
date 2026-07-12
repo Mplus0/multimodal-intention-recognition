@@ -87,6 +87,11 @@ def _training_dropout_transform(improved_config: dict[str, Any], seed: int):
     return build_random_modality_dropout_from_config(improved_config, seed=seed)
 
 
+def _synchronize_device(device: torch.device) -> None:
+    if device.type == "cuda":
+        torch.cuda.synchronize(device)
+
+
 def run_improved_single_experiment(
     *,
     base_config: dict[str, Any],
@@ -138,6 +143,8 @@ def run_improved_single_experiment(
     optimizer = torch.optim.AdamW(model.parameters(), lr=active_lr)
     history: dict[str, list[float]] = {"train_loss": [], "val_loss": []}
     best_macro_f1 = -1.0
+    best_epoch = 0
+    _synchronize_device(device)
     train_start = time.time()
 
     for epoch in range(1, active_epochs + 1):
@@ -156,13 +163,25 @@ def run_improved_single_experiment(
         )
         if val_metrics["macro_f1"] >= best_macro_f1:
             best_macro_f1 = float(val_metrics["macro_f1"])
+            best_epoch = epoch
             torch.save(checkpoint_payload(model, epoch, val_metrics, base_config), paths["best"])
 
+    _synchronize_device(device)
     training_time = time.time() - train_start
+    best_checkpoint = torch.load(paths["best"], map_location=device)
+    model.load_state_dict(best_checkpoint["model_state_dict"])
+    logger.info("loaded_best_checkpoint epoch=%s val_macro_f1=%.4f", best_epoch, best_macro_f1)
+
+    _synchronize_device(device)
     test_start = time.time()
     final_metrics, prediction_rows = evaluate(model, test_loader, criterion, device)
+    _synchronize_device(device)
     test_time = time.time() - test_start
-    sample_count = max(1, len(prediction_rows))
+    sample_count_test = len(prediction_rows)
+    sample_count_train = len(train_loader.dataset)
+    processed_train_sample_visits = sample_count_train * active_epochs
+    timing_train_denominator = max(1, processed_train_sample_visits)
+    timing_test_denominator = max(1, sample_count_test)
 
     model_config = improved_config.get("model", {}).get("improved", {})
     dropout_config = improved_config.get("training", {}).get("modality_dropout", {})
@@ -171,7 +190,25 @@ def run_improved_single_experiment(
             "experiment_name": experiment_name,
             "model_type": "ReliabilityGatedMultimodalModel",
             "training_time": round(training_time, 4),
-            "avg_test_time_per_sample": round(test_time / sample_count, 6),
+            "avg_test_time_per_sample": round(test_time / timing_test_denominator, 6),
+            "training_time_total_sec": round(training_time, 6),
+            "avg_training_time_per_sample_sec": round(
+                training_time / timing_train_denominator, 9
+            ),
+            "testing_time_total_sec": round(test_time, 6),
+            "avg_testing_time_per_sample_sec": round(
+                test_time / timing_test_denominator, 9
+            ),
+            "sample_count_train": sample_count_train,
+            "processed_train_sample_visits": processed_train_sample_visits,
+            "sample_count_test": sample_count_test,
+            "epochs": active_epochs,
+            "batch_size": active_batch_size,
+            "learning_rate": active_lr,
+            "device": str(device),
+            "seed": seed,
+            "best_epoch": best_epoch,
+            "best_val_macro_f1": best_macro_f1,
             "status": "smoke_test" if smoke_test else "completed",
             "notes": "synthetic smoke data; not an official result" if smoke_test else "",
             "use_reliability_gate": bool(model_config.get("use_reliability_gate", True)),
@@ -187,7 +224,7 @@ def run_improved_single_experiment(
     if metric_overrides:
         final_metrics.update(metric_overrides)
 
-    torch.save(checkpoint_payload(model, active_epochs, final_metrics, base_config), paths["final"])
+    torch.save(checkpoint_payload(model, best_epoch, final_metrics, base_config), paths["final"])
     save_metrics_csv(final_metrics, paths["metrics"])
     save_predictions(prediction_rows, paths["predictions"])
     save_summary_json(
@@ -367,6 +404,14 @@ def run_improved_ablation(
     if not isinstance(variants, list):
         raise ValueError("ablation.variants must be a list.")
 
+    conditions = improved_config.get("ablation", {}).get("conditions", ["clean"])
+    if not isinstance(conditions, list) or not conditions:
+        raise ValueError("ablation.conditions must be a non-empty list.")
+    supported_conditions = {"clean", "missing_text"}
+    unknown_conditions = [item for item in conditions if item not in supported_conditions]
+    if unknown_conditions:
+        raise ValueError(f"Unsupported ablation conditions: {unknown_conditions}")
+
     rows: list[dict[str, Any]] = []
     for variant in variants:
         name = str(variant.get("name", "improved_ablation"))
@@ -377,28 +422,44 @@ def run_improved_ablation(
             use_text_compression=bool(variant.get("use_text_compression", False)),
         )
         seed = int(variant_config.get("experiment", {}).get("seed", base_config.get("training", {}).get("seed", 42)))
-        train_dropout = _training_dropout_transform(variant_config, seed)
-        metrics = run_improved_single_experiment(
-            base_config=base_config,
-            improved_config=variant_config,
-            experiment_name=name,
-            output_prefix=name,
-            train_transform=train_dropout,
-            val_transform=None,
-            test_transform=None,
-            epochs=epochs,
-            batch_size=batch_size,
-            lr=lr,
-            max_samples=max_samples,
-            smoke_test=smoke_test,
-            metric_overrides={
-                "target_modality": "none",
-                "noise_ratio": "none",
-                "missing_modalities": "none",
-                "ablation_variant": name,
-            },
-        )
-        rows.append(metrics)
+        for condition in conditions:
+            train_dropout = _training_dropout_transform(variant_config, seed)
+            if condition == "missing_text":
+                missing_transform = MissingModalityTransform(["text"])
+                train_transform = ComposeTransforms([missing_transform, train_dropout])
+                val_transform = missing_transform
+                test_transform = missing_transform
+                run_name = f"{name}_missing_text"
+                missing_modalities = "text"
+            else:
+                train_transform = train_dropout
+                val_transform = None
+                test_transform = None
+                run_name = name
+                missing_modalities = "none"
+
+            metrics = run_improved_single_experiment(
+                base_config=base_config,
+                improved_config=variant_config,
+                experiment_name=run_name,
+                output_prefix=run_name,
+                train_transform=train_transform,
+                val_transform=val_transform,
+                test_transform=test_transform,
+                epochs=epochs,
+                batch_size=batch_size,
+                lr=lr,
+                max_samples=max_samples,
+                smoke_test=smoke_test,
+                metric_overrides={
+                    "target_modality": "none",
+                    "noise_ratio": "none",
+                    "missing_modalities": missing_modalities,
+                    "ablation_variant": name,
+                    "ablation_condition": condition,
+                },
+            )
+            rows.append(metrics)
 
     metrics_path = get_path("outputs", "metrics_dir", config=base_config) / "improved_ablation_metrics.csv"
     save_metrics_table(rows, metrics_path)

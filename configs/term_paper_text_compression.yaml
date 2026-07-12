@@ -44,6 +44,9 @@ missing_modality:
     - [audio, text]
 
 ablation:
+  conditions:
+    - clean
+    - missing_text
   variants:
     - name: term_paper_compression_only
       use_reliability_gate: false

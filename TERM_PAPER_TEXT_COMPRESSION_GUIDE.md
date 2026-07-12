@@ -314,7 +314,7 @@ missing_imu_text
 - Total Testing Time
 - Average Testing Time per Test Sample
 
-当前 runner 已保存 Accuracy、Macro-F1、Weighted-F1、训练时间及平均测试时间。正式运行后应核对输出 schema 是否完整满足期末论文要求；如果平均训练样本时间尚未输出，应在论文整理前补充 runner 统计，不能手工估计。
+当前 runner 保存 Accuracy、Macro-F1、Weighted-F1、总训练时间、平均单样本训练时间、总测试时间和平均单样本测试时间。GPU 环境会在计时区间前后执行 CUDA 同步。
 
 由于 clean baseline 曾出现 Accuracy 与 Macro-F1 差距较大的现象，论文分析应优先关注 Macro-F1，避免仅凭 Accuracy 得出结论。
 
@@ -378,7 +378,7 @@ results/term_paper/figures/improved_clean_confusion_matrix.png
 python experiments/run_term_paper_text_compression.py --mode missing
 ```
 
-第三步：运行消融实验。
+第三步：运行消融实验。每个消融版本会同时运行 `clean` 和 `missing_text`。
 
 ```bash
 python experiments/run_term_paper_text_compression.py --mode ablation
@@ -483,6 +483,7 @@ figures/
 8. epochs、batch size、learning rate、seed 和 device 已记录。
 9. predictions 行数与测试样本数一致。
 10. loss curve 和 confusion matrix 能正常打开。
+11. `best_epoch` 和 `best_val_macro_f1` 已记录，日志包含 `loaded_best_checkpoint`。
 
 建议将每次正式命令、Git commit、服务器设备和输出路径补充到：
 
@@ -674,7 +675,6 @@ Scene vector --------> Scene projection ----------/
 
 - 正式服务器运行。
 - 个人方法真实 metrics。
-- 平均训练时间/样本的完整核对。
 - gate weight 导出和可视化。
 - 论文 LaTeX 初稿。
 
@@ -686,4 +686,3 @@ Scene vector --------> Scene projection ----------/
 4. 正式运行 ablation。
 5. 汇总真实结果并生成论文对比图。
 6. 根据真实证据编写英文论文。
-

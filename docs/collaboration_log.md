@@ -611,3 +611,40 @@ python experiments/run_term_paper_text_compression.py --mode ablation
 ### Remaining Problems
 - 需要在正式服务器完成真实实验。
 - 需要根据真实结果撰写最终英文结论。
+## 2026-07-13 - 修复最佳 checkpoint、正式计时和缺失 Text 消融
+
+### Contributor
+- Name: Codex
+- Role: Code / Experiment
+
+### Files Changed
+- `src/training/improved_experiment_runner.py`: 测试前加载 validation Macro-F1 最佳 checkpoint；增加 CUDA 同步和完整训练/测试计时元数据；支持消融组运行 `clean` 与 `missing_text`。
+- `configs/term_paper_text_compression.yaml`: 增加 `ablation.conditions`。
+- `TERM_PAPER_TEXT_COMPRESSION_GUIDE.md`: 更新运行与结果检查说明。
+- `docs/experiment_log.md`: 记录旧运行的协议限制和重跑要求。
+
+### Purpose
+首次正式运行暴露出三个问题：测试使用最后 epoch 而非已保存的 best checkpoint；缺少平均训练时间/样本和总测试时间；消融仅覆盖 clean。修复后结果协议满足个人论文的核心比较要求。
+
+### Implementation Summary
+训练完成后从 `paths["best"]` 恢复 `model_state_dict` 再测试，并记录 `best_epoch` 与 `best_val_macro_f1`。计时字段使用 processed training sample visits 作为训练分母。消融文件名在 Missing Text 条件增加 `_missing_text` 后缀，避免与 clean 输出覆盖。
+
+### How to Validate
+```bash
+python experiments/run_term_paper_text_compression.py --epochs 5 --batch-size 64 --lr 0.001
+```
+
+### Expected Validation Outputs
+- `results/term_paper/metrics/improved_model_metrics.csv`
+- `results/term_paper/metrics/improved_ablation_metrics.csv`
+- `results/term_paper/metrics/term_paper_gate_compression_missing_text_metrics.csv`
+- 日志中的 `loaded_best_checkpoint`
+
+### Current Status
+- Partially completed：实现与 AST 静态检查完成，等待正式服务器重跑。
+
+### Notes for Report Writer
+2026-07-13 03:33 的首次运行不应作为最终论文数字；最终表格应引用本次修复后重跑生成的 CSV。
+
+### Remaining Problems
+- 需要同步新提交到服务器并重新运行完整个人实验。
